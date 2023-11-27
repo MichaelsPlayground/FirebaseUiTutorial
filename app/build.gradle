@@ -45,6 +45,10 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-auth:8.0.2'
     // FirebaseUI for Cloud Storage
     implementation 'com.firebaseui:firebase-ui-storage:8.0.2'
+
+    implementation 'com.karumi:dexter:6.2.3'
+
+    implementation 'pub.devrel:easypermissions:3.0.0'
 }
 // ADD THIS AT THE BOTTOM
 apply plugin: 'com.google.gms.google-services'

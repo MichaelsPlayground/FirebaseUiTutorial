@@ -1,7 +1,9 @@
 package de.androidcrypto.firebaseuitutorial;
 
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -12,14 +14,17 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
+import com.firebase.ui.auth.IdpResponse;
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ActivityResultCallback<FirebaseAuthUIAuthenticationResult> {
 
     /**
      * section authentication
@@ -107,6 +112,8 @@ public class MainActivity extends AppCompatActivity {
                     activeButtonsWhileUserIsSignedIn(true);
                 } else {
                     Log.e(TAG, "Could not retrieve onAuthStateChanged, user is NULL");
+                    signedInUser.setText("");
+                    activeButtonsWhileUserIsSignedIn(false);
                 }
             }
         };
@@ -118,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent signInIntent = AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         // ... options ...
-                        .setIsSmartLockEnabled(false)
+                        .setIsSmartLockEnabled(true)
                         .setAvailableProviders(authenticationProviders)
                         .setTheme(R.style.Theme_FirebaseUiTutorial)
                         .build();
@@ -126,27 +133,6 @@ public class MainActivity extends AppCompatActivity {
                 signInLauncher.launch(signInIntent);
             }
         });
-
-
-
-        /*
-        signIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "sign up a new or sign in an existing user");
-                startActivityForResult(
-                        AuthUI.getInstance()
-                                .createSignInIntentBuilder()
-                                .setIsSmartLockEnabled(true)
-                                .setAvailableProviders(authenticationProviders)
-                                .setTheme(R.style.Theme_FirebaseUiTutorial)
-                                .build(),
-                        RC_SIGN_IN
-                );
-            }
-        });
-
-         */
 
         signOut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -280,6 +266,57 @@ public class MainActivity extends AppCompatActivity {
         listImages.setEnabled(isSignedIn);
         listResizedImages.setEnabled(isSignedIn);
         */
+    }
+
+    @Override
+    public void onActivityResult(FirebaseAuthUIAuthenticationResult result) {
+        // Successfully signed in
+        IdpResponse response = result.getIdpResponse();
+        handleSignInResponse(result.getResultCode(), response);
+    }
+
+    private void handleSignInResponse(int resultCode, @Nullable IdpResponse response) {
+        // Successfully signed in
+        if (resultCode == RESULT_OK) {
+            Log.d(TAG, "handleSignInResponse: RESULT_OK");
+            //startSignedInActivity(response);
+            //finish();
+        } else {
+            // Sign in failed
+            if (response == null) {
+                // User pressed back button
+                Log.d(TAG, "handleSignInResponse: RESPONSE == null");
+                //showSnackbar(R.string.sign_in_cancelled);
+                return;
+            }
+
+            if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
+                Log.d(TAG, "handleSignInResponse: no_internet_connection");
+                //showSnackbar(R.string.no_internet_connection);
+                return;
+            }
+
+            if (response.getError().getErrorCode() == ErrorCodes.ANONYMOUS_UPGRADE_MERGE_CONFLICT) {
+                Log.d(TAG, "handleSignInResponse: ANONYMOUS_UPGRADE_MERGE_CONFLICT");
+                return;
+                /*
+                Intent intent = new Intent(this, AnonymousUpgradeActivity.class).putExtra
+                        (ExtraConstants.IDP_RESPONSE, response);
+                startActivity(intent);
+
+                 */
+            }
+
+            if (response.getError().getErrorCode() == ErrorCodes.ERROR_USER_DISABLED) {
+                Log.d(TAG, "handleSignInResponse: account_disabled");
+                //showSnackbar(R.string.account_disabled);
+                return;
+            }
+            Log.d(TAG, "handleSignInResponse: unknown_error");
+            //showSnackbar(R.string.unknown_error);
+            Log.e(TAG, "Sign-in error: ", response.getError());
+            return;
+        }
     }
 
 }
