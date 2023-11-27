@@ -1,6 +1,5 @@
 package de.androidcrypto.firebaseuitutorial;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,14 +16,17 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
-import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements ActivityResultCallback<FirebaseAuthUIAuthenticationResult> {
+import de.androidcrypto.firebaseuitutorial.firebasedatabase.DatabaseEditUserProfileActivity;
+import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
+
+//public class MainActivity extends AppCompatActivity implements ActivityResultCallback<FirebaseAuthUIAuthenticationResult> {
+public class MainActivity extends AppCompatActivity {
 
     /**
      * section authentication
@@ -32,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements ActivityResultCal
 
     private com.google.android.material.textfield.TextInputEditText signedInUser;
     private Button signIn, signOut;
-    public static final int RC_SIGN_IN = 1;
+
     private List<AuthUI.IdpConfig> authenticationProviders = Arrays.asList(
             new AuthUI.IdpConfig.EmailBuilder().build(),
             new AuthUI.IdpConfig.GoogleBuilder().build());
@@ -43,7 +45,8 @@ public class MainActivity extends AppCompatActivity implements ActivityResultCal
             new FirebaseAuthUIActivityResultContract(),
             (result) -> {
                 // Handle the FirebaseAuthUIAuthenticationResult
-                FirebaseUser user = firebaseAuth.getCurrentUser();
+                //FirebaseUser user = firebaseAuth.getCurrentUser();
+                FirebaseUser user = FirebaseUtils.getCurrentUser();
                 if (user != null) {
                     Toast.makeText(MainActivity.this, "User Signed In", Toast.LENGTH_SHORT).show();
                     signedInUser.setText(user.getEmail() + "\nDisplayName: " + user.getDisplayName());
@@ -55,9 +58,10 @@ public class MainActivity extends AppCompatActivity implements ActivityResultCal
 
 
     /**
-     * section
+     * section Firebase Realtime Database
      */
 
+    private Button editDatabaseUserProfile;
 
     /**
      * section
@@ -92,12 +96,12 @@ public class MainActivity extends AppCompatActivity implements ActivityResultCal
         setContentView(R.layout.activity_main);
 
         /**
-         * section for authentication
+         * section for Authentication
          */
 
         signedInUser = findViewById(R.id.etMainSignedInUser);
-        signIn = findViewById(R.id.btnMainSignIn);
-        signOut = findViewById(R.id.btnMainSignOut);
+        signIn = findViewById(R.id.btnMainAuthSignIn);
+        signOut = findViewById(R.id.btnMainAuthSignOut);
 
         // Initialize Firebase Auth
         firebaseAuth = FirebaseAuth.getInstance();
@@ -147,8 +151,18 @@ public class MainActivity extends AppCompatActivity implements ActivityResultCal
         });
 
         /**
-         * section for
+         * section for Firebase Realtime Database
          */
+
+        editDatabaseUserProfile = findViewById(R.id.btnMainDatabaseEditUserProfile);
+        editDatabaseUserProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "edit Database User Profile");
+                Intent intent = new Intent(MainActivity.this, DatabaseEditUserProfileActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         /**
@@ -268,12 +282,15 @@ public class MainActivity extends AppCompatActivity implements ActivityResultCal
         */
     }
 
+    /*
     @Override
     public void onActivityResult(FirebaseAuthUIAuthenticationResult result) {
         // Successfully signed in
         IdpResponse response = result.getIdpResponse();
         handleSignInResponse(result.getResultCode(), response);
     }
+
+     */
 
     private void handleSignInResponse(int resultCode, @Nullable IdpResponse response) {
         // Successfully signed in

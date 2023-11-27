@@ -3,6 +3,8 @@
 This is a sample app to demonstrate the usage of the 4 most used Firebase products - please visit the linked tutorials to setup 
 the Firebase products in the Firebase console.
 
+*FirebaseUI is an open-source library for Android that allows you to quickly connect common UI elements to Firebase APIs.*
+
 ## Firebase Authentication
 
 This app uses 2 Sign-In provider: **Email/Password** and **Google account** authentication.
@@ -66,9 +68,40 @@ service firebase.storage {
 }
 ```
 
+Firebase UI: https://firebaseopensource.com/projects/firebase/firebaseui-android/
 
+Firebase UI on GitHub: https://github.com/firebase/FirebaseUI-Android
 
+build.gradle (:app):
+```plaintext
+    // FirebaseUI for Firebase Auth
+    implementation 'com.firebaseui:firebase-ui-auth:8.0.2'
+    // FirebaseUI for Firebase Realtime Database
+    implementation 'com.firebaseui:firebase-ui-database:8.0.2'
+    // FirebaseUI for Cloud Firestore
+    implementation 'com.firebaseui:firebase-ui-firestore:8.0.2'
+    // FirebaseUI for Cloud Storage
+    implementation 'com.firebaseui:firebase-ui-storage:8.0.2'
 
+```
+
+settings.gradle:
+```plaintext
+...
+buildscript {
+    repositories {
+        // Make sure that you have the following two repositories
+        google()  // Google's Maven repository
+        mavenCentral()  // Maven Central repository
+    }
+    dependencies {
+        // Add the dependency for the Google services Gradle plugin
+        // note: stay on version '4.3.15' - version '4.4.0' will fail !
+        classpath 'com.google.gms:google-services:4.3.15'
+    }
+}
+...
+```
 
 
 
