@@ -28,7 +28,7 @@ import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 public class MessageModelAdapter extends FirebaseRecyclerAdapter<
         MessageModel, MessageModelAdapter.MessageModelViewholder> {
 
-    private static ItemClickListener clickListener;
+    //private static ItemClickListener clickListener;
     //public List<MessageModel> userList = new ArrayList<>();
     public MessageModelAdapter(
             @NonNull FirebaseRecyclerOptions<MessageModel> options)
@@ -43,24 +43,23 @@ public class MessageModelAdapter extends FirebaseRecyclerAdapter<
     onBindViewHolder(@NonNull MessageModelViewholder holder,
                      int position, @NonNull MessageModel model)
     {
-
         if(model.getSenderId().equals(FirebaseUtils.getCurrentUserId())){
             holder.leftChatLayout.setVisibility(View.GONE);
             holder.rightChatLayout.setVisibility(View.VISIBLE);
             holder.rightChatTextview.setText(model.getMessage());
             //holder.rightChatTimeTextview.setText(FirebaseUtils.timestampFullToString(model.getMessageTimestamp()));
 
-            Timestamp a = model.getMessageTimestamp();
-            String b = FirebaseUtils.timestampFullToString(a);
-            System.out.println("*** b: " + b);
+            //Timestamp a = model.getMessageTimestamp();
+            //String b = FirebaseUtils.timestampFullToString(a);
+            //System.out.println("*** b: " + b);
             //holder.rightChatTimeTextview.setText(FirebaseUtils.timestampFullToString(model.getMessageTimestamp()));
         }else{
             holder.rightChatLayout.setVisibility(View.GONE);
             holder.leftChatLayout.setVisibility(View.VISIBLE);
             holder.leftChatTextview.setText(model.getMessage());
-            Timestamp a = model.getMessageTimestamp();
-            String b = FirebaseUtils.timestampFullToString(a);
-            System.out.println("*** b: " + b);
+            //Timestamp a = model.getMessageTimestamp();
+            //String b = FirebaseUtils.timestampFullToString(a);
+            //System.out.println("*** b: " + b);
             //holder.leftChatTimeTextview.setText(FirebaseUtils.timestampFullToString(model.getMessageTimestamp()));
         }
 /*
@@ -111,7 +110,7 @@ public class MessageModelAdapter extends FirebaseRecyclerAdapter<
 
         LinearLayout leftChatLayout,rightChatLayout;
         TextView leftChatTextview,rightChatTextview;
-        TextView leftChatTimeTextview, rightChatTimeTextview; // added
+        TextView leftChatTimeTextview, rightChatTimeTextview;
 
 
         //private TextView message, messageTime, userId;

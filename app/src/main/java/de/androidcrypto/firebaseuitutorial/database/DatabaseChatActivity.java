@@ -24,7 +24,7 @@ import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.Timestamp;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Objects;
 
@@ -130,7 +131,7 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
                 // retrieve the time string in GMT
                 //SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 //String millisInString  = dateFormat.format(new Date());
-                Timestamp timestamp = Timestamp.now();
+                Timestamp timestamp = new Timestamp();
                 MessageModel messageModel = new MessageModel(messageString, actualTime, timestamp, authUserId, receiveUserId);
                 //MessageModel messageModel = new MessageModel(messageString, actualTime, authUserId, receiveUserId);
                 messagesDatabase.child(roomId).push().setValue(messageModel);
@@ -296,8 +297,8 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
 
         // Connecting object of required Adapter class to
         // the Adapter class itself
-        //firebaseRecyclerAdapter = new MessageModelAdapter(options);
-        firebaseRecyclerAdapter = new ChatRecyclerAdapter(options, this);
+        firebaseRecyclerAdapter = new MessageModelAdapter(options);
+        //firebaseRecyclerAdapter = new ChatRecyclerAdapter(options, this);
         messagesList.setAdapter(firebaseRecyclerAdapter);
 
 
