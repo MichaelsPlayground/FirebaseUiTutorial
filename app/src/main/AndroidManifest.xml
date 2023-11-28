@@ -27,6 +27,10 @@
             android:name=".firebasedatabase.DatabaseEditUserProfileActivity"
             android:exported="false">
         </activity>
+        <activity
+            android:name=".firebasedatabase.DatabaseListUserActivity"
+            android:exported="false">
+        </activity>
     </application>
 
 </manifest>

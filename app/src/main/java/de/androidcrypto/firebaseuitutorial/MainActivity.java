@@ -4,11 +4,13 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -23,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.androidcrypto.firebaseuitutorial.firebasedatabase.DatabaseEditUserProfileActivity;
+import de.androidcrypto.firebaseuitutorial.firebasedatabase.DatabaseListUserActivity;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 
 //public class MainActivity extends AppCompatActivity implements ActivityResultCallback<FirebaseAuthUIAuthenticationResult> {
@@ -61,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
      * section Firebase Realtime Database
      */
 
-    private Button editDatabaseUserProfile;
+    private Button editDatabaseUserProfile, listDatabaseUser;
 
     /**
      * section
@@ -94,6 +97,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        setSupportActionBar(myToolbar);
 
         /**
          * section for Authentication
@@ -164,6 +170,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        listDatabaseUser = findViewById(R.id.btnMainDatabaseListUser);
+        listDatabaseUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "list Database user");
+                Intent intent = new Intent(MainActivity.this, DatabaseListUserActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         /**
          * section for
@@ -200,6 +216,8 @@ public class MainActivity extends AppCompatActivity {
          */
 
 
+        // don't show the keyboard on startUp
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
     }
 
@@ -250,16 +268,33 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume called");
         firebaseAuth.addAuthStateListener(authStateListener);
+        // called when this activity is in the foreground
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d(TAG, "onPause called");
         firebaseAuth.removeAuthStateListener(authStateListener);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy called");
+        // called when the app is closed completely with Androids taskmanager
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop called");
+    }
+
     private void activeButtonsWhileUserIsSignedIn(boolean isSignedIn) {
+        editDatabaseUserProfile.setEnabled(isSignedIn);
         /*
         databaseUserProfile.setEnabled(isSignedIn);
         databaseUpdateUserImage.setEnabled(isSignedIn);
