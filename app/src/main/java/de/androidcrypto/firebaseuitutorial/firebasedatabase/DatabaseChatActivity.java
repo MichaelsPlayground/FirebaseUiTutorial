@@ -20,6 +20,8 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.MessageModel;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
+import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -147,8 +149,8 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
     // compare two strings and build a new string: if a < b: ab if a > b: ba, if a = b: ab
     private String getRoomId(String a, String b) {
         int compare = a.compareTo(b);
-        if (compare > 0) return b + a;
-        else return a + b;
+        if (compare > 0) return b + "_" + a;
+        else return a + "_" + b;
     }
 
     /**
@@ -228,8 +230,10 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
 
     private void loadSignedInUserData(String mAuthUserId) {
         if (!mAuthUserId.equals("")) {
-            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-            mDatabase.child("users").child(mAuthUserId).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            DatabaseReference userDatabaseReference = FirebaseUtils.getDatabaseUserReference(mAuthUserId);
+            //DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+            //mDatabase.child("users").child(mAuthUserId).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            userDatabaseReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DataSnapshot> task) {
                     //hideProgressBar();
@@ -268,7 +272,7 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
                 + " in room " + roomId;
          */
         String  conversationString = "DB chat with " + receiveUserDisplayName;
-        header.setText(conversationString);
+        //header.setText(conversationString);
         Log.i(TAG, conversationString);
 
         // get the last 50 messages from database
@@ -350,7 +354,7 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
 
     private void enableUiOnSignIn(boolean userIsSignedIn) {
         if (!userIsSignedIn) {
-            header.setText("you need to be signed in before starting a chat");
+            //header.setText("you need to be signed in before starting a chat");
             edtMessageLayout.setEnabled(userIsSignedIn);
         } else {
             edtMessageLayout.setEnabled(userIsSignedIn);

@@ -6,21 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".firebasedatabase.DatabaseChatActivity">
 
-    <TextView
-        android:id="@+id/tvChatDatabaseHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:text="Chat with other user using Firebase Realtime Database:"
-        android:textAlignment="center"
-        android:textSize="16sp"
-        android:textStyle="bold"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/chatToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="@dimen/toolbar_elevation"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:layout_constraintBottom_toTopOf="@+id/rvChatDatabase"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvChatDatabase"
@@ -32,8 +29,8 @@
         app:layout_constraintBottom_toTopOf="@+id/etChatDatabaseMessageLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvChatDatabaseHeader"
-        tools:listitem="@layout/message" />
+        app:layout_constraintTop_toBottomOf="@id/chatToolbar"
+        tools:listitem="@layout/chat_message_recycler_row" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/etChatDatabaseMessageLayout"

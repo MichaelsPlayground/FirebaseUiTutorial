@@ -2,22 +2,25 @@ package de.androidcrypto.firebaseuitutorial.models;
 
 import androidx.annotation.Nullable;
 
+import com.google.firebase.Timestamp;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class MessageModel {
     // MessageModel(String message, String senderId, long messageTime, String receiverId, String attachmentId, boolean messageRead, boolean messageEncrypted, int pubKeySender, int pubKeyReceiver
 
-    String message;
-    long messageTime;
-    String senderId;
-    String receiverId;
-    String attachmentId;
-    boolean messageRead;
-    boolean messageEncrypted;
-    int pubKeyIdSender;
-    int pubKeyIdReceiver;
-    String pubKeySender;
+    private String message;
+    private long messageTime;
+    private Timestamp timestamp;
+    private String senderId;
+    private String receiverId;
+    private String attachmentId;
+    private boolean messageRead;
+    private boolean messageEncrypted;
+    private int pubKeyIdSender;
+    private int pubKeyIdReceiver;
+    private String pubKeySender;
 
     public MessageModel() {}
 
@@ -146,5 +149,13 @@ public class MessageModel {
 
     public void setPubKeySender(String pubKeySender) {
         this.pubKeySender = pubKeySender;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 }

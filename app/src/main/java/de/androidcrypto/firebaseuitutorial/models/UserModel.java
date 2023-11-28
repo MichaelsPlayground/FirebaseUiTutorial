@@ -30,7 +30,7 @@ public class UserModel {
     }
 
     // for signUp
-    public UserModel(String userId, String userName, String userMail, String userPhotoUrl, String userPublicKey, int publicKeyNumber, boolean userIsOnline) {
+    public UserModel(String userId, String userName, String userMail, String userPhotoUrl, String userPublicKey, int userPublicKeyNumber, boolean userIsOnline) {
         this.userId = userId;
         this.userName = userName;
         this.userMail = userMail;

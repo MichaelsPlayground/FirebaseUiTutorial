@@ -115,7 +115,7 @@ public class DatabaseListUserLvActivity extends AppCompatActivity {
                 }
                 Log.i(TAG, "userListView clicked on pos: " + position);
                 //Intent intent = new Intent(DatabaseListUserLvActivity.this, ChatDatabaseActivity.class);
-                Intent intent = new Intent(DatabaseListUserLvActivity.this, MainActivity.class);
+                Intent intent = new Intent(DatabaseListUserLvActivity.this, DatabaseChatActivity.class);
                 intent.putExtra("UID", listAdapter.getRef(position).getKey());
                 intent.putExtra("EMAIL", emailList.get(position));
                 intent.putExtra("DISPLAYNAME", displayNameList.get(position));
