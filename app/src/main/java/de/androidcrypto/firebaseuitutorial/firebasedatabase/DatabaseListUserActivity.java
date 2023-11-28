@@ -104,6 +104,7 @@ public class DatabaseListUserActivity extends AppCompatActivity implements ItemC
     @Override
     public void onClick(View view, int position) {
         Log.i(TAG, "recyclerview clicked on position: " + position);
+        user
         /*
         String uidSelected = uidList.get(position);
         String emailSelected = emailList.get(position);

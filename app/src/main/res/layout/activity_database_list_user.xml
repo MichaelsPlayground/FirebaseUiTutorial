@@ -72,15 +72,6 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp" />
 
-    <Button
-        android:id="@+id/btnListUserDatabaseRvRun"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:text="list user" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvDatabaseListUser"
         android:layout_width="match_parent"
