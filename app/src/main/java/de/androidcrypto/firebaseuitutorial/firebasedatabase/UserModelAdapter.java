@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.androidcrypto.firebaseuitutorial.ItemClickListener;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.R;
@@ -22,7 +25,7 @@ public class UserModelAdapter extends FirebaseRecyclerAdapter<
         UserModel, UserModelAdapter.UserModelViewholder> {
 
     private static ItemClickListener clickListener;
-
+    public List<UserModel> userList = new ArrayList<>();
     public UserModelAdapter(
             @NonNull FirebaseRecyclerOptions<UserModel> options)
     {
@@ -37,6 +40,8 @@ public class UserModelAdapter extends FirebaseRecyclerAdapter<
                      int position, @NonNull UserModel model)
     {
 
+        userList.add(model);
+
         // Add firstname from model class (here
         // "UserModel.class") to appropriate view in Card
         // view (here "user.xml")
@@ -46,6 +51,7 @@ public class UserModelAdapter extends FirebaseRecyclerAdapter<
         // "person.class")to appropriate view in Card
         // view (here "person.xml")
         holder.userDisplayName.setText(model.getUserName());
+        holder.userId.setText(model.getUserId()); // dummy
     }
 
     public void setClickListener(ItemClickListener itemClickListener) {
@@ -71,18 +77,19 @@ public class UserModelAdapter extends FirebaseRecyclerAdapter<
     // view (here "person.xml")
     static class UserModelViewholder
             extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView userEmail, userDisplayName;
+        private TextView userEmail, userDisplayName, userId;
         public UserModelViewholder(@NonNull View itemView)
         {
             super(itemView);
             userEmail = itemView.findViewById(R.id.userEmail);
             userDisplayName = itemView.findViewById(R.id.userDisplayName);
+            userId = itemView.findViewById(R.id.userId); // dummy
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            if (clickListener != null) clickListener.onClick(view, getBindingAdapterPosition());
+            if (clickListener != null) clickListener.onClick(view, getBindingAdapterPosition(), userId.getText().toString());
         }
     }
 }

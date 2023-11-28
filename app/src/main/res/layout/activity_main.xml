@@ -97,8 +97,8 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="4dp"
-                    android:enabled="true"
                     android:layout_weight="1"
+                    android:enabled="true"
                     android:text="sign in" />
 
                 <Button
@@ -131,34 +131,54 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnMainDatabaseEditUserProfile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:enabled="true"
+                    android:text="edit user profile" />
+
+                <Button
+                    android:id="@+id/btnMainDatabaseEditUserImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="1"
+                    android:enabled="false"
+                    android:text="editUserImage" />
+
+            </LinearLayout>
 
             <Button
-                android:id="@+id/btnMainDatabaseEditUserProfile"
-                android:layout_width="wrap_content"
+                android:id="@+id/btnMainDatabaseListUserLv"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="4dp"
+                android:layout_marginEnd="16dp"
                 android:enabled="true"
-                android:layout_weight="1"
-                android:text="edit user profile" />
+                android:text="list user on database (Listview)" />
 
             <Button
-                android:id="@+id/btnMainDatabaseEditUserImage"
-                android:layout_width="wrap_content"
+                android:id="@+id/btnMainDatabaseListUser"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:enabled="false"
-                android:layout_weight="1"
-                android:text="editUserImage" />
-
-        </LinearLayout>
+                android:enabled="true"
+                android:text="list user on database in RecyclerView" />
 
             <Button
                 android:id="@+id/btnMainDatabaseUser"
@@ -179,26 +199,6 @@
                 android:layout_marginEnd="16dp"
                 android:enabled="false"
                 android:text="update user image" />
-
-            <Button
-                android:id="@+id/btnMainDatabaseListUserListView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:enabled="false"
-                android:text="list user on database (Listview)" />
-
-            <Button
-                android:id="@+id/btnMainDatabaseListUser"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:enabled="true"
-                android:text="list user on database in RecyclerView" />
 
             <Button
                 android:id="@+id/btnMainDatabaseSendMessage"

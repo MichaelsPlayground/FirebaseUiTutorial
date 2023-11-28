@@ -10,6 +10,16 @@ public class UserModel {
     public UserModel() {
     }
 
+    // for first storage
+    public UserModel(String userId, String userName, String userMail, String userPhotoUrl, String userPublicKey, int userPublicKeyNumber) {
+        this.userId = userId;
+        this.userName = userName;
+        this.userMail = userMail;
+        this.userPhotoUrl = userPhotoUrl;
+        this.userPublicKey = userPublicKey;
+        this.userPublicKeyNumber = userPublicKeyNumber;
+    }
+
     // for secure messaging
     public UserModel(String userName, String userMail, String userPhotoUrl, String userPublicKey, int userPublicKeyNumber) {
         this.userName = userName;

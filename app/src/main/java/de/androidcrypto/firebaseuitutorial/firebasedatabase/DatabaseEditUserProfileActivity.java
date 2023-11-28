@@ -319,7 +319,8 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
         } catch (NumberFormatException e) {
             publicKeyNumberInt = 0;
         }
-        UserModel user = new UserModel(name, email, photoUrl, publicKey, publicKeyNumberInt);
+        UserModel user = new UserModel(userId, name, email, photoUrl, publicKey, publicKeyNumberInt);
+        //UserModel user = new UserModel(name, email, photoUrl, publicKey, publicKeyNumberInt);
         databaseUserReference.setValue(user);
     }
 

@@ -8,6 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="off_white">#FAFAFA</color>
     <color name="colorPrimary">#2196F3</color>
     <color name="colorStatusBar">#1E88E5</color>
     <color name="colorAccent">#8E24AA</color>
@@ -22,5 +23,8 @@
     <color name="light_background_red">#FFB5B5</color>
     <color name="light_background_orange">#FFF2D7</color>
     <color name="light_background_blue">#86CAFF</color>
+
+    <color name="chat_color_sender">#1E88E5</color>
+    <color name="chat_color_receiver">#7CB342</color>
 
 </resources>

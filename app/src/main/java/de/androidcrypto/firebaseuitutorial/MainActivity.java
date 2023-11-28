@@ -26,6 +26,7 @@ import java.util.List;
 
 import de.androidcrypto.firebaseuitutorial.firebasedatabase.DatabaseEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.firebasedatabase.DatabaseListUserActivity;
+import de.androidcrypto.firebaseuitutorial.firebasedatabase.DatabaseListUserLvActivity;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 
 //public class MainActivity extends AppCompatActivity implements ActivityResultCallback<FirebaseAuthUIAuthenticationResult> {
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
      * section Firebase Realtime Database
      */
 
-    private Button editDatabaseUserProfile, listDatabaseUser;
+    private Button editDatabaseUserProfile, listDatabaseUser, listDatabaseUserLv;
 
     /**
      * section
@@ -176,6 +177,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d(TAG, "list Database user");
                 Intent intent = new Intent(MainActivity.this, DatabaseListUserActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        listDatabaseUserLv = findViewById(R.id.btnMainDatabaseListUserLv);
+        listDatabaseUserLv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "list Database user ListView");
+                Intent intent = new Intent(MainActivity.this, DatabaseListUserLvActivity.class);
                 startActivity(intent);
             }
         });
