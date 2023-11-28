@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/grey_300"
     android:orientation="vertical"
-    tools:context=".firebasedatabase.DatabaseListUserActivity">
+    tools:context=".database.DatabaseListUserActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/sub_toolbar"

@@ -24,9 +24,9 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.Arrays;
 import java.util.List;
 
-import de.androidcrypto.firebaseuitutorial.firebasedatabase.DatabaseEditUserProfileActivity;
-import de.androidcrypto.firebaseuitutorial.firebasedatabase.DatabaseListUserActivity;
-import de.androidcrypto.firebaseuitutorial.firebasedatabase.DatabaseListUserLvActivity;
+import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActivity;
+import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserActivity;
+import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserLvActivity;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 
 //public class MainActivity extends AppCompatActivity implements ActivityResultCallback<FirebaseAuthUIAuthenticationResult> {

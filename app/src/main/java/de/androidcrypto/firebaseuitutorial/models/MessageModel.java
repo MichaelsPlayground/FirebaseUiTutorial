@@ -8,11 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MessageModel {
-    // MessageModel(String message, String senderId, long messageTime, String receiverId, String attachmentId, boolean messageRead, boolean messageEncrypted, int pubKeySender, int pubKeyReceiver
 
     private String message;
     private long messageTime;
-    private Timestamp timestamp;
+    private Timestamp messageTimestamp;
     private String senderId;
     private String receiverId;
     private String attachmentId;
@@ -25,6 +24,21 @@ public class MessageModel {
     public MessageModel() {}
 
     // full message constructor
+
+    public MessageModel(String message, long messageTime, Timestamp messageTimestamp, String senderId, String receiverId, String attachmentId, boolean messageRead, boolean messageEncrypted, int pubKeyIdSender, int pubKeyIdReceiver, String pubKeySender) {
+        this.message = message;
+        this.messageTime = messageTime;
+        this.messageTimestamp = messageTimestamp;
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.attachmentId = attachmentId;
+        this.messageRead = messageRead;
+        this.messageEncrypted = messageEncrypted;
+        this.pubKeyIdSender = pubKeyIdSender;
+        this.pubKeyIdReceiver = pubKeyIdReceiver;
+        this.pubKeySender = pubKeySender;
+    }
+
     public MessageModel(String message, long messageTime, String senderId, String receiverId, String attachmentId, boolean messageRead, boolean messageEncrypted, int pubKeyIdSender, int pubKeyIdReceiver, String pubKeySender) {
         this.message = message;
         this.messageTime = messageTime;
@@ -42,6 +56,20 @@ public class MessageModel {
     public MessageModel(String message, long messageTime, String senderId, String receiverId) {
         this.message = message;
         this.messageTime = messageTime;
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.attachmentId = "";
+        this.messageRead = false;
+        this.messageEncrypted = false;
+        this.pubKeyIdSender = 0;
+        this.pubKeyIdReceiver = 0;
+        this.pubKeySender = "";
+    }
+
+    public MessageModel(String message, long messageTime, Timestamp messageTimestamp, String senderId, String receiverId) {
+        this.message = message;
+        this.messageTime = messageTime;
+        this.messageTimestamp = messageTimestamp;
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.attachmentId = "";
@@ -151,11 +179,11 @@ public class MessageModel {
         this.pubKeySender = pubKeySender;
     }
 
-    public Timestamp getTimestamp() {
-        return timestamp;
+    public Timestamp getMessageTimestamp() {
+        return messageTimestamp;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
+    public void setMessageTimestamp(Timestamp messageTimestamp) {
+        this.messageTimestamp = messageTimestamp;
     }
 }

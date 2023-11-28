@@ -1,4 +1,4 @@
-package de.androidcrypto.firebaseuitutorial.firebasedatabase;
+package de.androidcrypto.firebaseuitutorial.database;
 
 import android.view.LayoutInflater;
 import android.view.View;

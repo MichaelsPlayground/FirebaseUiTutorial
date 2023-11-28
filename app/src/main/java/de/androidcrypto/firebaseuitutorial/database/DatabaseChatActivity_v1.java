@@ -1,4 +1,4 @@
-package de.androidcrypto.firebaseuitutorial.firebasedatabase;
+package de.androidcrypto.firebaseuitutorial.database;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,11 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import de.androidcrypto.firebaseuitutorial.R;
-import de.androidcrypto.firebaseuitutorial.models.MessageModel;
-import de.androidcrypto.firebaseuitutorial.models.UserModel;
-import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,7 +29,12 @@ import com.google.firebase.database.Query;
 import java.util.Date;
 import java.util.Objects;
 
-public class DatabaseChatActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
+import de.androidcrypto.firebaseuitutorial.R;
+import de.androidcrypto.firebaseuitutorial.models.MessageModel;
+import de.androidcrypto.firebaseuitutorial.models.UserModel;
+import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
+
+public class DatabaseChatActivity_v1 extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
 
     TextView header;
     com.google.android.material.textfield.TextInputEditText edtMessage;

@@ -1,4 +1,4 @@
-package de.androidcrypto.firebaseuitutorial.firebasedatabase;
+package de.androidcrypto.firebaseuitutorial.database;
 
 import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
