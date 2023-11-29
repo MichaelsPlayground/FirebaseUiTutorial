@@ -12,12 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.MessageModel;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
+import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
 public class ChatRecyclerAdapter extends FirebaseRecyclerAdapter<MessageModel, ChatRecyclerAdapter.ModelViewHolder> {
 
@@ -34,19 +33,22 @@ public class ChatRecyclerAdapter extends FirebaseRecyclerAdapter<MessageModel, C
           holder.leftChatLayout.setVisibility(View.GONE);
           holder.rightChatLayout.setVisibility(View.VISIBLE);
           holder.rightChatTextview.setText(model.getMessage());
-          holder.rightChatTimeTextview.setText(FirebaseUtils.timestampFullToString(model.getMessageTimestamp())); // added
+            holder.rightChatTimeTextview.setText(TimeUtils.getZoneDatedStringMediumLocale(model.getMessageTime()));
+          //holder.rightChatTimeTextview.setText(model.getMessageTimeString());
        }else{
            holder.rightChatLayout.setVisibility(View.GONE);
            holder.leftChatLayout.setVisibility(View.VISIBLE);
            holder.leftChatTextview.setText(model.getMessage());
-           holder.leftChatTimeTextview.setText(FirebaseUtils.timestampFullToString(model.getMessageTimestamp())); // added
+           holder.leftChatTimeTextview.setText(TimeUtils.getZoneDatedStringMediumLocale(model.getMessageTime()));
+           //holder.leftChatTimeTextview.setText(model.getMessageTimeString());
        }
     }
 
     @NonNull
     @Override
     public ModelViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.chat_message_recycler_row,parent,false);
+        //View view = LayoutInflater.from(context).inflate(R.layout.chat_message_recycler_row,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_message_recycler_row,parent,false);
         return new ModelViewHolder(view);
     }
 

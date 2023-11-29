@@ -25,6 +25,9 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+
+        // Flag to enable support for the new language APIs, important for timestamps
+        coreLibraryDesugaringEnabled true
     }
 }
 
@@ -49,6 +52,9 @@ dependencies {
     implementation 'com.karumi:dexter:6.2.3'
 
     implementation 'pub.devrel:easypermissions:3.0.0'
+
+    // important for timestamps
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
 }
 // ADD THIS AT THE BOTTOM
 apply plugin: 'com.google.gms.google-services'

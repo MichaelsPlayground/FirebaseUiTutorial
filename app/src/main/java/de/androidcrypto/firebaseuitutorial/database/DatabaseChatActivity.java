@@ -21,7 +21,9 @@ import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.MessageModel;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
+import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -127,13 +129,14 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
                 String messageString = edtMessage.getText().toString();
                 Log.i(TAG, "message: " + messageString);
                 // now we are going to send data to the database
-                long actualTime = new Date().getTime();
+                long actualTime = TimeUtils.getActualUtcZonedDateTime();
+                String actualTimeString = TimeUtils.getZoneDatedStringMediumLocale(actualTime);
                 // retrieve the time string in GMT
                 //SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 //String millisInString  = dateFormat.format(new Date());
-                Timestamp timestamp = new Timestamp();
-                MessageModel messageModel = new MessageModel(messageString, actualTime, timestamp, authUserId, receiveUserId);
-                //MessageModel messageModel = new MessageModel(messageString, actualTime, authUserId, receiveUserId);
+
+                //MessageModel messageModel = new MessageModel(messageString, actualTime, timestamp, authUserId, receiveUserId);
+                MessageModel messageModel = new MessageModel(messageString, actualTime, actualTimeString, authUserId, receiveUserId);
                 messagesDatabase.child(roomId).push().setValue(messageModel);
                 // without push there is no new chatId key
                 // mDatabaseReference.child("messages").child(roomId).setValue(messageModel);
@@ -171,9 +174,13 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
                 Log.i(TAG, "onStart prepare database for chat");
                 reload();
                 enableUiOnSignIn(true);
+                setupChatRecyclerView(currentUser.getUid(), receiveUserId);
+                /*
                 setDatabaseForRoom(currentUser.getUid(), receiveUserId);
                 firebaseRecyclerAdapter.startListening();
                 attachRecyclerViewAdapter();
+
+                 */
             } else {
                 header.setText("you need to select a receiveUser first");
                 Log.i(TAG, "you need to select a receiveUser first");
@@ -208,6 +215,38 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
         }
     }
 
+    void setupChatRecyclerView(String ownUid, String receiverUid) {
+        roomId = FirebaseUtils.getChatroomId(ownUid, receiverUid);
+        messagesDatabase = FirebaseUtils.getDatabaseChatroomReference(roomId);
+        Query query = messagesDatabase
+                .child(roomId)
+                .orderByChild("messageTime");
+
+        /*
+        com.google.firebase.firestore.Query query = FirebaseUtils.getDatabaseChatroomReference(chatroomId)
+                .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING);
+*/
+        FirebaseRecyclerOptions<MessageModel> options = new FirebaseRecyclerOptions.Builder<MessageModel>()
+                .setQuery(query, MessageModel.class)
+                .build();
+
+        firebaseRecyclerAdapter = new ChatRecyclerAdapter(options, getApplicationContext());
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        manager.setReverseLayout(false); // true oldest element at bottom
+        messagesList.setLayoutManager(manager);
+        messagesList.setAdapter(firebaseRecyclerAdapter);
+        firebaseRecyclerAdapter.startListening();
+        firebaseRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                //messagesList.smoothScrollToPosition(0); // scroll to top document
+                messagesList.smoothScrollToPosition(itemCount - 1); // scroll to last document
+                messagesList.smoothScrollToPosition(firebaseRecyclerAdapter.getItemCount()); // scroll to last document
+            }
+        });
+    }
+/*
     private void attachRecyclerViewAdapter() {
         final RecyclerView.Adapter adapter = firebaseRecyclerAdapter;
         if (adapter != null) {
@@ -227,7 +266,7 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
             Log.i(TAG, "attachRecyclerViewAdapter NOT set, firebaseRecyclerAdapter is null");
         }
     }
-
+*/
     private boolean isSignedIn() {
         return FirebaseAuth.getInstance().getCurrentUser() != null;
     }
@@ -297,7 +336,7 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
 
         // Connecting object of required Adapter class to
         // the Adapter class itself
-        firebaseRecyclerAdapter = new MessageModelAdapter(options);
+        firebaseRecyclerAdapter = new ChatRecyclerAdapter(options, this);
         //firebaseRecyclerAdapter = new ChatRecyclerAdapter(options, this);
         messagesList.setAdapter(firebaseRecyclerAdapter);
 

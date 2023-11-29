@@ -15,7 +15,7 @@ public class FirebaseUtils {
      */
 
     public static final String USERS_FOLDER_NAME = "users";
-    public static final String CHATROOMS_FOLDER_NAME = "chats";
+    public static final String CHATROOMS_FOLDER_NAME = "messages";
 
     private static DatabaseReference databaseReference;
 
@@ -64,7 +64,11 @@ public class FirebaseUtils {
         return getDatabaseReference().child(CHATROOMS_FOLDER_NAME);
     }
 
-    public static String getChatroomId(String userId1,String userId2) {
+    public static DatabaseReference getDatabaseChatroomReference(String chatroomId) {
+        return getDatabaseReference().child(CHATROOMS_FOLDER_NAME).child(chatroomId);
+    }
+
+    public static String getChatroomId(String userId1, String userId2) {
         if (userId1.hashCode() < userId2.hashCode()) {
             return userId1 + "_" + userId2;
         } else {

@@ -10,8 +10,9 @@ import java.util.Map;
 public class MessageModel {
 
     private String message;
+    private String messageTimeString;
     private long messageTime;
-    private Timestamp messageTimestamp;
+    //private Timestamp messageTimestamp;
     private String senderId;
     private String receiverId;
     private String attachmentId;
@@ -25,6 +26,7 @@ public class MessageModel {
 
     // full message constructor
 
+    /*
     public MessageModel(String message, long messageTime, Timestamp messageTimestamp, String senderId, String receiverId, String attachmentId, boolean messageRead, boolean messageEncrypted, int pubKeyIdSender, int pubKeyIdReceiver, String pubKeySender) {
         this.message = message;
         this.messageTime = messageTime;
@@ -38,7 +40,7 @@ public class MessageModel {
         this.pubKeyIdReceiver = pubKeyIdReceiver;
         this.pubKeySender = pubKeySender;
     }
-
+*/
     public MessageModel(String message, long messageTime, String senderId, String receiverId, String attachmentId, boolean messageRead, boolean messageEncrypted, int pubKeyIdSender, int pubKeyIdReceiver, String pubKeySender) {
         this.message = message;
         this.messageTime = messageTime;
@@ -53,9 +55,10 @@ public class MessageModel {
     }
 
     // constructor for beginner chats (unencrypted, no attachment)
-    public MessageModel(String message, long messageTime, String senderId, String receiverId) {
+    public MessageModel(String message, long messageTime, String messageTimeString, String senderId, String receiverId) {
         this.message = message;
         this.messageTime = messageTime;
+        this.messageTimeString = messageTimeString;
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.attachmentId = "";
@@ -66,6 +69,7 @@ public class MessageModel {
         this.pubKeySender = "";
     }
 
+    /*
     public MessageModel(String message, long messageTime, Timestamp messageTimestamp, String senderId, String receiverId) {
         this.message = message;
         this.messageTime = messageTime;
@@ -79,6 +83,8 @@ public class MessageModel {
         this.pubKeyIdReceiver = 0;
         this.pubKeySender = "";
     }
+
+     */
 
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
@@ -179,6 +185,15 @@ public class MessageModel {
         this.pubKeySender = pubKeySender;
     }
 
+    public String getMessageTimeString() {
+        return messageTimeString;
+    }
+
+    public void setMessageTimeString(String messageTimeString) {
+        this.messageTimeString = messageTimeString;
+    }
+
+    /*
     public Timestamp getMessageTimestamp() {
         return messageTimestamp;
     }
@@ -186,4 +201,6 @@ public class MessageModel {
     public void setMessageTimestamp(Timestamp messageTimestamp) {
         this.messageTimestamp = messageTimestamp;
     }
+
+     */
 }
