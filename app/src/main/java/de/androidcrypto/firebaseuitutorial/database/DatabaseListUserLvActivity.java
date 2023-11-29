@@ -35,7 +35,7 @@ import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 public class DatabaseListUserLvActivity extends AppCompatActivity {
     // https://www.geeksforgeeks.org/how-to-populate-recyclerview-with-firebase-data-using-firebaseui-in-android-studio/
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = DatabaseListUserLvActivity.class.getSimpleName();
 
     private com.google.android.material.textfield.TextInputEditText signedInUser;
 
@@ -45,7 +45,7 @@ public class DatabaseListUserLvActivity extends AppCompatActivity {
     //private UserModelAdapter adapter; // Create Object of the Adapter class
     private ProgressBar progressBar;
     private DatabaseReference usersDatabaseReference;
-    private FirebaseListAdapter<UserModel> listAdapter;;
+    private FirebaseListAdapter<UserModel> listAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,9 +79,11 @@ public class DatabaseListUserLvActivity extends AppCompatActivity {
             protected void populateView(@NonNull View v, @NonNull UserModel model, int position) {
                 String email = model.getUserMail();
                 String displayName = model.getUserName();
+                String onlineStatusString = model.getUserOnlineString();
+                System.out.println("email: " + email + " status: " + onlineStatusString);
                 emailList.add(email);
                 displayNameList.add(displayName);
-                ((TextView) v.findViewById(android.R.id.text1)).setText(displayName + " (" + email + ")");
+                ((TextView) v.findViewById(android.R.id.text1)).setText(displayName + " (" + email + ") is " + onlineStatusString);
                 listAdapter.notifyDataSetChanged();
                 // if the user is the authUser save email and displayName
                 //if ()
@@ -211,6 +213,5 @@ public class DatabaseListUserLvActivity extends AppCompatActivity {
 
         return super.onCreateOptionsMenu(menu);
     }
-
 
 }

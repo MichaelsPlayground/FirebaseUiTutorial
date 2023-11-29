@@ -55,6 +55,8 @@ dependencies {
 
     // important for timestamps
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
+
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
 }
 // ADD THIS AT THE BOTTOM
 apply plugin: 'com.google.gms.google-services'

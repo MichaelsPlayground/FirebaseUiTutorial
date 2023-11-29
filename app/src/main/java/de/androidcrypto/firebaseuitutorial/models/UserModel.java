@@ -6,6 +6,7 @@ public class UserModel {
     private long  recentMsgTime;
     private int userPublicKeyNumber;
     private boolean userOnline;
+    private String userOnlineString;
 
     public UserModel() {
     }
@@ -18,7 +19,19 @@ public class UserModel {
         this.userPhotoUrl = userPhotoUrl;
         this.userPublicKey = userPublicKey;
         this.userPublicKeyNumber = userPublicKeyNumber;
+        this.userOnlineString = "offline"; // default
     }
+
+    public UserModel(String userId, String userName, String userMail, String userPhotoUrl, String userPublicKey, int userPublicKeyNumber, String onlineStatus) {
+        this.userId = userId;
+        this.userName = userName;
+        this.userMail = userMail;
+        this.userPhotoUrl = userPhotoUrl;
+        this.userPublicKey = userPublicKey;
+        this.userPublicKeyNumber = userPublicKeyNumber;
+        this.userOnlineString = onlineStatus;
+    }
+
 
     // for secure messaging
     public UserModel(String userName, String userMail, String userPhotoUrl, String userPublicKey, int userPublicKeyNumber) {
@@ -126,5 +139,13 @@ public class UserModel {
 
     public void setUserOnline(boolean userOnline) {
         this.userOnline = userOnline;
+    }
+
+    public String getUserOnlineString() {
+        return userOnlineString;
+    }
+
+    public void setUserOnlineString(String userOnlineString) {
+        this.userOnlineString = userOnlineString;
     }
 }

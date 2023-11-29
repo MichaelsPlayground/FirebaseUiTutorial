@@ -20,8 +20,14 @@ import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActivity;
@@ -66,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private Button editDatabaseUserProfile, listDatabaseUser, listDatabaseUserLv;
+    private Button presenceCheckDatabase;
+    private DatabaseReference actualUserDatabaseReference;
 
     /**
      * section
@@ -191,6 +199,56 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        presenceCheckDatabase = findViewById(R.id.btnMainDatabasePresenceCheck);
+        presenceCheckDatabase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "presenceCheckDatabase");
+                // https://firebase.google.com/docs/database/android/offline-capabilities#section-presence
+
+                // todo check that you are logged in when running this !!
+
+                String userId = FirebaseUtils.getCurrentUserId();
+                // Since I can connect from multiple devices, we store each connection instance separately
+                // any time that connectionsRef's value is null (i.e. has no children) I am offline
+                final DatabaseReference myConnectionsRef = FirebaseUtils.getDatabaseUserConnectionReference(userId);
+
+                // Stores the timestamp of my last disconnect (the last time I was seen online)
+                final DatabaseReference lastOnlineRef = FirebaseUtils.getDatabaseUserLastOnlineReference(userId);
+
+                final DatabaseReference connectedRef = FirebaseUtils.getDatabaseInfoConnected();
+                connectedRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        boolean connected = snapshot.getValue(Boolean.class);
+                        Log.d(TAG, "presenceCheckDatabase onDataChange connected: " + connected);
+                        if (connected) {
+                            DatabaseReference con = myConnectionsRef.push();
+
+                            // When this device disconnects, remove it
+                            con.onDisconnect().removeValue();
+
+                            // When I disconnect, update the last time I was seen online
+                            lastOnlineRef.onDisconnect().setValue(ServerValue.TIMESTAMP);
+
+                            // Add this device to my connections list
+                            // this value could contain info about the device or a timestamp too
+                            con.setValue(Boolean.TRUE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Listener was cancelled at .info/connected");
+                    }
+                });
+
+            }
+        });
+
+        /*
+
+         */
 
         /**
          * section for
@@ -236,6 +294,12 @@ public class MainActivity extends AppCompatActivity {
      * section for
      */
 
+    private void status(String status){
+        actualUserDatabaseReference = FirebaseUtils.getDatabaseUserReference(FirebaseUtils.getCurrentUserId());
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("userOnlineString", status);
+        actualUserDatabaseReference.updateChildren(hashMap);
+    }
 
 
     /**
@@ -282,6 +346,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onResume called");
         firebaseAuth.addAuthStateListener(authStateListener);
         // called when this activity is in the foreground
+        status("online");
     }
 
     @Override
@@ -289,6 +354,7 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         Log.d(TAG, "onPause called");
         firebaseAuth.removeAuthStateListener(authStateListener);
+        status("offline");
     }
 
     @Override

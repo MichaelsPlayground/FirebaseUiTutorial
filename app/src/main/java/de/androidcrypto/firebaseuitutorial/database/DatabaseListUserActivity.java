@@ -67,7 +67,7 @@ public class DatabaseListUserActivity extends AppCompatActivity implements ItemC
                 .build();
         // Connecting object of required Adapter class to
         // the Adapter class itself
-        adapter = new UserModelAdapter(options);
+        adapter = new UserModelAdapter(options, true, FirebaseUtils.getCurrentUserId());
         adapter.setClickListener(this);
         // Connecting Adapter class with the Recycler view*/
         recyclerView.setAdapter(adapter);

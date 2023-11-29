@@ -34,13 +34,11 @@ public class ChatRecyclerAdapter extends FirebaseRecyclerAdapter<MessageModel, C
           holder.rightChatLayout.setVisibility(View.VISIBLE);
           holder.rightChatTextview.setText(model.getMessage());
             holder.rightChatTimeTextview.setText(TimeUtils.getZoneDatedStringMediumLocale(model.getMessageTime()));
-          //holder.rightChatTimeTextview.setText(model.getMessageTimeString());
        }else{
            holder.rightChatLayout.setVisibility(View.GONE);
            holder.leftChatLayout.setVisibility(View.VISIBLE);
            holder.leftChatTextview.setText(model.getMessage());
            holder.leftChatTimeTextview.setText(TimeUtils.getZoneDatedStringMediumLocale(model.getMessageTime()));
-           //holder.leftChatTimeTextview.setText(model.getMessageTimeString());
        }
     }
 

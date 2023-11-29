@@ -16,6 +16,9 @@ public class FirebaseUtils {
 
     public static final String USERS_FOLDER_NAME = "users";
     public static final String CHATROOMS_FOLDER_NAME = "messages";
+    public static final String INFO_CONNECTED = ".info/connected";
+    public static final String DATABASE_CONNECTIONS = "connections";
+    public static final String DATABASE_LAST_ONLINE = "lastOnline";
 
     private static DatabaseReference databaseReference;
 
@@ -67,6 +70,28 @@ public class FirebaseUtils {
     public static DatabaseReference getDatabaseChatroomReference(String chatroomId) {
         return getDatabaseReference().child(CHATROOMS_FOLDER_NAME).child(chatroomId);
     }
+
+    // https://firebase.google.com/docs/database/android/offline-capabilities#section-presence
+    public static DatabaseReference getDatabaseUserConnectionReference(String userId) {
+        return getDatabaseUserReference(userId).child(DATABASE_CONNECTIONS);
+    }
+
+    public static DatabaseReference getDatabaseUserLastOnlineReference(String userId) {
+        return getDatabaseUserReference(userId).child(DATABASE_LAST_ONLINE);
+    }
+
+
+    public static DatabaseReference getDatabaseInfoConnected() {
+        return getDatabaseReference().child(INFO_CONNECTED);
+    }
+    public static void setPersistenceStatus(boolean status) {
+        FirebaseDatabase.getInstance().setPersistenceEnabled(status);
+    }
+    // see Keeping Data Fresh as well:
+    /*
+    DatabaseReference scoresRef = FirebaseDatabase.getInstance().getReference("scores");
+    scoresRef.keepSynced(true); or false
+     */
 
     public static String getChatroomId(String userId1, String userId2) {
         if (userId1.hashCode() < userId2.hashCode()) {

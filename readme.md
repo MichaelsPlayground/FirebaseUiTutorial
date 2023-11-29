@@ -115,3 +115,9 @@ de.androidcrypto.firebaseuitutorial
 Firebase UI Tutorial
 SHA1: 19:22:A4:D7:01:A8:3D:09:8F:04:93:E9:8E:21:92:2D:5A:5F:B0:54
 ```
+
+Fine Tutorial series: https://www.youtube.com/playlist?list=PLzLFqCABnRQftQQETzoVMuteXzNiXmnj8
+
+Code: https://github.com/KODDevYouTube/ChatAppTutorial
+
+CircleImageView: implementation 'de.hdodenhof:circleimageview:3.1.0'
