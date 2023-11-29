@@ -2,6 +2,7 @@ package de.androidcrypto.firebaseuitutorial.database;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,13 +16,17 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+
+import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.MessageModel;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -40,13 +45,15 @@ import java.util.Objects;
 
 public class DatabaseChatActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
 
-    TextView header;
-    com.google.android.material.textfield.TextInputEditText edtMessage;
-    com.google.android.material.textfield.TextInputLayout edtMessageLayout;
+    private TextView header;
+    private com.google.android.material.textfield.TextInputEditText edtMessage;
+    private com.google.android.material.textfield.TextInputLayout edtMessageLayout;
+    private CircleImageView profileImage;
+    private TextView userName;
     private RecyclerView messagesList;
 
     private static String authUserId = "", authUserEmail = "", authDisplayName = "";
-    private static String receiveUserId = "", receiveUserEmail = "", receiveUserDisplayName = "";
+    private static String receiveUserId = "", receiveUserEmail = "", receiveUserDisplayName = "", receiveProfileImage = "";
     private static String roomId = "";
 
     static final String TAG = "ChatDatabase";
@@ -61,10 +68,25 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_database_chat);
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.chatToolbar);
-        setSupportActionBar(myToolbar);
+        Toolbar toolbar = findViewById(R.id.tbChatDatabase);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // and this
+                startActivity(new Intent(DatabaseChatActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            }
+        });
+
+        //Toolbar myToolbar = (Toolbar) findViewById(R.id.chatToolbar);
+        //setSupportActionBar(myToolbar);
 
         //header = findViewById(R.id.tvChatDatabaseHeader);
+        profileImage = findViewById(R.id.ciChatDatabaseProfileImage);
+        userName = findViewById(R.id.tvChatDatabaseUserName);
+
         edtMessageLayout = findViewById(R.id.etChatDatabaseMessageLayout);
         edtMessage = findViewById(R.id.etChatDatabaseMessage);
         messagesList = findViewById(R.id.rvChatDatabase);
@@ -96,11 +118,31 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
         receiveUserDisplayName = intent.getStringExtra("DISPLAYNAME");
         if (receiveUserDisplayName != null) {
             Log.i(TAG, "selectedDisplayName: " + receiveUserDisplayName);
+        } else {
+            receiveUserDisplayName = receiveUserEmail;
         }
+        receiveProfileImage = intent.getStringExtra("PROFILE_IMAGE");
+        if (receiveProfileImage != null) {
+            Log.i(TAG, "selectedProfileImage: " + receiveProfileImage);
+        } else {
+            receiveProfileImage = "";
+        }
+
         String receiveUserString = "Email: " + receiveUserEmail;
         receiveUserString += "\nUID: " + receiveUserId;
         receiveUserString += "\nDisplay Name: " + receiveUserDisplayName;
         //receiveUser.setText(receiveUserString);
+
+        // fill toolbar
+        userName.setText(receiveUserDisplayName);
+        if (TextUtils.isEmpty(receiveProfileImage)){
+            profileImage.setImageResource(R.drawable.person_icon);
+        } else {
+            //and this
+            Glide.with(getApplicationContext()).load(receiveProfileImage).into(profileImage);
+        }
+
+
         Log.i(TAG, "receiveUser: " + receiveUserString);
         // get own data
         authUserEmail = intent.getStringExtra("AUTH_EMAIL");

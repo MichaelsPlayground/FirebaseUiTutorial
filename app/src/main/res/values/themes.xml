@@ -16,4 +16,8 @@
     </style>
 
     <style name="Theme.FirebaseUiTutorial" parent="Base.Theme.FirebaseUiTutorial" />
+
+    <style name="MenuStyle" parent="Theme.AppCompat.Light">
+        <item name="android:background">@android:color/white</item>
+    </style>
 </resources>

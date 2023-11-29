@@ -265,8 +265,8 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
                     } else {
                         // check for a null value means no user data were saved before
                         UserModel userModel = task.getResult().getValue(UserModel.class);
-                        Log.i(TAG, String.valueOf(userModel));
-                        if (userModel == null) {
+                        Log.d(TAG, "User model: " + String.valueOf(userModel));
+                        if (userModel.getUserId() == null) {
                             Log.i(TAG, "userModel is null, show message");
                             infoNoData.setVisibility(View.VISIBLE);
                             // get data from user

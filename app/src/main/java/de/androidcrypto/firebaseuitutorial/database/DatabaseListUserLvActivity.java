@@ -66,6 +66,7 @@ public class DatabaseListUserLvActivity extends AppCompatActivity {
         List<UserModel> userModelList = new ArrayList<>();
         List<String> emailList = new ArrayList<>();
         List<String> displayNameList = new ArrayList<>();
+        List<String> profileImageList = new ArrayList<>();
 
         // this is the new way
         FirebaseListOptions<UserModel> listAdapterOptions;
@@ -79,10 +80,12 @@ public class DatabaseListUserLvActivity extends AppCompatActivity {
             protected void populateView(@NonNull View v, @NonNull UserModel model, int position) {
                 String email = model.getUserMail();
                 String displayName = model.getUserName();
+                String profileImage = model.getUserPhotoUrl();
                 String onlineStatusString = model.getUserOnlineString();
                 System.out.println("email: " + email + " status: " + onlineStatusString);
                 emailList.add(email);
                 displayNameList.add(displayName);
+                profileImageList.add(profileImage);
                 ((TextView) v.findViewById(android.R.id.text1)).setText(displayName + " (" + email + ") is " + onlineStatusString);
                 listAdapter.notifyDataSetChanged();
                 // if the user is the authUser save email and displayName
@@ -119,6 +122,7 @@ public class DatabaseListUserLvActivity extends AppCompatActivity {
                 intent.putExtra("DISPLAYNAME", displayNameList.get(position));
                 intent.putExtra("AUTH_EMAIL", authUserEmail);
                 intent.putExtra("AUTH_DISPLAYNAME", authDisplayName);
+                intent.putExtra("PROFILE_IMAGE", profileImageList.get(position));
                 startActivity(intent);
                 finish();
             }

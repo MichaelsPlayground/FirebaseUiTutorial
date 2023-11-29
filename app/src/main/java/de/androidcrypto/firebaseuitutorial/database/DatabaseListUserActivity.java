@@ -109,6 +109,7 @@ public class DatabaseListUserActivity extends AppCompatActivity implements ItemC
         String uidSelected = uidList.get(position);
         String emailSelected = emailList.get(position);
         String displayNameSelected = displayNameList.get(position);
+
         Intent intent = new Intent(ListUserRecyclerviewActivity.this, ChatActivity.class);
         intent.putExtra("UID", uidSelected);
         intent.putExtra("EMAIL", emailSelected);
