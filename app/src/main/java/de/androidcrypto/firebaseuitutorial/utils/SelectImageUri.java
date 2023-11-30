@@ -43,7 +43,7 @@ public class SelectImageUri extends AppCompatActivity {
     private Uri resultProvider;
     private ActivityResultLauncher<PickVisualMediaRequest> pickMediaActivityResultLauncher;
     private ActivityResultLauncher<Intent> cropActivityResultLauncher;
-    private ActivityResultLauncher<Boolean> selectImageUriFinishedLauncher;
+    public ActivityResultLauncher<Boolean> selectImageUriFinishedLauncher;
 
 
     public SelectImageUri(Context context, boolean doCropping) {
@@ -51,7 +51,7 @@ public class SelectImageUri extends AppCompatActivity {
         this.doCropping = doCropping;
         // Launch the photo picker and let the user choose only images.
         https://developer.android.com/training/data-storage/shared/photopicker
-        pickMediaActivityResultLauncher.launch(new PickVisualMediaRequest.Builder()
+        this.pickMediaActivityResultLauncher.launch(new PickVisualMediaRequest.Builder()
                 .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                 .build());
 

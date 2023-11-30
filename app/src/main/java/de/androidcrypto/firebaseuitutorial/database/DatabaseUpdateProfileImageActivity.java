@@ -118,8 +118,11 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
     private final String FILE_PROVIDER_AUTHORITY = "de.androidcrypto.firebaseuitutorial";
     private Uri intermediateProvider;
     private Uri resultProvider;
+    private SelectImageUri selectImageUriX;
     private ActivityResultLauncher<PickVisualMediaRequest> pickMediaActivityResultLauncher;
     private ActivityResultLauncher<Intent> cropActivityResultLauncher;
+
+    private ActivityResultLauncher<Intent> selectImageUriFinishedLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,7 +175,7 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
 
             }
         });
-/*
+
         // click on profile image to load a new one
         profileImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,22 +188,20 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
                         .build());
             }
         });
-*/
+
+        /*
         // use the external selector
         profileImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "click on profileImage");
                 // Launch the photo picker and let the user choose only images.
-                https://developer.android.com/training/data-storage/shared/photopicker
+                //https://developer.android.com/training/data-storage/shared/photopicker
 
-                int i = 0;
-                Log.i(TAG, String.valueOf(i));
-
-                SelectImageUri selectImageUriX = new SelectImageUri(v.getContext(), true);
+                selectImageUriX = new SelectImageUri(v.getContext(), true);
             }
         });
-
+*/
         cropImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -273,6 +274,17 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
         /**
          * section for launcher
          */
+/*
+        selectImageUriFinishedLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Log.d(TAG, "crop finished");
+                        Bitmap cb = selectImageUriX.getCroppedBitmapFromImage();
+                        Log.d(TAG, "width: " + cb.getWidth());
+                    }
+                });
+*/
 
         // android 13 photo picker
         // Registers a photo picker activity launcher in single-select mode.
