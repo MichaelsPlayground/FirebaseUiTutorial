@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -25,6 +27,7 @@ import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 
 //import com.firebase.uidemo.GlideApp;
@@ -120,6 +123,9 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_database_update_user_image);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.sub_toolbar);
+        setSupportActionBar(myToolbar);
 
         signedInUser = findViewById(R.id.etDatabaseUserSignedInUser);
         progressBar = findViewById(R.id.pbDatabaseUser);
@@ -674,12 +680,26 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
         }
     }
 
-    public String usernameFromEmail(String email) {
-        if (email.contains("@")) {
-            return email.split("@")[0];
-        } else {
-            return email;
-        }
+    /**
+     * section for options menu
+     */
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_return_home, menu);
+
+        MenuItem mGoToHome = menu.findItem(R.id.action_return_main);
+        mGoToHome.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(DatabaseUpdateProfileImageActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
     }
 
 }
