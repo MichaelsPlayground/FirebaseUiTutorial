@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -145,7 +146,7 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
 
         // don't show the keyboard on startUp
-        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
