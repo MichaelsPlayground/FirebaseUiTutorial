@@ -6,7 +6,16 @@
     android:layout_height="match_parent"
     android:background="@color/grey_300"
     android:orientation="vertical"
-    tools:context=".database.UpdateUserImageDatabaseActivity">
+    tools:context=".database.DatabaseUpdateProfileImageActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/sub_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="@dimen/toolbar_elevation"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -100,12 +109,13 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:background="@color/red_300"
-                android:visibility="gone"
-                android:text="no data stored in database USERS, press SAVE DATA to store"
+                android:background="@drawable/share_rounded_corner_light_red_with_border_error"
+                android:padding="4dp"
+                android:text="No data is stored in database USERS, the data is taken from Auth database.\nThe Dataset is stored automatically."
                 android:textAlignment="center"
                 android:textSize="16sp"
-                android:textStyle="normal" />
+                android:textStyle="normal"
+                android:visibility="visible" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/etDatabaseUserUserIdLayout"
@@ -190,6 +200,24 @@
                 app:civ_border_width="5dp"
                 app:civ_border_color="@color/colorPrimary"/>
 
+            <Button
+                android:id="@+id/btnDatabaseUserProfileImageCrop"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:text="crop image" />
+
+            <Button
+                android:id="@+id/btnDatabaseUserProfileImageUpload"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:text="upload image" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/etDatabaseUserPhotoUrlLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -249,6 +277,37 @@
                     android:textSize="16sp"
                     android:visibility="visible"
                     android:focusable="false"
+                    tools:ignore="KeyboardInaccessibleWidget" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/etDatabaseUserPublicKeyNumberLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:hint="User public key number"
+                android:visibility="gone"
+                app:boxCornerRadiusBottomEnd="5dp"
+                app:boxCornerRadiusBottomStart="5dp"
+                app:boxCornerRadiusTopEnd="5dp"
+                app:boxCornerRadiusTopStart="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDatabaseUserPublicKeyNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:focusable="false"
+                    android:inputType="text"
+                    android:text="0"
+                    android:textSize="16sp"
+                    android:visibility="visible"
                     tools:ignore="KeyboardInaccessibleWidget" />
             </com.google.android.material.textfield.TextInputLayout>
 

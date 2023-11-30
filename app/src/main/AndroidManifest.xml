@@ -3,6 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <queries>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+        <intent>
+            <action android:name="com.android.camera.action.CROP" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.PICK" />
+            <data android:mimeType="vnd.android.cursor.dir/image" />
+        </intent>
+    </queries>
 
     <application
         android:allowBackup="true"
@@ -25,20 +39,45 @@
         </activity>
         <activity
             android:name=".database.DatabaseEditUserProfileActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false"/>
+        <activity
+            android:name=".database.DatabaseUpdateProfileImageActivity"
+            android:exported="false"/>
         <activity
             android:name=".database.DatabaseListUserActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false"/>
         <activity
             android:name=".database.DatabaseListUserLvActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false"/>
         <activity
             android:name=".database.DatabaseChatActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false"/>
+
+        <!-- Provider to cache images to the internal App cache -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+        <!-- Trigger Google Play services to install the back ported photo picker module. -->
+        <service
+            android:name="com.google.android.gms.metadata.ModuleDependencies"
+            android:enabled="false"
+            android:exported="false"
+            tools:ignore="MissingClass">
+            <intent-filter>
+                <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
+            </intent-filter>
+            <meta-data
+                android:name="photopicker_activity:0:required"
+                android:value="" />
+        </service>
+
     </application>
 
 </manifest>

@@ -5,6 +5,7 @@ import static androidx.core.content.ContextCompat.startActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.androidcrypto.firebaseuitutorial.GlideApp;
 import de.androidcrypto.firebaseuitutorial.ItemClickListener;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.R;
@@ -76,6 +78,13 @@ public class UserModelAdapter extends FirebaseRecyclerAdapter<
                 holder.img_on.setVisibility(View.GONE);
                 holder.img_off.setVisibility(View.GONE);
             }
+
+            if (!TextUtils.isEmpty(model.getUserPhotoUrl())) {
+                GlideApp.with(context)
+                        .load(model.getUserPhotoUrl())
+                        .into(holder.userProfileImage);
+            }
+
             //holder.itemView.setVisibility(View.VISIBLE);
 
             holder.itemView.setOnClickListener(v -> {
@@ -126,11 +135,13 @@ public class UserModelAdapter extends FirebaseRecyclerAdapter<
     static class UserModelViewholder
             extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView userEmail, userDisplayName, userId;
+        private ImageView userProfileImage;
         private ImageView img_on;
         private ImageView img_off;
 
         public UserModelViewholder(@NonNull View itemView) {
             super(itemView);
+            userProfileImage = itemView.findViewById(R.id.profile_image);
             userEmail = itemView.findViewById(R.id.last_msg);
             userDisplayName = itemView.findViewById(R.id.username);
             userId = itemView.findViewById(R.id.userId); // dummy

@@ -34,6 +34,7 @@ import java.util.List;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserLvActivity;
+import de.androidcrypto.firebaseuitutorial.database.DatabaseUpdateProfileImageActivity;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 
 //public class MainActivity extends AppCompatActivity implements ActivityResultCallback<FirebaseAuthUIAuthenticationResult> {
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
      * section Firebase Realtime Database
      */
 
-    private Button editDatabaseUserProfile, listDatabaseUser, listDatabaseUserLv;
+    private Button editDatabaseUserProfile, editDatabaseUserImage, listDatabaseUser, listDatabaseUserLv;
     private Button presenceCheckDatabase;
     private DatabaseReference actualUserDatabaseReference;
 
@@ -176,6 +177,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d(TAG, "edit Database User Profile");
                 Intent intent = new Intent(MainActivity.this, DatabaseEditUserProfileActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        editDatabaseUserImage = findViewById(R.id.btnMainDatabaseEditUserImage);
+        editDatabaseUserImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "edit Database User Image");
+                Intent intent = new Intent(MainActivity.this, DatabaseUpdateProfileImageActivity.class);
                 startActivity(intent);
             }
         });
