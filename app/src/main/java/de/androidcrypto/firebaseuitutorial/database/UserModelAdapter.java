@@ -1,5 +1,9 @@
 package de.androidcrypto.firebaseuitutorial.database;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,12 +34,14 @@ public class UserModelAdapter extends FirebaseRecyclerAdapter<
     public List<UserModel> userList = new ArrayList<>();
     private boolean ischat;
     private String ownUserId;
+    private Context context;
 
     public UserModelAdapter(
-            @NonNull FirebaseRecyclerOptions<UserModel> options, boolean ischat, String ownUserId) {
+            @NonNull FirebaseRecyclerOptions<UserModel> options, boolean ischat, String ownUserId, Context context) {
         super(options);
         this.ischat = ischat;
         this.ownUserId = ownUserId;
+        this.context = context;
     }
 
     // Function to bind the view in Card view (here "user.xml") with data in
@@ -80,6 +86,16 @@ public class UserModelAdapter extends FirebaseRecyclerAdapter<
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);*/
                 System.out.println("*** you clicked on userId: " + model.getUserId() + " ***");
+                Intent intent = new Intent(context, DatabaseChatActivity.class);
+                intent.putExtra("UID", model.getUserId());
+                intent.putExtra("EMAIL", model.getUserMail());
+                intent.putExtra("DISPLAYNAME", model.getUserName());
+                intent.putExtra("AUTH_EMAIL", "test@test.com");
+                intent.putExtra("AUTH_DISPLAYNAME", "authDisplayName");
+                intent.putExtra("PROFILE_IMAGE", model.getUserPhotoUrl());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+                ((Activity)context).finish();
             });
         } else {
             holder.itemView.setVisibility(View.GONE);

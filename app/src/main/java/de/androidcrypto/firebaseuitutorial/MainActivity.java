@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -295,10 +296,14 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private void status(String status){
-        actualUserDatabaseReference = FirebaseUtils.getDatabaseUserReference(FirebaseUtils.getCurrentUserId());
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("userOnlineString", status);
-        actualUserDatabaseReference.updateChildren(hashMap);
+        String currentUserId = FirebaseUtils.getCurrentUserId();
+        // update only if a user is signed in
+        if (!TextUtils.isEmpty(currentUserId)) {
+            actualUserDatabaseReference = FirebaseUtils.getDatabaseUserReference(currentUserId);
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("userOnlineString", status);
+            actualUserDatabaseReference.updateChildren(hashMap);
+        }
     }
 
 
