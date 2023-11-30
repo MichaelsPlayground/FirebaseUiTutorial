@@ -270,6 +270,39 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
                         imageUriFull = uri;
                         saveBitmapFileToIntermediate(imageUriFull);
 
+                        // start cropping directly
+                        onCropImage();
+
+/*
+                        Bitmap inputImage = loadFromUri(intermediateProvider);
+                        //Bitmap rotated = rotateBitmap(getResizedBitmap(inputImage, 800), imageUriFull);
+                        Bitmap rotated = getResizedBitmap(inputImage, 500);
+                        profileImageView.setImageBitmap(rotated);
+
+                        int height = profileImageView.getHeight();
+                        int width = profileImageView.getWidth();
+
+                        //Bitmap inputImage = uriToBitmap(imageUriFull);
+                        String imageInfo = "height: " + height + " width: " + width + " resolution: " + (height * width) +
+                                "\nOriginal Bitmap height: " + inputImage.getHeight() + " width: " + inputImage.getWidth() +
+                                " res: " + (inputImage.getHeight() * inputImage.getWidth());
+                        //tvFull.setText(imageInfo);
+                        Log.d(TAG, "imageInfo: " + imageInfo);
+
+ */
+                    } else {
+                        Log.d(TAG, "No media selected");
+                    }
+                });
+/*
+        pickMediaActivityResultLauncher =
+                registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                    // Callback is invoked after the user selects a media item or closes the
+                    // photo picker.
+                    if (uri != null) {
+                        imageUriFull = uri;
+                        saveBitmapFileToIntermediate(imageUriFull);
+
                         Bitmap inputImage = loadFromUri(intermediateProvider);
                         //Bitmap rotated = rotateBitmap(getResizedBitmap(inputImage, 800), imageUriFull);
                         Bitmap rotated = getResizedBitmap(inputImage, 500);
@@ -288,7 +321,26 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
                         Log.d(TAG, "No media selected");
                     }
                 });
+*/
 
+        cropActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        imageUriCrop = resultProvider;
+                        Bitmap croppedImage = loadFromUri(resultProvider);
+                        profileImageView.setImageBitmap(getResizedBitmap(croppedImage, 500));
+                        String imageInfo = "Cropped Bitmap height: " + croppedImage.getHeight() + " width: " + croppedImage.getWidth() +
+                                " res: " + (croppedImage.getHeight() * croppedImage.getWidth());
+                        //tvCrop.setText(imageInfo);
+                        Log.d(TAG, "imageInfo: " + imageInfo);
+
+                        // directly upload image
+                        uploadImage(imageUriCrop);
+                    }
+                });
+
+        /*
         cropActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -302,7 +354,7 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
                         Log.d(TAG, "imageInfo: " + imageInfo);
                     }
                 });
-
+*/
     }
 
     /**
