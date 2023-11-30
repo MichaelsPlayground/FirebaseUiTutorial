@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
@@ -60,6 +61,7 @@ import java.util.List;
 import java.util.Objects;
 
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
+import de.androidcrypto.firebaseuitutorial.utils.SelectImageUri;
 import de.hdodenhof.circleimageview.CircleImageView;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
@@ -118,7 +120,6 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
     private Uri resultProvider;
     private ActivityResultLauncher<PickVisualMediaRequest> pickMediaActivityResultLauncher;
     private ActivityResultLauncher<Intent> cropActivityResultLauncher;
-    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,8 +143,6 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
         userPublicKeyNumber = findViewById(R.id.etDatabaseUserPublicKeyNumber);
 
         profileImageView = findViewById(R.id.ivUserProfileImage);
-
-        progressDialog = new ProgressDialog(this);
 
         // don't show the keyboard on startUp
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -173,7 +172,7 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
 
             }
         });
-
+/*
         // click on profile image to load a new one
         profileImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,6 +183,21 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
                 pickMediaActivityResultLauncher.launch(new PickVisualMediaRequest.Builder()
                         .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                         .build());
+            }
+        });
+*/
+        // use the external selector
+        profileImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "click on profileImage");
+                // Launch the photo picker and let the user choose only images.
+                https://developer.android.com/training/data-storage/shared/photopicker
+
+                int i = 0;
+                Log.i(TAG, String.valueOf(i));
+
+                SelectImageUri selectImageUriX = new SelectImageUri(v.getContext(), true);
             }
         });
 
