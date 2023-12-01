@@ -120,7 +120,7 @@ public class FirebaseUtils {
     }
 
     public static DatabaseReference getDatabaseUserRecentMessagesReference(String userId) {
-        return getDatabaseUserReference(userId).child(RECENT_MESSAGES_FOLDER_NAME);
+        return getDatabaseReference().child(RECENT_MESSAGES_FOLDER_NAME).child(userId);
     }
     public static DatabaseReference getDatabaseUserChatroomsReference(String userId, String chatroomId) {
         return getDatabaseUserChatroomsReference(userId).child(chatroomId);
