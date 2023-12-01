@@ -56,7 +56,6 @@ public class DatabaseListUserActivity extends AppCompatActivity implements ItemC
 
         // Create a instance of the database and get its reference
         DatabaseReference usersDatabase = FirebaseUtils.getDatabaseUsersReference(); // unsorted user list
-        Query usersDatabaseQuery = FirebaseUtils.getDatabaseUsersSortedLastOnlineDateReference(); // sorted user list (last online time)
 
         recyclerView = findViewById(R.id.rvDatabaseListUser);
         // To display the Recycler view linearlayout
@@ -64,9 +63,6 @@ public class DatabaseListUserActivity extends AppCompatActivity implements ItemC
 
         // This is a class provided by the FirebaseUI to make a
         // query in the database to fetch appropriate data
-
-
-
         FirebaseRecyclerOptions<UserModel> options
                 = new FirebaseRecyclerOptions.Builder<UserModel>()
                 .setQuery(usersDatabase, UserModel.class)
@@ -74,15 +70,6 @@ public class DatabaseListUserActivity extends AppCompatActivity implements ItemC
         // Connecting object of required Adapter class to
         // the Adapter class itself
         adapter = new UserModelAdapter(options, true, FirebaseUtils.getCurrentUserId(), this);
-
-        Query sortedQuery = usersDatabase
-                .orderByChild(FirebaseUtils.DATABASE_LAST_ONLINE_TIME);
-        FirebaseRecyclerOptions<UserModel> optionsSorted
-                = new FirebaseRecyclerOptions.Builder<UserModel>()
-                .setQuery(sortedQuery, UserModel.class)
-                .build();
-        adapter.updateOptions(optionsSorted);
-
         adapter.setClickListener(this);
         // Connecting Adapter class with the Recycler view*/
         recyclerView.setAdapter(adapter);
