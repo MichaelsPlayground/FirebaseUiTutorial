@@ -62,6 +62,7 @@ import java.util.Objects;
 
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.SelectImageUri;
+import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 import de.hdodenhof.circleimageview.CircleImageView;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
@@ -231,11 +232,14 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
                                 Objects.requireNonNull(userEmail.getText()).toString(),
                                 Objects.requireNonNull(userPhotoUrl.getText()).toString(),
                                 Objects.requireNonNull(userPublicKey.getText()).toString(),
-                                Objects.requireNonNull(userPublicKeyNumber.getText()).toString());
+                                Objects.requireNonNull(userPublicKeyNumber.getText()).toString(),
+                                FirebaseUtils.USER_ONLINE,
+                                TimeUtils.getActualUtcZonedDateTime()
+                                );
                         Snackbar snackbar = Snackbar
                                 .make(view, "data written to database", Snackbar.LENGTH_SHORT);
                         snackbar.show();
-                        // write the data to the auth database
+                        // additionally write the data to the auth database
                         FirebaseUtils.writeToCurrentUserAuthData(userName.getText().toString(), userPhotoUrl.getText().toString());
                     } else {
                         Toast.makeText(getApplicationContext(),
@@ -684,7 +688,10 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
                                     Objects.requireNonNull(userEmail.getText()).toString(),
                                     Objects.requireNonNull(userPhotoUrl.getText()).toString(),
                                     Objects.requireNonNull(userPublicKey.getText()).toString(),
-                                    Objects.requireNonNull(userPublicKeyNumber.getText()).toString());
+                                    Objects.requireNonNull(userPublicKeyNumber.getText()).toString(),
+                                    FirebaseUtils.USER_ONLINE,
+                                    TimeUtils.getActualUtcZonedDateTime()
+                            );
                             Snackbar snackbar = Snackbar
                                     .make(progressBar, "data written to database", Snackbar.LENGTH_SHORT);
                             snackbar.show();
@@ -721,14 +728,14 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
         }
     }
 
-    public void writeUserProfile(String userId, String name, String email, String photoUrl, String publicKey, String publicKeyNumber) {
+    public void writeUserProfile(String userId, String name, String email, String photoUrl, String publicKey, String publicKeyNumber, String userOnlineString, long userLastOnlineTime) {
         int publicKeyNumberInt;
         try {
             publicKeyNumberInt = Integer.parseInt(publicKeyNumber);
         } catch (NumberFormatException e) {
             publicKeyNumberInt = 0;
         }
-        UserModel user = new UserModel(userId, name, email, photoUrl, publicKey, publicKeyNumberInt);
+        UserModel user = new UserModel(userId, name, email, photoUrl, publicKey, publicKeyNumberInt, userOnlineString, userLastOnlineTime);
         databaseUserReference.setValue(user);
     }
 

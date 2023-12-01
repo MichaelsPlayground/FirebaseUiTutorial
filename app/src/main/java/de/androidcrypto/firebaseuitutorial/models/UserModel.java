@@ -12,6 +12,17 @@ public class UserModel {
     public UserModel() {
     }
 
+    public UserModel(String userId, String userName, String userMail, String userPhotoUrl, String userPublicKey, int userPublicKeyNumber, String userOnlineString, long userLastOnlineTime) {
+        this.userId = userId;
+        this.userName = userName;
+        this.userMail = userMail;
+        this.userPhotoUrl = userPhotoUrl;
+        this.userPublicKey = userPublicKey;
+        this.userPublicKeyNumber = userPublicKeyNumber;
+        this.userOnlineString = userOnlineString;
+        this.userLastOnlineTime = userLastOnlineTime;
+    }
+
     // for first storage
     public UserModel(String userId, String userName, String userMail, String userPhotoUrl, String userPublicKey, int userPublicKeyNumber) {
         this.userId = userId;

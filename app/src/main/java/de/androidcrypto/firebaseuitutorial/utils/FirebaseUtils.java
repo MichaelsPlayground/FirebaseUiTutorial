@@ -25,7 +25,8 @@ public class FirebaseUtils {
      */
 
     // realtime database
-
+    public static final String USER_OFFLINE = "offline";
+    public static final String USER_ONLINE = "online";
     public static final String USERS_FOLDER_NAME = "users";
     public static final String CHATROOM_FOLDER_NAME = "messages";
     private static final String RECENT_MESSAGES_FOLDER_NAME = "recentMessages";
