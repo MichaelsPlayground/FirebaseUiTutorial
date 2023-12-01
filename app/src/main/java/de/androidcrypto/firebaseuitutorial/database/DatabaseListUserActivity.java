@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 
 import java.util.Objects;
 
@@ -54,13 +55,18 @@ public class DatabaseListUserActivity extends AppCompatActivity implements ItemC
         progressBar = findViewById(R.id.pbDatabaseListUser);
 
         // Create a instance of the database and get its reference
-        DatabaseReference usersDatabase = FirebaseUtils.getDatabaseUsersReference();
+        DatabaseReference usersDatabase = FirebaseUtils.getDatabaseUsersReference(); // unsorted user list
+        Query usersDatabaseQuery = FirebaseUtils.getDatabaseUsersSortedLastOnlineDateReference(); // sorted user list (last online time)
+
         recyclerView = findViewById(R.id.rvDatabaseListUser);
         // To display the Recycler view linearlayout
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // This is a class provided by the FirebaseUI to make a
         // query in the database to fetch appropriate data
+
+
+
         FirebaseRecyclerOptions<UserModel> options
                 = new FirebaseRecyclerOptions.Builder<UserModel>()
                 .setQuery(usersDatabase, UserModel.class)
@@ -68,6 +74,15 @@ public class DatabaseListUserActivity extends AppCompatActivity implements ItemC
         // Connecting object of required Adapter class to
         // the Adapter class itself
         adapter = new UserModelAdapter(options, true, FirebaseUtils.getCurrentUserId(), this);
+
+        Query sortedQuery = usersDatabase
+                .orderByChild(FirebaseUtils.DATABASE_LAST_ONLINE_TIME);
+        FirebaseRecyclerOptions<UserModel> optionsSorted
+                = new FirebaseRecyclerOptions.Builder<UserModel>()
+                .setQuery(sortedQuery, UserModel.class)
+                .build();
+        adapter.updateOptions(optionsSorted);
+
         adapter.setClickListener(this);
         // Connecting Adapter class with the Recycler view*/
         recyclerView.setAdapter(adapter);

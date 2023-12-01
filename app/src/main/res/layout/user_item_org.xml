@@ -51,7 +51,7 @@
         android:layout_toEndOf="@id/userProfileImage"/>
 
     <TextView
-        android:id="@+id/userLastOnlineTime"
+        android:id="@+id/last_msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/userNameEmail"

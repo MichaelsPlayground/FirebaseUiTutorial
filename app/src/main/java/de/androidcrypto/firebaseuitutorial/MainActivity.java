@@ -41,6 +41,7 @@ import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserLvActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseUpdateProfileImageActivity;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
+import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
 //public class MainActivity extends AppCompatActivity implements ActivityResultCallback<FirebaseAuthUIAuthenticationResult> {
 public class MainActivity extends AppCompatActivity {
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "User Signed In", Toast.LENGTH_SHORT).show();
                     signedInUser.setText(user.getEmail() + "\nDisplayName: " + user.getDisplayName());
                     activeButtonsWhileUserIsSignedIn(true);
+                    status("online", TimeUtils.getActualUtcZonedDateTime());
                 } else {
                     Log.e(TAG, "Error in handling the FirebaseAuthUIAuthenticationResult");
                 }
@@ -165,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "sign out the current user");
                 // set user onlineStatus in Firestore users to false
                 //setFirestoreUserOnlineStatus(mFirebaseAuth.getCurrentUser().getUid(), false);
+                status("offline", TimeUtils.getActualUtcZonedDateTime());
                 firebaseAuth.signOut();
                 signedInUser.setText(null);
                 activeButtonsWhileUserIsSignedIn(false);
@@ -387,13 +390,14 @@ public class MainActivity extends AppCompatActivity {
      * section for
      */
 
-    private void status(String status) {
+    private void status(String status, long utcTimestamp) {
         String currentUserId = FirebaseUtils.getCurrentUserId();
         // update only if a user is signed in
         if (!TextUtils.isEmpty(currentUserId)) {
             actualUserDatabaseReference = FirebaseUtils.getDatabaseUserReference(currentUserId);
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put("userOnlineString", status);
+            hashMap.put("userLastOnlineTime", utcTimestamp);
             actualUserDatabaseReference.updateChildren(hashMap);
         }
     }
@@ -434,7 +438,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onResume called");
         firebaseAuth.addAuthStateListener(authStateListener);
         // called when this activity is in the foreground
-        status("online");
+        status("online", TimeUtils.getActualUtcZonedDateTime());
     }
 
     @Override
@@ -442,7 +446,7 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         Log.d(TAG, "onPause called");
         firebaseAuth.removeAuthStateListener(authStateListener);
-        status("offline");
+        status("offline", TimeUtils.getActualUtcZonedDateTime());
     }
 
     @Override
@@ -459,7 +463,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void activeButtonsWhileUserIsSignedIn(boolean isSignedIn) {
+        // auth
+        verification.setEnabled(isSignedIn);
+        accountDeletion.setEnabled(isSignedIn);
+        // realtime database
         editDatabaseUserProfile.setEnabled(isSignedIn);
+        editDatabaseUserImage.setEnabled(isSignedIn);
+        listDatabaseUser.setEnabled(isSignedIn);
+        listDatabaseUserLv.setEnabled(isSignedIn);
+
+
+
+
+
         /*
         databaseUserProfile.setEnabled(isSignedIn);
         databaseUpdateUserImage.setEnabled(isSignedIn);

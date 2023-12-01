@@ -7,6 +7,7 @@ public class UserModel {
     private int userPublicKeyNumber;
     private boolean userOnline;
     private String userOnlineString;
+    private long userLastOnlineTime;
 
     public UserModel() {
     }
@@ -147,5 +148,13 @@ public class UserModel {
 
     public void setUserOnlineString(String userOnlineString) {
         this.userOnlineString = userOnlineString;
+    }
+
+    public long getUserLastOnlineTime() {
+        return userLastOnlineTime;
+    }
+
+    public void setUserLastOnlineTime(long userLastOnlineTime) {
+        this.userLastOnlineTime = userLastOnlineTime;
     }
 }

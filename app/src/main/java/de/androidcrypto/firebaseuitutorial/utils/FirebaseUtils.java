@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -23,6 +24,7 @@ public class FirebaseUtils {
     public static final String INFO_CONNECTED = ".info/connected";
     public static final String DATABASE_CONNECTIONS = "connections";
     public static final String DATABASE_LAST_ONLINE = "lastOnline";
+    public static final String DATABASE_LAST_ONLINE_TIME = "lastOnlineTime";
     public static final String DATABASE_USER_PHOTO_URL_FIELD = "userPhotoUrl";
 
     // storage
@@ -67,6 +69,10 @@ public class FirebaseUtils {
 
     public static DatabaseReference getDatabaseUsersReference() {
         return getDatabaseReference().child(USERS_FOLDER_NAME);
+    }
+
+    public static Query getDatabaseUsersSortedLastOnlineDateReference() {
+        return getDatabaseUsersReference().orderByChild(DATABASE_LAST_ONLINE_TIME);
     }
 
     public static DatabaseReference getDatabaseUserReference(String userId) {

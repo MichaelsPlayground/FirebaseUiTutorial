@@ -25,6 +25,8 @@ import de.androidcrypto.firebaseuitutorial.GlideApp;
 import de.androidcrypto.firebaseuitutorial.ItemClickListener;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.R;
+import de.androidcrypto.firebaseuitutorial.utils.AndroidUtils;
+import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
 // FirebaseRecyclerAdapter is a class provided by
 // FirebaseUI. it provides functions to bind, adapt and show
@@ -34,14 +36,14 @@ public class UserModelAdapter extends FirebaseRecyclerAdapter<
 
     private static ItemClickListener clickListener;
     public List<UserModel> userList = new ArrayList<>();
-    private boolean ischat;
+    private boolean isChat;
     private String ownUserId;
     private Context context;
 
     public UserModelAdapter(
-            @NonNull FirebaseRecyclerOptions<UserModel> options, boolean ischat, String ownUserId, Context context) {
+            @NonNull FirebaseRecyclerOptions<UserModel> options, boolean isChat, String ownUserId, Context context) {
         super(options);
-        this.ischat = ischat;
+        this.isChat = isChat;
         this.ownUserId = ownUserId;
         this.context = context;
     }
@@ -56,17 +58,15 @@ public class UserModelAdapter extends FirebaseRecyclerAdapter<
         if (!model.getUserId().equals(ownUserId)) {
             userList.add(model);
 
-            holder.userEmail.setText(model.getUserMail());
-            holder.userDisplayName.setText(model.getUserName());
-            //holder.userId.setText(model.getUserId()); // dummy
-
-            //if (ischat){
-            //    lastMessage(user.getId(), holder.last_msg);
-            //} else {
-            //    holder.last_msg.setVisibility(View.GONE);
-            //}
-
-            if (ischat) {
+            holder.userNameEmail.setText(AndroidUtils.shortenString(model.getUserName() + " (" + model.getUserMail() + ")", 20));
+            // last online time
+            long lastOnlineTime = model.getUserLastOnlineTime();
+            if (lastOnlineTime > 1) {
+                holder.userLastOnlineTime.setText(TimeUtils.getZoneDatedStringMediumLocale(lastOnlineTime));
+            } else {
+                holder.userLastOnlineTime.setText("not online");
+            }
+            if (isChat) {
                 if (model.getUserOnlineString().equals("online")) {
                     holder.img_on.setVisibility(View.VISIBLE);
                     holder.img_off.setVisibility(View.GONE);
@@ -78,7 +78,7 @@ public class UserModelAdapter extends FirebaseRecyclerAdapter<
                 holder.img_on.setVisibility(View.GONE);
                 holder.img_off.setVisibility(View.GONE);
             }
-
+            // if a PhotoUrl is available try to load the profile image
             if (!TextUtils.isEmpty(model.getUserPhotoUrl())) {
                 GlideApp.with(context)
                         .load(model.getUserPhotoUrl())
@@ -134,16 +134,16 @@ public class UserModelAdapter extends FirebaseRecyclerAdapter<
     // view (here "person.xml")
     static class UserModelViewholder
             extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private TextView userEmail, userDisplayName, userId;
+        private TextView userNameEmail, userLastOnlineTime, userId;
         private ImageView userProfileImage;
         private ImageView img_on;
         private ImageView img_off;
 
         public UserModelViewholder(@NonNull View itemView) {
             super(itemView);
-            userProfileImage = itemView.findViewById(R.id.profile_image);
-            userEmail = itemView.findViewById(R.id.last_msg);
-            userDisplayName = itemView.findViewById(R.id.username);
+            userProfileImage = itemView.findViewById(R.id.userProfileImage);
+            userNameEmail = itemView.findViewById(R.id.userNameEmail);
+            userLastOnlineTime = itemView.findViewById(R.id.userLastOnlineTime);
             userId = itemView.findViewById(R.id.userId); // dummy
             img_on = itemView.findViewById(R.id.img_on);
             img_off = itemView.findViewById(R.id.img_off);
