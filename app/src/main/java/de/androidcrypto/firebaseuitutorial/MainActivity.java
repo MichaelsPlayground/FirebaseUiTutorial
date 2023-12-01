@@ -3,9 +3,11 @@ package de.androidcrypto.firebaseuitutorial;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -19,6 +21,9 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -45,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private com.google.android.material.textfield.TextInputEditText signedInUser;
-    private Button signIn, signOut;
+    private Button signIn, signOut, verification, accountDeletion;
 
     private List<AuthUI.IdpConfig> authenticationProviders = Arrays.asList(
             new AuthUI.IdpConfig.EmailBuilder().build(),
@@ -87,11 +92,9 @@ public class MainActivity extends AppCompatActivity {
      */
 
 
-
     /**
      * section
      */
-
 
 
     /**
@@ -119,6 +122,8 @@ public class MainActivity extends AppCompatActivity {
         signedInUser = findViewById(R.id.etMainSignedInUser);
         signIn = findViewById(R.id.btnMainAuthSignIn);
         signOut = findViewById(R.id.btnMainAuthSignOut);
+        verification = findViewById(R.id.btnMainAuthVerification);
+        accountDeletion = findViewById(R.id.btnMainAuthDeleteUser);
 
         // Initialize Firebase Auth
         firebaseAuth = FirebaseAuth.getInstance();
@@ -150,7 +155,6 @@ public class MainActivity extends AppCompatActivity {
                         .setAvailableProviders(authenticationProviders)
                         .setTheme(R.style.Theme_FirebaseUiTutorial)
                         .build();
-
                 signInLauncher.launch(signInIntent);
             }
         });
@@ -164,6 +168,89 @@ public class MainActivity extends AppCompatActivity {
                 firebaseAuth.signOut();
                 signedInUser.setText(null);
                 activeButtonsWhileUserIsSignedIn(false);
+            }
+        });
+
+        verification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "verificate the current Email account");
+                // todo enable the button when signed in only
+
+                // see https://firebase.google.com/docs/auth/android/email-link-auth
+                FirebaseUtils.getCurrentUser().sendEmailVerification()
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(getApplicationContext(),
+                                            "An email was sent to your Email address for verification",
+                                            Toast.LENGTH_SHORT).show();
+                                    Log.d(TAG, "Email sent.");
+                                }
+                            }
+                        });
+
+
+            }
+        });
+
+        accountDeletion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "account deletion");
+                // see https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md#deleting-accounts
+
+                // this is a permanently operation - show a confirmation dialog
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case DialogInterface.BUTTON_POSITIVE:
+                                //Yes button clicked
+                                AuthUI.getInstance()
+                                        .delete(MainActivity.this)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    // Deletion succeeded
+                                                    Toast.makeText(getApplicationContext(),
+                                                            "The account was deleted",
+                                                            Toast.LENGTH_SHORT).show();
+                                                    Log.d(TAG, "Account deleted");
+                                                } else {
+                                                    // Deletion failed
+                                                    Toast.makeText(getApplicationContext(),
+                                                            "FAILURE on account deletion",
+                                                            Toast.LENGTH_SHORT).show();
+                                                    Log.d(TAG, "FAILURE on account deletion");
+                                                }
+                                            }
+                                        });
+                                break;
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //No button clicked
+                                // nothing to do
+                                Toast.makeText(getApplicationContext(),
+                                        "Deletion of account aborted",
+                                        Toast.LENGTH_SHORT).show();
+                                Log.d(TAG, "deletion aborted");
+                                break;
+                        }
+                    }
+                };
+                final String selectedFolderString = "You are going to delete the account" + "\n\n" +
+                        "This is an irrevocable setting that cannot get undone" + "\n\n" +
+                        "Do you want to proceed ?";
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+                builder.setMessage(selectedFolderString).setPositiveButton(android.R.string.yes, dialogClickListener)
+                        .setNegativeButton(android.R.string.no, dialogClickListener)
+                        .setTitle("DELETE the account")
+                        .show();
+
+
             }
         });
 
@@ -267,18 +354,9 @@ public class MainActivity extends AppCompatActivity {
          */
 
 
-
         /**
          * section for
          */
-
-
-
-        /**
-         * section for
-         */
-
-
 
 
         /**
@@ -286,6 +364,9 @@ public class MainActivity extends AppCompatActivity {
          */
 
 
+        /**
+         * section for
+         */
 
 
         /**
@@ -306,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
      * section for
      */
 
-    private void status(String status){
+    private void status(String status) {
         String currentUserId = FirebaseUtils.getCurrentUserId();
         // update only if a user is signed in
         if (!TextUtils.isEmpty(currentUserId)) {
@@ -323,6 +404,9 @@ public class MainActivity extends AppCompatActivity {
      */
 
 
+    /**
+     * section for
+     */
 
 
     /**
@@ -330,26 +414,14 @@ public class MainActivity extends AppCompatActivity {
      */
 
 
-
-
     /**
      * section for
      */
 
 
-
-
     /**
      * section for
      */
-
-
-
-
-    /**
-     * section for
-     */
-
 
 
     /**

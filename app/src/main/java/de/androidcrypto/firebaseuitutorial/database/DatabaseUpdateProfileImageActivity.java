@@ -106,9 +106,7 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
     private static String authUserId = "", authUserEmail, authDisplayName, authPhotoUrl;
 
     private DatabaseReference databaseUserReference;
-    private DatabaseReference mDatabase;
-    private FirebaseAuth mAuth;
-    private StorageReference userProfileStorageReference;
+    private FirebaseAuth firebaseAuth;
     private ProgressBar progressBar;
 
     private final String CACHE_FOLDER = "crop";
@@ -118,11 +116,9 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
     private final String FILE_PROVIDER_AUTHORITY = "de.androidcrypto.firebaseuitutorial";
     private Uri intermediateProvider;
     private Uri resultProvider;
-    private SelectImageUri selectImageUriX;
+
     private ActivityResultLauncher<PickVisualMediaRequest> pickMediaActivityResultLauncher;
     private ActivityResultLauncher<Intent> cropActivityResultLauncher;
-
-    private ActivityResultLauncher<Intent> selectImageUriFinishedLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,15 +147,7 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
-        // Initialize Firebase Database
-        // https://fir-playground-1856e-default-rtdb.europe-west1.firebasedatabase.app/
-        // if the database location is not us we need to use the reference:
-        //mDatabase = FirebaseDatabase.getInstance("https://fir-playground-1856e-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
-        // the following can be used if the database server location is us
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        userProfileStorageReference= FirebaseStorage.getInstance().getReference().child("profile_images");
-
+        firebaseAuth = FirebaseAuth.getInstance();
 
         Button loadData = findViewById(R.id.btnDatabaseUserLoad);
         Button cropImage = findViewById(R.id.btnDatabaseUserProfileImageCrop);
@@ -539,8 +527,9 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
 
     private void uploadImage(Uri uri) {
         showProgressBar();
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("profile_images").child(mAuth.getUid() + ".jpg");
-        storageReference.putFile(uri)
+        //StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("profile_images").child(mAuth.getUid() + ".jpg");
+        StorageReference storageReference = FirebaseUtils.getStorageProfileImagesReference(firebaseAuth.getUid());
+                storageReference.putFile(uri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -549,7 +538,8 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Uri uri) {
                                 final String downloadUrl = uri.toString();
-                                mDatabase.child("users").child(authUserId).child("userPhotoUrl")
+                                FirebaseUtils.getDatabaseUserFieldReference(authUserId, FirebaseUtils.DATABASE_USER_PHOTO_URL_FIELD)
+                                //mDatabase.child("users").child(authUserId).child("userPhotoUrl")
                                         .setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
@@ -557,7 +547,6 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
                                                     Log.i(TAG, "downloadUrl: " + downloadUrl);
                                                     Toast.makeText(DatabaseUpdateProfileImageActivity.this, "Image saved in database successfuly", Toast.LENGTH_SHORT).show();
                                                     userPhotoUrl.setText(downloadUrl);
-                                                    // todo reload changed image
                                                     // Download directly from StorageReference using Glide
                                                     // (See MyAppGlideModule for Loader registration)
                                                     GlideApp.with(getApplicationContext())
@@ -587,7 +576,7 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseUser currentUser = FirebaseUtils.getCurrentUser();
         if(currentUser != null){
             reload();
         } else {
@@ -596,16 +585,11 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
     }
 
     private void reload() {
-        Objects.requireNonNull(mAuth.getCurrentUser()).reload().addOnCompleteListener(new OnCompleteListener<Void>() {
+        Objects.requireNonNull(FirebaseUtils.getCurrentUser()).reload().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    updateUI(mAuth.getCurrentUser());
-                    /*
-                    Toast.makeText(getApplicationContext(),
-                            "Reload successful!",
-                            Toast.LENGTH_SHORT).show();
-                     */
+                    updateUI(FirebaseUtils.getCurrentUser());
                 } else {
                     Log.e(TAG, "reload", task.getException());
                     Toast.makeText(getApplicationContext(),
@@ -641,9 +625,9 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
                 sb.append("Display name: ").append(authDisplayName).append("\n");
             }
             if (TextUtils.isEmpty(authPhotoUrl)) {
-                sb.append("Photo url: ").append("no photo url available").append("\n");
+                sb.append("Photo URL: ").append("no photo url available").append("\n");
             } else {
-                sb.append("Photo url: ").append(authPhotoUrl).append("\n");
+                sb.append("Photo URL: ").append(authPhotoUrl).append("\n");
             }
             if (user.isEmailVerified()) {
                 sb.append("Email verification: ").append("Email address is VERIFIED");
@@ -743,7 +727,6 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
             publicKeyNumberInt = 0;
         }
         UserModel user = new UserModel(userId, name, email, photoUrl, publicKey, publicKeyNumberInt);
-        //UserModel user = new UserModel(name, email, photoUrl, publicKey, publicKeyNumberInt);
         databaseUserReference.setValue(user);
     }
 

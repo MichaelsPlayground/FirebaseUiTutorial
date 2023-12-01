@@ -5,6 +5,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
 
@@ -14,11 +16,19 @@ public class FirebaseUtils {
      * section for internal constants
      */
 
+    // realtime database
+
     public static final String USERS_FOLDER_NAME = "users";
     public static final String CHATROOMS_FOLDER_NAME = "messages";
     public static final String INFO_CONNECTED = ".info/connected";
     public static final String DATABASE_CONNECTIONS = "connections";
     public static final String DATABASE_LAST_ONLINE = "lastOnline";
+    public static final String DATABASE_USER_PHOTO_URL_FIELD = "userPhotoUrl";
+
+    // storage
+
+    public static final String STORAGE_PROFILE_IMAGES_FOLDER_NAME = "profile_images";
+    public static final String STORAGE_PROFILE_IMAGE_FILE_EXTENSION = ".jpg";
 
     private static DatabaseReference databaseReference;
 
@@ -61,6 +71,10 @@ public class FirebaseUtils {
 
     public static DatabaseReference getDatabaseUserReference(String userId) {
         return getDatabaseReference().child(USERS_FOLDER_NAME).child(userId);
+    }
+
+    public static DatabaseReference getDatabaseUserFieldReference(String userId, String fieldName) {
+        return getDatabaseReference().child(USERS_FOLDER_NAME).child(userId).child(fieldName);
     }
 
     public static DatabaseReference getDatabaseChatsReference() {
@@ -112,6 +126,15 @@ public class FirebaseUtils {
     /**
      * section Firebase Storage
      */
+
+    public static StorageReference getStorageProfileImagesReference(String userId) {
+        return getStorageChildReference(STORAGE_PROFILE_IMAGES_FOLDER_NAME).child(userId + STORAGE_PROFILE_IMAGE_FILE_EXTENSION);
+    }
+
+    public static StorageReference getStorageChildReference(String child) {
+        return FirebaseStorage.getInstance().getReference().child(child);
+    }
+
 
 
     /**
