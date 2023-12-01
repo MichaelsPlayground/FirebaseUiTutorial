@@ -194,7 +194,7 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
                 edtMessage.setText("");
 
                 // store the message in recentMessages database of the receiver
-// RecentMessageModel(String chatroomId, String chatMessage, String userId, String userName, String userEmail, String userProfileImage, long chatLastTime)
+                // RecentMessageModel(String chatroomId, String chatMessage, String userId, String userName, String userEmail, String userProfileImage, long chatLastTime)
                 RecentMessageModel recentMessageModel = new RecentMessageModel(roomId, messageString, authUserId, authDisplayName, authUserEmail, "https://firebasestorage.googleapis.com/v0/b/fir-tutorial-365bc.appspot.com/o/profile_images%2Frpv1yNXRgnhCb7flsXBkyaTgSZ22.jpg?alt=media&token=3502b607-fd38-4ddc-aa46-9b864b0ea5de", actualTime);
                 FirebaseUtils.getDatabaseUserRecentMessagesReference(receiveUserId)
                         .push().setValue(recentMessageModel);
