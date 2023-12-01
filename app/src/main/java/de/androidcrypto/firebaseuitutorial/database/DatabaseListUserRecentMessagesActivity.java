@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 
 import java.util.Objects;
 
@@ -57,18 +58,22 @@ public class DatabaseListUserRecentMessagesActivity extends AppCompatActivity im
 
         recyclerView = findViewById(R.id.rvDatabaseListUserRecentMessages);
         // To display the Recycler view linearlayout
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(layoutManager);
 
     }
 
-    private void listDatabaseUserChatrooms() {
+    private void listDatabaseUserRecentMessages() {
         recentMessagesDatabase = FirebaseUtils.getDatabaseUserRecentMessagesReference(authUserId);
-
         // This is a class provided by the FirebaseUI to make a
         // query in the database to fetch appropriate data
+        Query orderedQuery = recentMessagesDatabase.orderByChild("chatLastTime");
         FirebaseRecyclerOptions<RecentMessageModel> options
                 = new FirebaseRecyclerOptions.Builder<RecentMessageModel>()
-                .setQuery(recentMessagesDatabase, RecentMessageModel.class)
+                .setQuery(orderedQuery, RecentMessageModel.class)
+                //.setQuery(recentMessagesDatabase, RecentMessageModel.class)
                 .build();
         // Connecting object of required Adapter class to
         // the Adapter class itself
@@ -148,7 +153,7 @@ public class DatabaseListUserRecentMessagesActivity extends AppCompatActivity im
             authUserEmail = user.getEmail();
             String userData = String.format("Email: %s", authUserEmail);
             signedInUser.setText(userData);
-            listDatabaseUserChatrooms();
+            listDatabaseUserRecentMessages();
         } else {
             signedInUser.setText(null);
         }

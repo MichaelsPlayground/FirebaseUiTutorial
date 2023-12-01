@@ -1,12 +1,11 @@
 package de.androidcrypto.firebaseuitutorial.database;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +21,6 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 
 import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
-import de.androidcrypto.firebaseuitutorial.models.ChatroomModel;
 import de.androidcrypto.firebaseuitutorial.models.MessageModel;
 import de.androidcrypto.firebaseuitutorial.models.RecentMessageModel;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
@@ -30,7 +28,6 @@ import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -41,8 +38,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.Objects;
 
 public class DatabaseChatActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
@@ -54,7 +49,10 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
     private TextView userName;
     private RecyclerView messagesList;
 
-    private static String authUserId = "", authUserEmail = "", authDisplayName = "";
+    private static String authUserId = "";
+    private static String authUserEmail = "";
+    private static String authDisplayName = "";
+    private static String authProfileImage = "";
     private static String receiveUserId = "", receiveUserEmail = "", receiveUserDisplayName = "", receiveProfileImage = "";
     private static String roomId = "";
 
@@ -153,6 +151,7 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
         // get own data
         authUserEmail = intent.getStringExtra("AUTH_EMAIL");
         authDisplayName = intent.getStringExtra("AUTH_DISPLAYNAME");
+        authProfileImage = mFirebaseAuth.getCurrentUser().getPhotoUrl().toString();
 
         // Initialize Firebase Auth
         // mFirebaseAuth = FirebaseAuth.getInstance();
@@ -195,7 +194,7 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
 
                 // store the message in recentMessages database of the receiver
                 // RecentMessageModel(String chatroomId, String chatMessage, String userId, String userName, String userEmail, String userProfileImage, long chatLastTime)
-                RecentMessageModel recentMessageModel = new RecentMessageModel(roomId, messageString, authUserId, authDisplayName, authUserEmail, "https://firebasestorage.googleapis.com/v0/b/fir-tutorial-365bc.appspot.com/o/profile_images%2Frpv1yNXRgnhCb7flsXBkyaTgSZ22.jpg?alt=media&token=3502b607-fd38-4ddc-aa46-9b864b0ea5de", actualTime);
+                RecentMessageModel recentMessageModel = new RecentMessageModel(roomId, messageString, authUserId, authDisplayName, authUserEmail, authProfileImage, actualTime);
                 FirebaseUtils.getDatabaseUserRecentMessagesReference(receiveUserId)
                         .push().setValue(recentMessageModel);
                 Log.d(TAG, "recent message reference written");
@@ -369,7 +368,7 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
         }
     }
 
-    // generates the room id and prepares for the querry
+    // generates the room id and prepares for the query
     private void setDatabaseForRoom(String ownUid, String receiverUid) {
         // get the roomId by comparing 2 UID strings
         roomId = getRoomId(ownUid, receiverUid);

@@ -495,7 +495,7 @@ public class MainActivity extends AppCompatActivity {
         editDatabaseUserImage.setEnabled(isSignedIn);
         listDatabaseUser.setEnabled(isSignedIn);
         listDatabaseUserLv.setEnabled(isSignedIn);
-
+        listDatabaseUserRecentMessages.setEnabled(isSignedIn);
 
 
 

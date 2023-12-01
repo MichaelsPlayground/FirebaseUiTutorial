@@ -235,6 +235,8 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
                         Snackbar snackbar = Snackbar
                                 .make(view, "data written to database", Snackbar.LENGTH_SHORT);
                         snackbar.show();
+                        // write the data to the auth database
+                        FirebaseUtils.writeToCurrentUserAuthData(userName.getText().toString(), userPhotoUrl.getText().toString());
                     } else {
                         Toast.makeText(getApplicationContext(),
                                 "load user data before saving",

@@ -1,8 +1,15 @@
 package de.androidcrypto.firebaseuitutorial.utils;
 
+import android.net.Uri;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -60,6 +67,24 @@ public class FirebaseUtils {
 
     public static void logout(){
         FirebaseAuth.getInstance().signOut();
+    }
+
+    public static void writeToCurrentUserAuthData(String displayName, String photoUrl) {
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(displayName)
+                .setPhotoUri(Uri.parse(photoUrl))
+                .build();
+
+        getCurrentUser().updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            // success
+                        }
+                    }
+                });
+        return;
     }
 
     /**
