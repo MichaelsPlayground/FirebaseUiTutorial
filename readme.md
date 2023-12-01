@@ -9,7 +9,7 @@ the Firebase products in the Firebase console.
 
 This app uses 2 Sign-In provider: **Email/Password** and **Google account** authentication.
 
-This app is not using the "Email address verification".
+This app is showing but not actively using the "Email address verification".
 
 Step-by-step tutorial for Authentication: 
 
