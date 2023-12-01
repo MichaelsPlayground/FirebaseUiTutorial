@@ -38,6 +38,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".auth.AuthEditUserProfileActivity"
+            android:exported="false"/>
+        <activity
             android:name=".database.DatabaseEditUserProfileActivity"
             android:exported="false"/>
         <activity

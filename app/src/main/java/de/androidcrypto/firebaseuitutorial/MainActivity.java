@@ -36,6 +36,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import de.androidcrypto.firebaseuitutorial.auth.AuthEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserChatroomsActivity;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private com.google.android.material.textfield.TextInputEditText signedInUser;
-    private Button signIn, signOut, verification, accountDeletion;
+    private Button signIn, signOut, editAuthUserProfile, verification, accountDeletion;
 
     private List<AuthUI.IdpConfig> authenticationProviders = Arrays.asList(
             new AuthUI.IdpConfig.EmailBuilder().build(),
@@ -127,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
         signedInUser = findViewById(R.id.etMainSignedInUser);
         signIn = findViewById(R.id.btnMainAuthSignIn);
         signOut = findViewById(R.id.btnMainAuthSignOut);
+        editAuthUserProfile = findViewById(R.id.btnMainAuthEditUserProfile);
         verification = findViewById(R.id.btnMainAuthVerification);
         accountDeletion = findViewById(R.id.btnMainAuthDeleteUser);
 
@@ -174,6 +176,15 @@ public class MainActivity extends AppCompatActivity {
                 firebaseAuth.signOut();
                 signedInUser.setText(null);
                 activeButtonsWhileUserIsSignedIn(false);
+            }
+        });
+
+        editAuthUserProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "edit user profile on auth database");
+                Intent intent = new Intent(MainActivity.this, AuthEditUserProfileActivity.class);
+                startActivity(intent);
             }
         });
 
