@@ -54,7 +54,7 @@ public class UserModelAdapter extends FirebaseRecyclerAdapter<
     protected void
     onBindViewHolder(@NonNull UserModelViewholder holder,
                      int position, @NonNull UserModel model) {
-
+        System.out.println("*** onBindViewHolder position: " + position);
         if (!model.getUserId().equals(ownUserId)) {
             userList.add(model);
 
@@ -109,9 +109,7 @@ public class UserModelAdapter extends FirebaseRecyclerAdapter<
         } else {
             holder.itemView.setVisibility(View.GONE);
             holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
-
         }
-
     }
 
     public void setClickListener(ItemClickListener itemClickListener) {

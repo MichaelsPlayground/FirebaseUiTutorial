@@ -20,7 +20,9 @@ public class FirebaseUtils {
     // realtime database
 
     public static final String USERS_FOLDER_NAME = "users";
-    public static final String CHATROOMS_FOLDER_NAME = "messages";
+    public static final String CHATROOM_FOLDER_NAME = "messages";
+    private static final String RECENT_MESSAGES_FOLDER_NAME = "recentMessages";
+    public static final String CHATROOMS_FOLDER_NAME = "chatrooms";
     public static final String INFO_CONNECTED = ".info/connected";
     public static final String DATABASE_CONNECTIONS = "connections";
     public static final String DATABASE_LAST_ONLINE = "lastOnline";
@@ -31,6 +33,7 @@ public class FirebaseUtils {
 
     public static final String STORAGE_PROFILE_IMAGES_FOLDER_NAME = "profile_images";
     public static final String STORAGE_PROFILE_IMAGE_FILE_EXTENSION = ".jpg";
+
 
     private static DatabaseReference databaseReference;
 
@@ -84,11 +87,21 @@ public class FirebaseUtils {
     }
 
     public static DatabaseReference getDatabaseChatsReference() {
-        return getDatabaseReference().child(CHATROOMS_FOLDER_NAME);
+        return getDatabaseReference().child(CHATROOM_FOLDER_NAME);
     }
 
     public static DatabaseReference getDatabaseChatroomReference(String chatroomId) {
-        return getDatabaseReference().child(CHATROOMS_FOLDER_NAME).child(chatroomId);
+        return getDatabaseReference().child(CHATROOM_FOLDER_NAME).child(chatroomId);
+    }
+
+    public static DatabaseReference getDatabaseUserRecentMessagesReference(String userId) {
+        return getDatabaseUserChatroomsReference(userId).child(RECENT_MESSAGES_FOLDER_NAME);
+    }
+    public static DatabaseReference getDatabaseUserChatroomsReference(String userId, String chatroomId) {
+        return getDatabaseUserChatroomsReference(userId).child(chatroomId);
+    }
+    public static DatabaseReference getDatabaseUserChatroomsReference(String userId) {
+        return getDatabaseReference().child(USERS_FOLDER_NAME).child(userId).child(CHATROOMS_FOLDER_NAME);
     }
 
     // https://firebase.google.com/docs/database/android/offline-capabilities#section-presence

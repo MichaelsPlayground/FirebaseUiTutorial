@@ -20,65 +20,62 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
 
 import java.util.Objects;
 
 import de.androidcrypto.firebaseuitutorial.ItemClickListener;
 import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
+import de.androidcrypto.firebaseuitutorial.models.ChatroomModel;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 
-public class DatabaseListUserActivity extends AppCompatActivity implements ItemClickListener {
+public class DatabaseListUserChatroomsActivity extends AppCompatActivity implements ItemClickListener {
     // https://www.geeksforgeeks.org/how-to-populate-recyclerview-with-firebase-data-using-firebaseui-in-android-studio/
 
-    private static final String TAG = DatabaseListUserActivity.class.getSimpleName();
+    private static final String TAG = DatabaseListUserChatroomsActivity.class.getSimpleName();
 
     private com.google.android.material.textfield.TextInputEditText signedInUser;
 
     private static String authUserId = "", authUserEmail, authDisplayName, authPhotoUrl;
 
+    DatabaseReference chatroomsDatabase;
     private RecyclerView recyclerView;
-    private UserModelAdapter adapter; // Create Object of the Adapter class
+    private ChatroomModelAdapter adapter; // Create Object of the Adapter class
     private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_database_list_user);
+        setContentView(R.layout.activity_database_list_user_chatrooms);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.sub_toolbar);
         setSupportActionBar(myToolbar);
 
         signedInUser = findViewById(R.id.etDatabaseListUserSignedInUser);
-        progressBar = findViewById(R.id.pbDatabaseListUser);
+        progressBar = findViewById(R.id.pbDatabaseListUserChatrooms);
 
-        // Create a instance of the database and get its reference
-        DatabaseReference usersDatabase = FirebaseUtils.getDatabaseUsersReference(); // unsorted user list
-
-        recyclerView = findViewById(R.id.rvDatabaseListUser);
+        recyclerView = findViewById(R.id.rvDatabaseListUserChatrooms);
         // To display the Recycler view linearlayout
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+    }
+
+    private void listDatabaseUserChatrooms() {
+        chatroomsDatabase = FirebaseUtils.getDatabaseUserChatroomsReference(authUserId);
+
         // This is a class provided by the FirebaseUI to make a
         // query in the database to fetch appropriate data
-        FirebaseRecyclerOptions<UserModel> options
-                = new FirebaseRecyclerOptions.Builder<UserModel>()
-                .setQuery(usersDatabase, UserModel.class)
+        FirebaseRecyclerOptions<ChatroomModel> options
+                = new FirebaseRecyclerOptions.Builder<ChatroomModel>()
+                .setQuery(chatroomsDatabase, ChatroomModel.class)
                 .build();
         // Connecting object of required Adapter class to
         // the Adapter class itself
-        System.out.println("*** before adapter = new UserModelAdapter");
-        adapter = new UserModelAdapter(options, true, FirebaseUtils.getCurrentUserId(), this);
+        adapter = new ChatroomModelAdapter(options, true, FirebaseUtils.getCurrentUserId(), this);
         adapter.setClickListener(this);
         // Connecting Adapter class with the Recycler view*/
         recyclerView.setAdapter(adapter);
-
-        // note: the onClick listener is implemented in UserModelAdapter
-    }
-
-    private void listDatabaseUser() {
         adapter.startListening();
     }
 
@@ -151,7 +148,7 @@ public class DatabaseListUserActivity extends AppCompatActivity implements ItemC
             authUserEmail = user.getEmail();
             String userData = String.format("Email: %s", authUserEmail);
             signedInUser.setText(userData);
-            listDatabaseUser();
+            listDatabaseUserChatrooms();
         } else {
             signedInUser.setText(null);
         }
@@ -181,7 +178,7 @@ public class DatabaseListUserActivity extends AppCompatActivity implements ItemC
         mGoToHome.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Intent intent = new Intent(DatabaseListUserActivity.this, MainActivity.class);
+                Intent intent = new Intent(DatabaseListUserChatroomsActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
                 return false;

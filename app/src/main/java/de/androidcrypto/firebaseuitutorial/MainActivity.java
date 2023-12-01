@@ -38,7 +38,9 @@ import java.util.List;
 
 import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserActivity;
+import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserChatroomsActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserLvActivity;
+import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserRecentMessagesActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseUpdateProfileImageActivity;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
@@ -81,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private Button editDatabaseUserProfile, editDatabaseUserImage, listDatabaseUser, listDatabaseUserLv;
+    private Button listDatabaseUserRecentMessages, listDatabaseUserChatrooms;
     private Button presenceCheckDatabase;
     private DatabaseReference actualUserDatabaseReference;
 
@@ -300,6 +303,27 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        listDatabaseUserRecentMessages = findViewById(R.id.btnMainDatabaseListUserRecentMessages);
+        listDatabaseUserRecentMessages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "list Database user recent messages RecyclerView");
+                Intent intent = new Intent(MainActivity.this, DatabaseListUserRecentMessagesActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        listDatabaseUserChatrooms = findViewById(R.id.btnMainDatabaseListUserChatrooms);
+        listDatabaseUserChatrooms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "list Database user chatrooms RecyclerView");
+                Intent intent = new Intent(MainActivity.this, DatabaseListUserChatroomsActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         presenceCheckDatabase = findViewById(R.id.btnMainDatabasePresenceCheck);
         presenceCheckDatabase.setOnClickListener(new View.OnClickListener() {

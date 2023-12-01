@@ -52,6 +52,12 @@
         <activity
             android:name=".database.DatabaseChatActivity"
             android:exported="false"/>
+        <activity
+            android:name=".database.DatabaseListUserRecentMessagesActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".database.DatabaseListUserChatroomsActivity"
+            android:exported="false"/>
 
         <!-- Provider to cache images to the internal App cache -->
         <provider

@@ -117,6 +117,10 @@ public class TimeUtils {
         return getZoneDatedStringMedium(timestamp, getDevicesZoneId(), getDevicesLocale());
     }
 
+    public static String getZoneDatedStringShortLocale (long timestamp) {
+        return getZoneDatedStringShort(timestamp, getDevicesZoneId(), getDevicesLocale());
+    }
+
     // returns for Europe/Germany Summertime: '07.09.23 17:32'
     public static String getZoneDatedStringShortDefault(byte[] instant8Bytes) {
         return getZoneDatedStringShort(instant8Bytes, getDevicesZoneId(), getDevicesLocale());

@@ -209,6 +209,26 @@
                 android:text="list user on database in RecyclerView" />
 
             <Button
+                android:id="@+id/btnMainDatabaseListUserRecentMessages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:enabled="true"
+                android:text="list recent user messages in RecyclerView" />
+
+            <Button
+                android:id="@+id/btnMainDatabaseListUserChatrooms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:enabled="true"
+                android:text="list user chatrooms database in RecyclerView" />
+
+            <Button
                 android:id="@+id/btnMainDatabasePresenceCheck"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

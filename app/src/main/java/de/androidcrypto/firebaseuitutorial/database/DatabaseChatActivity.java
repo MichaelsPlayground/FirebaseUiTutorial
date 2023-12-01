@@ -22,7 +22,9 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 
 import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
+import de.androidcrypto.firebaseuitutorial.models.ChatroomModel;
 import de.androidcrypto.firebaseuitutorial.models.MessageModel;
+import de.androidcrypto.firebaseuitutorial.models.RecentMessageModel;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
@@ -62,6 +64,10 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
     private DatabaseReference messagesDatabase;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseRecyclerAdapter firebaseRecyclerAdapter;
+
+    // store the chatroom in user's chatroom database
+    private DatabaseReference chatroomsReference;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,7 +166,7 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
 
         // Create a instance of the database and get its reference
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        messagesDatabase = mDatabaseReference.child("messages");
+        messagesDatabase = FirebaseUtils.getDatabaseChatsReference();
         messagesDatabase.keepSynced(true);
 
         edtMessageLayout.setEndIconOnClickListener(new View.OnClickListener() {
@@ -186,6 +192,22 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
                         "message written to database: " + messageString,
                         Toast.LENGTH_SHORT).show();
                 edtMessage.setText("");
+
+                // store the message in recentMessages database of the receiver
+// RecentMessageModel(String chatroomId, String chatMessage, String userId, String userName, String userEmail, String userProfileImage, long chatLastTime)
+                RecentMessageModel recentMessageModel = new RecentMessageModel(roomId, messageString, authUserId, authDisplayName, authUserEmail, "https://firebasestorage.googleapis.com/v0/b/fir-tutorial-365bc.appspot.com/o/profile_images%2Frpv1yNXRgnhCb7flsXBkyaTgSZ22.jpg?alt=media&token=3502b607-fd38-4ddc-aa46-9b864b0ea5de", actualTime);
+                FirebaseUtils.getDatabaseUserRecentMessagesReference(receiveUserId)
+                        .push().setValue(recentMessageModel);
+                Log.d(TAG, "recent message reference written");
+                /*
+                // store the chatroom in the chatrooms database
+                ChatroomModel chatroomModel = new ChatroomModel(
+                roomId, authUserId, authDisplayName, authUserEmail, "", receiveUserId, receiveUserDisplayName, receiveUserEmail, receiveProfileImage, actualTime, messageString, authUserId, authDisplayName);
+//ChatroomModel(String chatroomId, String userId1, String userName1, String userEmail1, String userProfileImage1, String userId2, String userName2, String userEmail2, String userProfileImage2, long chatLastTime, String lastMessage, String lastMessageFromUserId, String lastMessageFromUserName) {
+                chatroomsReference = FirebaseUtils.getDatabaseUserChatroomsReference(authUserId, roomId);
+                chatroomsReference.setValue(chatroomModel);
+                Log.d(TAG, "chatroom reference written");
+*/
             }
         });
 
