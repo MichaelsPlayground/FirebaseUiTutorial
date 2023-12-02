@@ -61,10 +61,49 @@ are some limitations on the (generous) free "Spark plan". For details see https:
 
 ### edit user profile
 
+Basically most of the data is a copy of the user profile in Auth database. Unfortunately only the (authenticated) user is been 
+able to read the data, so we do need a dataset that is available in a database readable by other (authenticated) users.
 
+As the user ID and the eser email are used to identify a user I don't allow to change them. The user name is the only one 
+editable by typing a new value and press the "save data" button.
+
+If you click on the user image (or the placeholder icon) you are been able to change the profile image. The "Photo Picker" 
+will show up to select an image from the gallery, followed by the (default) image cropper. The cropped image itself is 
+saved in **Firebase Storage** but the **DownloadUrl** is stored in the dataset. Please note: depending on your tutorial stage 
+this functionality is not available in the beginning (as we need Firebase Storage that is introduced at a later point of time).
+
+You may have noticed that this solutions is using a **File Provider** access to intermediately store the selected file before 
+cropping and uploading. If you prefer the older ("legacy") solution see "edit user profile (legacy)".
+
+Just a note on the data: the user dataset contains some elements that are not used within this tutorial.
 
 ### edit user profile (legacy)
 
+The only difference to "edit user profile" is the image cropper. The newer solution is using the "device's built-in" image cropper 
+like "Samsung Gallery" or "Google Photos". The legacy option is using the image cropper of Arthur (android-image-cropper). As the 
+author named the project "unmaintained" you probably should not use this option for newer projects, but the implementation 
+is very easy.
+
+### List user on database (Listview)
+
+
+### list user on database in RecyclerView (chat)
+
+
+### list recent user messages in RecyclerView
+
+
+### database presence check
+
+
+
+
+
+
+
+
+
+### additional data
 
 Step-by-step tutorial for Realtime Database:
 
@@ -79,6 +118,45 @@ Setup the Realtime Database with this rule:
 ```
 
 ## Cloud Firestore Database
+
+This database is the newer one and Firebase's default database. Before using this solution you should check if this database 
+is the right choice (or use the "older" Realtime Database). Please have a look at the pricing plans as well for both databases.
+
+### edit user profile
+
+Basically most of the data is a copy of the user profile in Auth database. Unfortunately only the (authenticated) user is been
+able to read the data, so we do need a dataset that is available in a database readable by other (authenticated) users.
+
+As the user ID and the eser email are used to identify a user I don't allow to change them. The user name is the only one
+editable by typing a new value and press the "save data" button.
+
+If you click on the user image (or the placeholder icon) you are been able to change the profile image. The "Photo Picker"
+will show up to select an image from the gallery, followed by the (default) image cropper. The cropped image itself is
+saved in **Firebase Storage** but the **DownloadUrl** is stored in the dataset. Please note: depending on your tutorial stage
+this functionality is not available in the beginning (as we need Firebase Storage that is introduced at a later point of time).
+
+You may have noticed that this solutions is using a **File Provider** access to intermediately store the selected file before
+cropping and uploading. If you prefer the older ("legacy") solution see "edit user profile (legacy)".
+
+Just a note on the data: the user dataset contains some elements that are not used within this tutorial.
+
+### edit user profile (legacy)
+
+The only difference to "edit user profile" is the image cropper. The newer solution is using the "device's built-in" image cropper
+like "Samsung Gallery" or "Google Photos". The legacy option is using the image cropper of Arthur (android-image-cropper). As the
+author named the project "unmaintained" you probably should not use this option for newer projects, but the implementation
+is very easy.
+
+### list user on database in RecyclerView (chat)
+
+Note: maybe you have noticed that there is no ListView choice, but FirebaseUi does not offer an implementation (helper) for that.
+
+### list recent user messages in RecyclerView
+
+### 
+
+
+### additional data
 
 Step-by-step tutorial for Firestore Database: 
 
@@ -170,3 +248,5 @@ Fine Tutorial series: https://www.youtube.com/playlist?list=PLzLFqCABnRQftQQETzo
 Code: https://github.com/KODDevYouTube/ChatAppTutorial
 
 CircleImageView: implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+Image cropper by Arthur: api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
