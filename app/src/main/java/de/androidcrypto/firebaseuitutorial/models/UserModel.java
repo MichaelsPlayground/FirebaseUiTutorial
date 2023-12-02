@@ -44,7 +44,6 @@ public class UserModel {
         this.userOnlineString = onlineStatus;
     }
 
-
     // for secure messaging
     public UserModel(String userName, String userMail, String userPhotoUrl, String userPublicKey, int userPublicKeyNumber) {
         this.userName = userName;

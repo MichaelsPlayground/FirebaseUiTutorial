@@ -1,6 +1,4 @@
-package de.androidcrypto.firebaseuitutorial.database;
-
-import static androidx.core.content.ContextCompat.startActivity;
+package de.androidcrypto.firebaseuitutorial.firestore;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,22 +15,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.androidcrypto.firebaseuitutorial.GlideApp;
 import de.androidcrypto.firebaseuitutorial.ItemClickListener;
-import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.R;
+import de.androidcrypto.firebaseuitutorial.database.DatabaseChatActivity;
+import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.utils.AndroidUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
 // FirebaseRecyclerAdapter is a class provided by
 // FirebaseUI. it provides functions to bind, adapt and show
 // database contents in a Recycler View
-public class UserModelAdapter extends FirebaseRecyclerAdapter<
-        UserModel, UserModelAdapter.UserModelViewholder> {
+public class FirestoreUserModelAdapter extends FirestoreRecyclerAdapter<
+        UserModel, FirestoreUserModelAdapter.UserModelViewholder> {
 
     private static ItemClickListener clickListener;
     public List<UserModel> userList = new ArrayList<>();
@@ -40,8 +41,8 @@ public class UserModelAdapter extends FirebaseRecyclerAdapter<
     private String ownUserId;
     private Context context;
 
-    public UserModelAdapter(
-            @NonNull FirebaseRecyclerOptions<UserModel> options, boolean isChat, String ownUserId, Context context) {
+    public FirestoreUserModelAdapter(
+            @NonNull FirestoreRecyclerOptions<UserModel> options, boolean isChat, String ownUserId, Context context) {
         super(options);
         this.isChat = isChat;
         this.ownUserId = ownUserId;

@@ -34,7 +34,7 @@
                 android:layout_marginEnd="16dp"
                 android:text="This is the Firebase UI Tutorial"
                 android:textAlignment="center"
-                android:textSize="16sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -147,7 +147,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
                     android:layout_weight="1"
-                    android:text="acc deletetion" />
+                    android:text="acc deletion" />
 
             </LinearLayout>
 
@@ -269,7 +269,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1"
-                    android:enabled="true"
+                    android:enabled="false"
                     android:text="edit user profile" />
 
                 <Button
@@ -284,6 +284,26 @@
                     android:text="edit user profile (legacy)" />
 
             </LinearLayout>
+
+            <Button
+                android:id="@+id/btnMainFirestoreListUser"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:enabled="true"
+                android:text="list user on database in RecyclerView (chat)" />
+
+            <Button
+                android:id="@+id/btnMainFirestoreListUserRecentMessages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:enabled="true"
+                android:text="list recent user messages in RecyclerView" />
 
             <Button
                 android:id="@+id/btnMainFirestoreSelectUser"

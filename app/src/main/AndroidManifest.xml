@@ -74,6 +74,18 @@
         <activity
             android:name=".database.DatabaseListUserRecentMessagesActivity"
             android:exported="false"/>
+        <activity
+            android:name=".firestore.FirestoreEditUserProfileActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".firestore.FirestoreEditUserProfileLegacyActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".firestore.FirestoreListUserActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".firestore.FirestoreListUserRecentMessagesActivity"
+            android:exported="false"/>
 
         <!-- Provider to cache images to the internal App cache -->
         <provider

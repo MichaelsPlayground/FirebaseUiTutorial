@@ -23,9 +23,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:text="List the recent messages of the signed-in user on Firebase Realtime Database in RecyclerView"
+        android:text="List the recent messages of the signed-in user on Firebase Realtime Database"
         android:textAlignment="center"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
     <ProgressBar

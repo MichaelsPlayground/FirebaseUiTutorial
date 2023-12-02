@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/grey_300"
     android:orientation="vertical"
-    tools:context=".auth.AuthEditUserProfileActivity">
+    tools:context=".firestore.FirestoreEditUserProfileLegacyActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/sub_toolbar"
@@ -32,13 +32,13 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:text="AUTH Database user profile"
+                android:text="Edit Firestore user profile (Legacy)"
                 android:textAlignment="center"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
             <ProgressBar
-                android:id="@+id/pbAuthUser"
+                android:id="@+id/pbFirestoreUser"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
                 android:visibility="invisible" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/etAuthUserSignedInUserLayout"
+                android:id="@+id/etFirestoreUserSignedInUserLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etAuthUserSignedInUser"
+                    android:id="@+id/etFirestoreUserSignedInUser"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -86,15 +86,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="16dp"
                 android:background="@color/blue_300"
-                android:text="data in AUTH database"
+                android:text="data in Firestore USERS"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="normal" />
 
             <TextView
-                android:id="@+id/tvAuthUserNoData"
+                android:id="@+id/tvFirestoreUserNoData"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -102,14 +102,14 @@
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/share_rounded_corner_light_red_with_border_error"
                 android:padding="4dp"
-                android:text="No data is stored in database USERS, the data is changed on Auth database only.\nIf you want to change the DATABASE user profile user other button."
+                android:text="No data is stored in Firestore USERS, the data is taken from Auth Firestore.\nThe Dataset is stored automatically."
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="normal"
                 android:visibility="visible" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/etAuthUserUserIdLayout"
+                android:id="@+id/etFirestoreUserUserIdLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -127,7 +127,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etAuthUserUserId"
+                    android:id="@+id/etFirestoreUserUserId"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -140,7 +140,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/etAuthUserUserEmailLayout"
+                android:id="@+id/etFirestoreUserUserEmailLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -158,7 +158,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etAuthUserUserEmail"
+                    android:id="@+id/etFirestoreUserUserEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -170,8 +170,29 @@
                     tools:ignore="KeyboardInaccessibleWidget" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:text="click on the image to change the profile image"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ivUserProfileImage"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/profile_image"
+                app:civ_border_width="5dp"
+                app:civ_border_color="@color/colorPrimary"/>
+
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/etAuthUserPhotoUrlLayout"
+                android:id="@+id/etFirestoreUserPhotoUrlLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -189,7 +210,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etAuthUserPhotoUrl"
+                    android:id="@+id/etFirestoreUserPhotoUrl"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -197,12 +218,74 @@
                     android:text=""
                     android:textSize="16sp"
                     android:visibility="visible"
-                    android:focusable="true"
+                    android:focusable="false"
                     tools:ignore="KeyboardInaccessibleWidget" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/etAuthUserUserNameLayout"
+                android:id="@+id/etFirestoreUserPublicKeyLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:hint="User public key"
+                android:visibility="visible"
+                app:boxCornerRadiusBottomEnd="5dp"
+                app:boxCornerRadiusBottomStart="5dp"
+                app:boxCornerRadiusTopEnd="5dp"
+                app:boxCornerRadiusTopStart="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etFirestoreUserPublicKey"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:inputType="text"
+                    android:text=""
+                    android:textSize="16sp"
+                    android:visibility="visible"
+                    android:focusable="false"
+                    tools:ignore="KeyboardInaccessibleWidget" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/etFirestoreUserPublicKeyNumberLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:hint="User public key number"
+                android:visibility="gone"
+                app:boxCornerRadiusBottomEnd="5dp"
+                app:boxCornerRadiusBottomStart="5dp"
+                app:boxCornerRadiusTopEnd="5dp"
+                app:boxCornerRadiusTopStart="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etFirestoreUserPublicKeyNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:focusable="false"
+                    android:inputType="text"
+                    android:text="0"
+                    android:textSize="16sp"
+                    android:visibility="visible"
+                    tools:ignore="KeyboardInaccessibleWidget" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/etFirestoreUserUserNameLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -221,7 +304,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etAuthUserUserName"
+                    android:id="@+id/etFirestoreUserUserName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -229,33 +312,11 @@
                     android:text=""
                     android:textSize="16sp"
                     android:visibility="visible"
-
                     tools:ignore="KeyboardInaccessibleWidget" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:text="Note: You can't click on the image to change the profile image"
-                android:textAlignment="center"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/ivUserProfileImage"
-                android:layout_width="250dp"
-                android:layout_height="250dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp"
-                android:src="@drawable/profile_image"
-                app:civ_border_width="5dp"
-                app:civ_border_color="@color/colorPrimary"/>
-
             <Button
-                android:id="@+id/btnAuthUserSave"
+                android:id="@+id/btnFirestoreUserSave"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"

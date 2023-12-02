@@ -129,6 +129,8 @@ public class AuthEditUserProfileActivity extends AppCompatActivity {
                         snackbar.show();
                         // write the data only to the auth database
                         FirebaseUtils.writeToCurrentUserAuthData(userName.getText().toString(), userPhotoUrl.getText().toString());
+                        FirebaseUtils.copyAuthDatabaseToDatabaseUser();
+                        FirebaseUtils.copyAuthDatabaseToFirestoreUser();
                     } else {
                         Toast.makeText(getApplicationContext(),
                                 "load user data before saving",

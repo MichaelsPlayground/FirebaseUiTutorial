@@ -41,7 +41,7 @@ public class DatabaseListUserRecentMessagesActivity extends AppCompatActivity im
 
     private DatabaseReference recentMessagesDatabase;
     private RecyclerView recyclerView;
-    private RecentMessageModelAdapter adapter; // Create Object of the Adapter class
+    private DatabaseRecentMessageModelAdapter adapter; // Create Object of the Adapter class
     private ProgressBar progressBar;
 
     @Override
@@ -78,7 +78,7 @@ public class DatabaseListUserRecentMessagesActivity extends AppCompatActivity im
                 .build();
         // Connecting object of required Adapter class to
         // the Adapter class itself
-        adapter = new RecentMessageModelAdapter(options, this);
+        adapter = new DatabaseRecentMessageModelAdapter(options, this);
         adapter.setClickListener(this);
         // Connecting Adapter class with the Recycler view*/
         recyclerView.setAdapter(adapter);

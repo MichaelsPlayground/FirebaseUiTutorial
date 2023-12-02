@@ -1,4 +1,4 @@
-package de.androidcrypto.firebaseuitutorial.database;
+package de.androidcrypto.firebaseuitutorial.firestore;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,11 +15,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.firestore.CollectionReference;
 
 import java.util.Objects;
 
@@ -29,47 +29,46 @@ import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 
-public class DatabaseListUserActivity extends AppCompatActivity implements ItemClickListener {
+public class FirestoreListUserActivity extends AppCompatActivity implements ItemClickListener {
     // https://www.geeksforgeeks.org/how-to-populate-recyclerview-with-firebase-data-using-firebaseui-in-android-studio/
 
-    private static final String TAG = DatabaseListUserActivity.class.getSimpleName();
+    private static final String TAG = FirestoreListUserActivity.class.getSimpleName();
 
     private com.google.android.material.textfield.TextInputEditText signedInUser;
 
     private static String authUserId = "", authUserEmail, authDisplayName, authPhotoUrl;
 
     private RecyclerView recyclerView;
-    private DatabaseUserModelAdapter adapter; // Create Object of the Adapter class
+    private FirestoreUserModelAdapter adapter; // Create Object of the Adapter class
     private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_database_list_user);
+        setContentView(R.layout.activity_firestore_list_user);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.sub_toolbar);
         setSupportActionBar(myToolbar);
 
-        signedInUser = findViewById(R.id.etDatabaseListUserSignedInUser);
-        progressBar = findViewById(R.id.pbDatabaseListUser);
+        signedInUser = findViewById(R.id.etFirestoreListUserSignedInUser);
+        progressBar = findViewById(R.id.pbFirestoreListUser);
 
         // Create a instance of the database and get its reference
-        DatabaseReference usersDatabase = FirebaseUtils.getDatabaseUsersReference(); // unsorted user list
+        CollectionReference usersDatabase = FirebaseUtils.getFirestoreUsersReference(); // unsorted user list
 
-        recyclerView = findViewById(R.id.rvDatabaseListUser);
+        recyclerView = findViewById(R.id.rvFirestoreListUser);
         // To display the Recycler view linearlayout
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // This is a class provided by the FirebaseUI to make a
         // query in the database to fetch appropriate data
-        FirebaseRecyclerOptions<UserModel> options
-                = new FirebaseRecyclerOptions.Builder<UserModel>()
+        FirestoreRecyclerOptions<UserModel> options = new FirestoreRecyclerOptions.Builder<UserModel>()
                 .setQuery(usersDatabase, UserModel.class)
                 .build();
         // Connecting object of required Adapter class to
         // the Adapter class itself
         System.out.println("*** before adapter = new UserModelAdapter");
-        adapter = new DatabaseUserModelAdapter(options, true, FirebaseUtils.getCurrentUserId(), this);
+        adapter = new FirestoreUserModelAdapter(options, true, FirebaseUtils.getCurrentUserId(), this);
         adapter.setClickListener(this);
         // Connecting Adapter class with the Recycler view*/
         recyclerView.setAdapter(adapter);
@@ -180,7 +179,7 @@ public class DatabaseListUserActivity extends AppCompatActivity implements ItemC
         mGoToHome.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Intent intent = new Intent(DatabaseListUserActivity.this, MainActivity.class);
+                Intent intent = new Intent(FirestoreListUserActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
                 return false;

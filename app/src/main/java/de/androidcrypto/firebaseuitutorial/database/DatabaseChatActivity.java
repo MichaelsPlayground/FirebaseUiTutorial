@@ -1,7 +1,6 @@
 package de.androidcrypto.firebaseuitutorial.database;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,6 +17,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+
+import java.util.Objects;
 
 import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
@@ -27,18 +36,6 @@ import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-
-import java.util.Objects;
 
 public class DatabaseChatActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
 
@@ -62,10 +59,6 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
     private DatabaseReference messagesDatabase;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseRecyclerAdapter firebaseRecyclerAdapter;
-
-    // store the chatroom in user's chatroom database
-    private DatabaseReference chatroomsReference;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

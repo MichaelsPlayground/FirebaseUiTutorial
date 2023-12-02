@@ -41,6 +41,10 @@ import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserLvActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserRecentMessagesActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActivity;
+import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileActivity;
+import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileLegacyActivity;
+import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserActivity;
+import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserRecentMessagesActivity;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
@@ -87,8 +91,11 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference actualUserDatabaseReference;
 
     /**
-     * section
+     * section Cloud Firestore Database
      */
+
+    private Button editFirestoreUserProfile, editFirestoreUserProfileLegacy, listFirestoreUser;
+    private Button listFirestoreUserRecentMessages;
 
 
     /**
@@ -142,7 +149,8 @@ public class MainActivity extends AppCompatActivity {
                     signedInUser.setText(user.getEmail() + "\nDisplayName: " + user.getDisplayName());
                     activeButtonsWhileUserIsSignedIn(true);
                     // generate or update database user entry
-                    FirebaseUtils.copyAuthDatabaseToUserDatabase(); // this is set by copyAuth...
+                    FirebaseUtils.copyAuthDatabaseToDatabaseUser(); // this is set by copyAuth...
+                    FirebaseUtils.copyAuthDatabaseToFirestoreUser(); // this is set by copyAuth...
                 } else {
                     Log.e(TAG, "Could not retrieve onAuthStateChanged, user is NULL");
                     signedInUser.setText("");
@@ -372,14 +380,49 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /*
-
-         */
-
         /**
-         * section for
+         * section for Cloud Firestore Database
          */
 
+        editFirestoreUserProfile = findViewById(R.id.btnMainFirestoreEditUserProfile);
+        editFirestoreUserProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "edit Firestore User Profile");
+                Intent intent = new Intent(MainActivity.this, FirestoreEditUserProfileActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        editFirestoreUserProfileLegacy = findViewById(R.id.btnMainFirestoreEditUserProfileLegacy);
+        editFirestoreUserProfileLegacy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "edit Firestore User Profile Legacy");
+                Intent intent = new Intent(MainActivity.this, FirestoreEditUserProfileLegacyActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        listFirestoreUser = findViewById(R.id.btnMainFirestoreListUser);
+        listFirestoreUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "list Database user");
+                Intent intent = new Intent(MainActivity.this, FirestoreListUserActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        listFirestoreUserRecentMessages = findViewById(R.id.btnMainFirestoreListUserRecentMessages);
+        listFirestoreUserRecentMessages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "list Firestore user recent messages RecyclerView");
+                Intent intent = new Intent(MainActivity.this, FirestoreListUserRecentMessagesActivity.class);
+                startActivity(intent);
+            }
+        });
 
         /**
          * section for
@@ -497,9 +540,10 @@ public class MainActivity extends AppCompatActivity {
         listDatabaseUser.setEnabled(isSignedIn);
         listDatabaseUserLv.setEnabled(isSignedIn);
         listDatabaseUserRecentMessages.setEnabled(isSignedIn);
-
-
-
+        // firestore database
+        editFirestoreUserProfile.setEnabled(isSignedIn);
+        editFirestoreUserProfileLegacy.setEnabled(isSignedIn);
+        listFirestoreUser.setEnabled(isSignedIn);
 
         /*
         databaseUserProfile.setEnabled(isSignedIn);

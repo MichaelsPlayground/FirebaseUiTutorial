@@ -2,11 +2,15 @@ package de.androidcrypto.firebaseuitutorial.utils;
 
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -14,10 +18,11 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 
@@ -58,20 +63,22 @@ public class FirebaseUtils {
      * section Authentication
      */
 
-    public static FirebaseUser getCurrentUser(){
+    public static FirebaseUser getCurrentUser() {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
-    public static String getCurrentUserId(){
+
+    public static String getCurrentUserId() {
         return FirebaseAuth.getInstance().getUid();
     }
-    public static boolean isLoggedIn(){
-        if(getCurrentUserId() != null){
+
+    public static boolean isLoggedIn() {
+        if (getCurrentUserId() != null) {
             return true;
         }
         return false;
     }
 
-    public static void logout(){
+    public static void logout() {
         FirebaseAuth.getInstance().signOut();
     }
 
@@ -128,9 +135,11 @@ public class FirebaseUtils {
     public static DatabaseReference getDatabaseUserRecentMessagesReference(String userId) {
         return getDatabaseReference().child(RECENT_MESSAGES_FOLDER_NAME).child(userId);
     }
+
     public static DatabaseReference getDatabaseUserChatroomsReference(String userId, String chatroomId) {
         return getDatabaseUserChatroomsReference(userId).child(chatroomId);
     }
+
     public static DatabaseReference getDatabaseUserChatroomsReference(String userId) {
         return getDatabaseReference().child(USERS_FOLDER_NAME).child(userId).child(CHATROOMS_FOLDER_NAME);
     }
@@ -144,10 +153,10 @@ public class FirebaseUtils {
         return getDatabaseUserReference(userId).child(DATABASE_LAST_ONLINE);
     }
 
-
     public static DatabaseReference getDatabaseInfoConnected() {
         return getDatabaseReference().child(INFO_CONNECTED);
     }
+
     public static void setPersistenceStatus(boolean status) {
         FirebaseDatabase.getInstance().setPersistenceEnabled(status);
     }
@@ -166,86 +175,57 @@ public class FirebaseUtils {
     }
 
     // copies the current user credentials to Database user
-    public static void copyAuthDatabaseToUserDatabase() {
+    public static void copyAuthDatabaseToDatabaseUser() {
         FirebaseUser user = getCurrentUser();
         String userId = user.getUid();
         if (TextUtils.isEmpty(userId)) {
             UserModel userModel = new UserModel(
                     userId, user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString(), "", 0, USER_ONLINE, TimeUtils.getActualUtcZonedDateTime());
-        FirebaseUtils.getDatabaseUserReference(userId).setValue(userModel);
+            FirebaseUtils.getDatabaseUserReference(userId).setValue(userModel);
             System.out.println("*** uName: " + user.getDisplayName() + " url: " + user.getPhotoUrl());
         }
     }
-
-/*
-databaseUserReference = FirebaseUtils.getDatabaseUserReference(authUserId);
-        if (!TextUtils.isEmpty(authUserId)) {
-            databaseUserReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DataSnapshot> task) {
-                    hideProgressBar();
-                    if (!task.isSuccessful()) {
-                        Log.e(TAG, "Error getting data", task.getException());
-                    } else {
-                        // check for a null value means no user data were saved before
-                        UserModel userModel = task.getResult().getValue(UserModel.class);
-                        Log.d(TAG, "User model: " + String.valueOf(userModel));
-                        if (userModel.getUserId() == null) {
-                            Log.i(TAG, "userModel is null, show message");
-                            infoNoData.setVisibility(View.VISIBLE);
-                            // get data from user
-                            userId.setText(authUserId);
-                            userEmail.setText(authUserEmail);
-                            userName.setText(FirebaseUtils.usernameFromEmail(authUserEmail));
-                            userPhotoUrl.setText(authPhotoUrl);
-                            userPublicKey.setText("");
-                            userPublicKeyNumber.setText("0");
-
-                            // automatically save a new dataset
-                            showProgressBar();
-                            writeUserProfile(authUserId, Objects.requireNonNull(userName.getText()).toString(),
-                                    Objects.requireNonNull(userEmail.getText()).toString(),
-                                    Objects.requireNonNull(userPhotoUrl.getText()).toString(),
-                                    Objects.requireNonNull(userPublicKey.getText()).toString(),
-                                    Objects.requireNonNull(userPublicKeyNumber.getText()).toString(),
-                                    FirebaseUtils.USER_ONLINE,
-                                    TimeUtils.getActualUtcZonedDateTime()
-                            );
-                            Snackbar snackbar = Snackbar
-                                    .make(progressBar, "data written to database", Snackbar.LENGTH_SHORT);
-                            snackbar.show();
-                            hideProgressBar();
-                        } else {
-                            Log.i(TAG, "userModel email: " + userModel.getUserMail());
-                            infoNoData.setVisibility(View.GONE);
-                            // get data from user
-                            userId.setText(authUserId);
-                            userEmail.setText(userModel.getUserMail());
-                            userName.setText(userModel.getUserName());
-                            String photoUrl = userModel.getUserPhotoUrl();
-                            userPhotoUrl.setText(photoUrl);
-                            userPublicKey.setText(userModel.getUserPublicKey());
-                            userPublicKeyNumber.setText(String.valueOf(userModel.getUserPublicKeyNumber()));
-                            // load image if userPhotoUrl is not empty
-                            if (!TextUtils.isEmpty(photoUrl)) {
-                                // Download directly from StorageReference using Glide
-                                // (See MyAppGlideModule for Loader registration)
-                                GlideApp.with(getApplicationContext())
-                                        .load(photoUrl)
-                                        .into(profileImageView);
-                            }
-                        }
-                    }
-                }
- */
-
 
     /**
      * section Cloud Firestore Database
      */
 
+    public static FirebaseFirestore getFirestoreReference() {
+        return FirebaseFirestore.getInstance();
+    }
+
+    public static CollectionReference getFirestoreUsersReference() {
+        return getFirestoreReference().collection(USERS_FOLDER_NAME);
+    }
+
+    public static DocumentReference getFirestoreUserReference(String userId) {
+        return getFirestoreReference().collection(USERS_FOLDER_NAME).document(userId);
+    }
 
 
+    // copies the current user credentials to Firestore user
+    public static void copyAuthDatabaseToFirestoreUser() {
+        FirebaseUser user = getCurrentUser();
+        String userId = user.getUid();
+        if (TextUtils.isEmpty(userId)) {
+            UserModel userModel = new UserModel(
+                    userId, user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString(), "", 0, USER_ONLINE, TimeUtils.getActualUtcZonedDateTime());
+            FirebaseUtils.getFirestoreUserReference(userId).set(userModel)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // success
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // failure
+                        }
+                    });
+            System.out.println("*** uName: " + user.getDisplayName() + " url: " + user.getPhotoUrl());
+        }
+    }
 
     /**
      * section Firebase Storage
@@ -260,16 +240,15 @@ databaseUserReference = FirebaseUtils.getDatabaseUserReference(authUserId);
     }
 
 
-
     /**
      * section for conversions
      */
 
-    public static String timestampToString(Timestamp timestamp){
+    public static String timestampToString(Timestamp timestamp) {
         return new SimpleDateFormat("HH:mm").format(timestamp.toDate());
     }
 
-    public static String timestampFullToString(Timestamp timestamp){
+    public static String timestampFullToString(Timestamp timestamp) {
         return new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(timestamp.toDate());
     }
 

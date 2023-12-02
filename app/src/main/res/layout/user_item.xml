@@ -20,7 +20,8 @@
         android:layout_toEndOf="@id/userProfileImage"
         android:layout_marginLeft="10dp"
         android:layout_centerVertical="true"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:maxLines="1"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/img_on"

@@ -2,8 +2,6 @@ package de.androidcrypto.firebaseuitutorial.models;
 
 import androidx.annotation.Nullable;
 
-import com.google.firebase.Timestamp;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +10,6 @@ public class MessageModel {
     private String message;
     private String messageTimeString;
     private long messageTime;
-    //private Timestamp messageTimestamp;
     private String senderId;
     private String receiverId;
     private String attachmentId;
@@ -23,36 +20,6 @@ public class MessageModel {
     private String pubKeySender;
 
     public MessageModel() {}
-
-    // full message constructor
-
-    /*
-    public MessageModel(String message, long messageTime, Timestamp messageTimestamp, String senderId, String receiverId, String attachmentId, boolean messageRead, boolean messageEncrypted, int pubKeyIdSender, int pubKeyIdReceiver, String pubKeySender) {
-        this.message = message;
-        this.messageTime = messageTime;
-        this.messageTimestamp = messageTimestamp;
-        this.senderId = senderId;
-        this.receiverId = receiverId;
-        this.attachmentId = attachmentId;
-        this.messageRead = messageRead;
-        this.messageEncrypted = messageEncrypted;
-        this.pubKeyIdSender = pubKeyIdSender;
-        this.pubKeyIdReceiver = pubKeyIdReceiver;
-        this.pubKeySender = pubKeySender;
-    }
-*/
-    public MessageModel(String message, long messageTime, String senderId, String receiverId, String attachmentId, boolean messageRead, boolean messageEncrypted, int pubKeyIdSender, int pubKeyIdReceiver, String pubKeySender) {
-        this.message = message;
-        this.messageTime = messageTime;
-        this.senderId = senderId;
-        this.receiverId = receiverId;
-        this.attachmentId = attachmentId;
-        this.messageRead = messageRead;
-        this.messageEncrypted = messageEncrypted;
-        this.pubKeyIdSender = pubKeyIdSender;
-        this.pubKeyIdReceiver = pubKeyIdReceiver;
-        this.pubKeySender = pubKeySender;
-    }
 
     // constructor for beginner chats (unencrypted, no attachment)
     public MessageModel(String message, long messageTime, String messageTimeString, String senderId, String receiverId) {
@@ -68,23 +35,6 @@ public class MessageModel {
         this.pubKeyIdReceiver = 0;
         this.pubKeySender = "";
     }
-
-    /*
-    public MessageModel(String message, long messageTime, Timestamp messageTimestamp, String senderId, String receiverId) {
-        this.message = message;
-        this.messageTime = messageTime;
-        this.messageTimestamp = messageTimestamp;
-        this.senderId = senderId;
-        this.receiverId = receiverId;
-        this.attachmentId = "";
-        this.messageRead = false;
-        this.messageEncrypted = false;
-        this.pubKeyIdSender = 0;
-        this.pubKeyIdReceiver = 0;
-        this.pubKeySender = "";
-    }
-
-     */
 
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();

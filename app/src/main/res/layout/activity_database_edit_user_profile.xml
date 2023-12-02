@@ -32,9 +32,9 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:text="Database user profile"
+                android:text="Edit Database user profile"
                 android:textAlignment="center"
-                android:textSize="16sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <ProgressBar

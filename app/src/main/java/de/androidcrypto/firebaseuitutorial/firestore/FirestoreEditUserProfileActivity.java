@@ -1,4 +1,4 @@
-package de.androidcrypto.firebaseuitutorial.database;
+package de.androidcrypto.firebaseuitutorial.firestore;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -36,8 +36,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -56,9 +57,7 @@ import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class DatabaseEditUserProfileActivity extends AppCompatActivity {
-
-    private static final String TAG = DatabaseEditUserProfileActivity.class.getSimpleName();
+public class FirestoreEditUserProfileActivity extends AppCompatActivity {
 
     /*
     This class uses Glide to download and show the image
@@ -77,13 +76,15 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
     private com.google.android.material.textfield.TextInputEditText userId, userEmail, userPhotoUrl, userPublicKey, userPublicKeyNumber, userName;
     private TextView infoNoData;
 
+    private static final String TAG = FirestoreEditUserProfileActivity.class.getSimpleName();
+
     // get the data from auth
     private static String authUserId = "", authUserEmail, authDisplayName, authPhotoUrl;
 
-    private DatabaseReference databaseUserReference;
+    private DocumentReference documentReference;
     private FirebaseAuth firebaseAuth;
     private ProgressBar progressBar;
-
+    private View savedView;
     private final String CACHE_FOLDER = "crop";
     private String intermediateName = "1.jpg";
     private String resultName = "2.jpg";
@@ -98,24 +99,23 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_database_edit_user_profile);
+        setContentView(R.layout.activity_firestore_edit_user_profile);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.sub_toolbar);
         setSupportActionBar(myToolbar);
 
-        signedInUser = findViewById(R.id.etDatabaseUserSignedInUser);
-        progressBar = findViewById(R.id.pbDatabaseUser);
+        signedInUser = findViewById(R.id.etFirestoreUserSignedInUser);
+        progressBar = findViewById(R.id.pbFirestoreUser);
 
-        infoNoData = findViewById(R.id.tvDatabaseUserNoData);
-        signedInUser = findViewById(R.id.etDatabaseUserSignedInUser);
-        userId = findViewById(R.id.etDatabaseUserUserId);
-        userEmail = findViewById(R.id.etDatabaseUserUserEmail);
-        userNameLayout = findViewById(R.id.etDatabaseUserUserNameLayout);
-        userName = findViewById(R.id.etDatabaseUserUserName);
-        userPhotoUrl = findViewById(R.id.etDatabaseUserPhotoUrl);
-        userPublicKey = findViewById(R.id.etDatabaseUserPublicKey);
-        userPublicKeyNumber = findViewById(R.id.etDatabaseUserPublicKeyNumber);
-
+        infoNoData = findViewById(R.id.tvFirestoreUserNoData);
+        signedInUser = findViewById(R.id.etFirestoreUserSignedInUser);
+        userId = findViewById(R.id.etFirestoreUserUserId);
+        userEmail = findViewById(R.id.etFirestoreUserUserEmail);
+        userNameLayout = findViewById(R.id.etFirestoreUserUserNameLayout);
+        userName = findViewById(R.id.etFirestoreUserUserName);
+        userPhotoUrl = findViewById(R.id.etFirestoreUserPhotoUrl);
+        userPublicKey = findViewById(R.id.etFirestoreUserPublicKey);
+        userPublicKeyNumber = findViewById(R.id.etFirestoreUserPublicKeyNumber);
         profileImageView = findViewById(R.id.ivUserProfileImage);
 
         // don't show the keyboard on startUp
@@ -124,10 +124,11 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
         // Initialize Firebase Auth
         firebaseAuth = FirebaseAuth.getInstance();
 
-        Button cropImage = findViewById(R.id.btnDatabaseUserProfileImageCrop);
-        Button uploadProfileImage = findViewById(R.id.btnDatabaseUserProfileImageUpload);
+        Button cropImage = findViewById(R.id.btnFirestoreUserProfileImageCrop);
+        Button uploadProfileImage = findViewById(R.id.btnFirestoreUserProfileImageUpload);
 
-        Button savaData = findViewById(R.id.btnDatabaseUserSave);
+        Button savaData = findViewById(R.id.btnFirestoreUserSave);
+        savedView = savaData.getRootView();
 
         // click on profile image to load a new one
         profileImageView.setOnClickListener(new View.OnClickListener() {
@@ -172,7 +173,6 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
             }
         });
 
-
         savaData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -200,9 +200,7 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
                                 FirebaseUtils.USER_ONLINE,
                                 TimeUtils.getActualUtcZonedDateTime()
                                 );
-                        Snackbar snackbar = Snackbar
-                                .make(view, "data written to database", Snackbar.LENGTH_SHORT);
-                        snackbar.show();
+
                         // additionally write the data to the auth database
                         FirebaseUtils.writeToCurrentUserAuthData(userName.getText().toString(), userPhotoUrl.getText().toString());
                     } else {
@@ -333,7 +331,7 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
             Bitmap bitmap = loadFromUri(sourceUri);
             File imageFile = getPhotoFileUri(intermediateName);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                intermediateProvider = FileProvider.getUriForFile(DatabaseEditUserProfileActivity.this, FILE_PROVIDER_AUTHORITY + ".provider", imageFile);
+                intermediateProvider = FileProvider.getUriForFile(FirestoreEditUserProfileActivity.this, FILE_PROVIDER_AUTHORITY + ".provider", imageFile);
             else
                 intermediateProvider = Uri.fromFile(imageFile);
 
@@ -422,7 +420,7 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
                 // wrap File object into a content provider
                 // required for API >= 24
                 // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
-                resultProvider = FileProvider.getUriForFile(DatabaseEditUserProfileActivity.this, FILE_PROVIDER_AUTHORITY + ".provider", photoFile);
+                resultProvider = FileProvider.getUriForFile(FirestoreEditUserProfileActivity.this, FILE_PROVIDER_AUTHORITY + ".provider", photoFile);
                 intent.putExtra("return-data", false);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, resultProvider);
                 intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
@@ -496,7 +494,7 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if (task.isSuccessful()) {
                                                     Log.i(TAG, "downloadUrl: " + downloadUrl);
-                                                    Toast.makeText(DatabaseEditUserProfileActivity.this, "Image saved in database successfuly", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(FirestoreEditUserProfileActivity.this, "Image saved in database successfuly", Toast.LENGTH_SHORT).show();
                                                     userPhotoUrl.setText(downloadUrl);
                                                     // Download directly from StorageReference using Glide
                                                     // (See MyAppGlideModule for Loader registration)
@@ -505,7 +503,7 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
                                                             .into(profileImageView);
                                                 } else {
                                                     String message = task.getException().toString();
-                                                    Toast.makeText(DatabaseEditUserProfileActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(FirestoreEditUserProfileActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
                                                 }
                                                 hideProgressBar();
                                             }
@@ -516,7 +514,7 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(DatabaseEditUserProfileActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FirestoreEditUserProfileActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         hideProgressBar();
                     }
                 });
@@ -601,67 +599,67 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
     }
 
     private void loadUserFromDatabase() {
-        Log.i(TAG, "load user data from database for user id: " + authUserId);
+        Log.i(TAG, "load user data from firestore for user id: " + authUserId);
         infoNoData.setVisibility(View.GONE);
         showProgressBar();
-        databaseUserReference = FirebaseUtils.getDatabaseUserReference(authUserId);
         if (!TextUtils.isEmpty(authUserId)) {
-            databaseUserReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            documentReference = FirebaseUtils.getFirestoreUserReference(authUserId);
+            documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
-                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
                     hideProgressBar();
-                    if (!task.isSuccessful()) {
-                        Log.e(TAG, "Error getting data", task.getException());
-                    } else {
-                        // check for a null value means no user data were saved before
-                        UserModel userModel = task.getResult().getValue(UserModel.class);
-                        Log.d(TAG, "User model: " + String.valueOf(userModel));
-                        if (userModel.getUserId() == null) {
-                            Log.i(TAG, "userModel is null, show message");
-                            infoNoData.setVisibility(View.VISIBLE);
-                            // get data from user
-                            userId.setText(authUserId);
-                            userEmail.setText(authUserEmail);
-                            userName.setText(FirebaseUtils.usernameFromEmail(authUserEmail));
-                            userPhotoUrl.setText(authPhotoUrl);
-                            userPublicKey.setText("");
-                            userPublicKeyNumber.setText("0");
+                    Log.i(TAG, "success on loading data from firestore database");
+                    System.out.println("*** " + documentSnapshot.toString());
+                    String un = (String) documentSnapshot.get("userName");
+                    System.out.println("*** un: " + un);
+                    UserModel userModel = documentSnapshot.toObject(UserModel.class);
+                    if (userModel == null) {
+                        Log.i(TAG, "userModel is null, show message");
+                        Log.i(TAG, "userModel is null, show message");
+                        infoNoData.setVisibility(View.VISIBLE);
+                        // get data from user
+                        userId.setText(authUserId);
+                        userEmail.setText(authUserEmail);
+                        userName.setText(FirebaseUtils.usernameFromEmail(authUserEmail));
+                        userPhotoUrl.setText(authPhotoUrl);
+                        userPublicKey.setText("");
+                        userPublicKeyNumber.setText("0");
 
-                            // automatically save a new dataset
-                            showProgressBar();
-                            writeUserProfile(authUserId, Objects.requireNonNull(userName.getText()).toString(),
-                                    Objects.requireNonNull(userEmail.getText()).toString(),
-                                    Objects.requireNonNull(userPhotoUrl.getText()).toString(),
-                                    Objects.requireNonNull(userPublicKey.getText()).toString(),
-                                    Objects.requireNonNull(userPublicKeyNumber.getText()).toString(),
-                                    FirebaseUtils.USER_ONLINE,
-                                    TimeUtils.getActualUtcZonedDateTime()
-                            );
-                            Snackbar snackbar = Snackbar
-                                    .make(progressBar, "data written to database", Snackbar.LENGTH_SHORT);
-                            snackbar.show();
-                            hideProgressBar();
-                        } else {
-                            Log.i(TAG, "userModel email: " + userModel.getUserMail());
-                            infoNoData.setVisibility(View.GONE);
-                            // get data from user
-                            userId.setText(authUserId);
-                            userEmail.setText(userModel.getUserMail());
-                            userName.setText(userModel.getUserName());
-                            String photoUrl = userModel.getUserPhotoUrl();
-                            userPhotoUrl.setText(photoUrl);
-                            userPublicKey.setText(userModel.getUserPublicKey());
-                            userPublicKeyNumber.setText(String.valueOf(userModel.getUserPublicKeyNumber()));
-                            // load image if userPhotoUrl is not empty
-                            if (!TextUtils.isEmpty(photoUrl)) {
-                                // Download directly from StorageReference using Glide
-                                // (See MyAppGlideModule for Loader registration)
-                                GlideApp.with(getApplicationContext())
-                                        .load(photoUrl)
-                                        .into(profileImageView);
-                            }
-                            hideProgressBar();
+                        // automatically save a new dataset
+                        showProgressBar();
+                        writeUserProfile(authUserId, Objects.requireNonNull(userName.getText()).toString(),
+                                Objects.requireNonNull(userEmail.getText()).toString(),
+                                Objects.requireNonNull(userPhotoUrl.getText()).toString(),
+                                Objects.requireNonNull(userPublicKey.getText()).toString(),
+                                Objects.requireNonNull(userPublicKeyNumber.getText()).toString(),
+                                FirebaseUtils.USER_ONLINE,
+                                TimeUtils.getActualUtcZonedDateTime()
+                        );
+                        Snackbar snackbar = Snackbar
+                                .make(progressBar, "data written to database", Snackbar.LENGTH_SHORT);
+                        snackbar.show();
+                        hideProgressBar();
+                    } else {
+                        Log.i(TAG, "userModel email: " + userModel.getUserMail());
+                        Log.i(TAG, "userModel email: " + userModel.getUserMail());
+                        infoNoData.setVisibility(View.GONE);
+                        // get data from user
+                        userId.setText(authUserId);
+                        userEmail.setText(userModel.getUserMail());
+                        userName.setText(userModel.getUserName());
+                        String photoUrl = userModel.getUserPhotoUrl();
+                        userPhotoUrl.setText(photoUrl);
+                        userPublicKey.setText(userModel.getUserPublicKey());
+                        userPublicKeyNumber.setText(String.valueOf(userModel.getUserPublicKeyNumber()));
+                        // load image if userPhotoUrl is not empty
+                        if (!TextUtils.isEmpty(photoUrl)) {
+                            // Download directly from StorageReference using Glide
+                            // (See MyAppGlideModule for Loader registration)
+                            GlideApp.with(getApplicationContext())
+                                    .load(photoUrl)
+                                    .into(profileImageView);
                         }
+                        hideProgressBar();
                     }
                 }
             });
@@ -682,7 +680,25 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
             publicKeyNumberInt = 0;
         }
         UserModel user = new UserModel(userId, name, email, photoUrl, publicKey, publicKeyNumberInt, userOnlineString, userLastOnlineTime);
-        databaseUserReference.setValue(user);
+        FirebaseUtils.getFirestoreUserReference(userId).set(user)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.i(TAG, "DocumentSnapshot successfully written for userId: " + userId);
+                        Snackbar snackbar = Snackbar
+                                .make(savedView, "data written to database", Snackbar.LENGTH_SHORT);
+                        snackbar.show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.i(TAG, "Error writing document for userId: " + userId, e);
+                        Snackbar snackbar = Snackbar
+                                .make(savedView, "Error on write user data to database", Snackbar.LENGTH_SHORT);
+                        snackbar.show();
+                    }
+                });
     }
 
     public void showProgressBar() {
@@ -709,7 +725,7 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
         mGoToHome.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Intent intent = new Intent(DatabaseEditUserProfileActivity.this, MainActivity.class);
+                Intent intent = new Intent(FirestoreEditUserProfileActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
                 return false;
