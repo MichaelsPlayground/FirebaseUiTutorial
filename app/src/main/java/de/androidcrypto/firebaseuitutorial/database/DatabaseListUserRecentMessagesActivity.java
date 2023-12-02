@@ -27,7 +27,6 @@ import java.util.Objects;
 import de.androidcrypto.firebaseuitutorial.ItemClickListener;
 import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
-import de.androidcrypto.firebaseuitutorial.models.ChatroomModel;
 import de.androidcrypto.firebaseuitutorial.models.RecentMessageModel;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 
@@ -69,7 +68,9 @@ public class DatabaseListUserRecentMessagesActivity extends AppCompatActivity im
         recentMessagesDatabase = FirebaseUtils.getDatabaseUserRecentMessagesReference(authUserId);
         // This is a class provided by the FirebaseUI to make a
         // query in the database to fetch appropriate data
-        Query orderedQuery = recentMessagesDatabase.orderByChild("chatLastTime");
+        Query orderedQuery = recentMessagesDatabase
+                .orderByChild("chatLastTime")
+                .limitToLast(5);
         FirebaseRecyclerOptions<RecentMessageModel> options
                 = new FirebaseRecyclerOptions.Builder<RecentMessageModel>()
                 .setQuery(orderedQuery, RecentMessageModel.class)
@@ -82,6 +83,17 @@ public class DatabaseListUserRecentMessagesActivity extends AppCompatActivity im
         // Connecting Adapter class with the Recycler view*/
         recyclerView.setAdapter(adapter);
         adapter.startListening();
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                //recyclerView.smoothScrollToPosition(0); // scroll to top document
+                //recyclerView.smoothScrollToPosition(0); // scroll to top document
+                //recyclerView.smoothScrollToPosition(0); // scroll to last document
+                recyclerView.smoothScrollToPosition(itemCount - 1); // scroll to last document
+                recyclerView.smoothScrollToPosition(adapter.getItemCount()); // scroll to last document
+            }
+        });
     }
 
     @Override

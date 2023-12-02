@@ -198,15 +198,7 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
                 FirebaseUtils.getDatabaseUserRecentMessagesReference(receiveUserId)
                         .push().setValue(recentMessageModel);
                 Log.d(TAG, "recent message reference written");
-                /*
-                // store the chatroom in the chatrooms database
-                ChatroomModel chatroomModel = new ChatroomModel(
-                roomId, authUserId, authDisplayName, authUserEmail, "", receiveUserId, receiveUserDisplayName, receiveUserEmail, receiveProfileImage, actualTime, messageString, authUserId, authDisplayName);
-//ChatroomModel(String chatroomId, String userId1, String userName1, String userEmail1, String userProfileImage1, String userId2, String userName2, String userEmail2, String userProfileImage2, long chatLastTime, String lastMessage, String lastMessageFromUserId, String lastMessageFromUserName) {
-                chatroomsReference = FirebaseUtils.getDatabaseUserChatroomsReference(authUserId, roomId);
-                chatroomsReference.setValue(chatroomModel);
-                Log.d(TAG, "chatroom reference written");
-*/
+
             }
         });
 

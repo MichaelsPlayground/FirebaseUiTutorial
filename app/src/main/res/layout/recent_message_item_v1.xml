@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="1dp"
+    android:padding="5dp"
     android:layout_height="wrap_content">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -29,8 +29,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/tvMessage"
         android:layout_toRightOf="@id/ciUserProfileImage"
-        android:layout_marginTop="1dp"
-        android:paddingTop="1dp"
+        android:layout_marginTop="5dp"
+        android:paddingTop="5dp"
         android:textColor="@color/colorPrimaryDark"
         android:layout_marginLeft="10dp"
         android:maxLines="1"/>
@@ -41,8 +41,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/tvUserNameEmail"
         android:layout_toRightOf="@id/ciUserProfileImage"
-        android:layout_marginTop="1dp"
-        android:paddingTop="1dp"
+        android:layout_marginTop="5dp"
+        android:paddingTop="5dp"
         android:textColor="@color/colorPrimaryDark"
         android:layout_marginLeft="10dp"
         android:maxLines="1"/>

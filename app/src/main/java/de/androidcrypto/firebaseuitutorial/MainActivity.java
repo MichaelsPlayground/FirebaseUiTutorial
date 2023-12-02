@@ -23,7 +23,6 @@ import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -39,7 +38,6 @@ import java.util.List;
 import de.androidcrypto.firebaseuitutorial.auth.AuthEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserActivity;
-import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserChatroomsActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserLvActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserRecentMessagesActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseUpdateProfileImageActivity;
@@ -84,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private Button editDatabaseUserProfile, editDatabaseUserImage, listDatabaseUser, listDatabaseUserLv;
-    private Button listDatabaseUserRecentMessages, listDatabaseUserChatrooms;
+    private Button listDatabaseUserRecentMessages;
     private Button presenceCheckDatabase;
     private DatabaseReference actualUserDatabaseReference;
 
@@ -326,17 +324,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        listDatabaseUserChatrooms = findViewById(R.id.btnMainDatabaseListUserChatrooms);
-        listDatabaseUserChatrooms.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "list Database user chatrooms RecyclerView");
-                Intent intent = new Intent(MainActivity.this, DatabaseListUserChatroomsActivity.class);
-                startActivity(intent);
-            }
-        });
-
 
         presenceCheckDatabase = findViewById(R.id.btnMainDatabasePresenceCheck);
         presenceCheckDatabase.setOnClickListener(new View.OnClickListener() {
