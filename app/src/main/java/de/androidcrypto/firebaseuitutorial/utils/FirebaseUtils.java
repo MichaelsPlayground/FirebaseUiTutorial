@@ -45,6 +45,11 @@ public class FirebaseUtils {
     public static final String DATABASE_LAST_ONLINE_TIME = "lastOnlineTime";
     public static final String DATABASE_USER_PHOTO_URL_FIELD = "userPhotoUrl";
 
+    // firestore
+    public static final String CHATROOM_MESSAGE_TIME = "messageTime";
+    public static final String CHATROOM_COLLECTION_FOLDER_NAME = "mess";
+    public static final String RECENT_MESSAGES_COLLECTION_FOLDER_NAME = "recentMessages";
+
     // storage
 
     public static final String STORAGE_PROFILE_IMAGES_FOLDER_NAME = "profile_images";
@@ -200,15 +205,30 @@ public class FirebaseUtils {
         return getFirestoreReference().collection(USERS_FOLDER_NAME).document(userId);
     }
 
-    public static DocumentReference getFirestoreChatroomReference(String chatroomId) {
-        return getFirestoreReference().collection(CHATROOM_FOLDER_NAME).document(chatroomId);
-    }
     public static CollectionReference getFirestoreChatsReference() {
         return getFirestoreReference().collection(CHATROOM_FOLDER_NAME);
     }
 
-    public static DocumentReference getFirestoreUserRecentMessagesReference(String userId) {
-        return getFirestoreReference().collection(RECENT_MESSAGES_FOLDER_NAME).document(userId);
+    public static CollectionReference getFirestoreUserRecentMessagesReference(String userId) {
+        return getFirestoreReference()
+                .collection(FirebaseUtils.RECENT_MESSAGES_FOLDER_NAME)
+                .document(userId)
+                .collection(CHATROOM_COLLECTION_FOLDER_NAME);
+    }
+
+    public static com.google.firebase.firestore.Query getFirestoreChatroomQuery(String chatroomId) {
+        return getFirestoreReference()
+                .collection(FirebaseUtils.CHATROOM_FOLDER_NAME)
+                .document(chatroomId)
+                .collection(CHATROOM_COLLECTION_FOLDER_NAME)
+                .orderBy(CHATROOM_MESSAGE_TIME);
+    }
+
+    public static CollectionReference getFirestoreChatroomReference(String chatroomId) {
+        return getFirestoreReference()
+                .collection(FirebaseUtils.CHATROOM_FOLDER_NAME)
+                .document(chatroomId)
+                .collection(CHATROOM_COLLECTION_FOLDER_NAME);
     }
 
 

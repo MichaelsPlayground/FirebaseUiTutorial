@@ -96,7 +96,7 @@ public class FirestoreUserModelAdapter extends FirestoreRecyclerAdapter<
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);*/
                 System.out.println("*** you clicked on userId: " + model.getUserId() + " ***");
-                Intent intent = new Intent(context, DatabaseChatActivity.class);
+                Intent intent = new Intent(context, FirestoreChatActivity.class);
                 intent.putExtra("UID", model.getUserId());
                 intent.putExtra("EMAIL", model.getUserMail());
                 intent.putExtra("DISPLAYNAME", model.getUserName());

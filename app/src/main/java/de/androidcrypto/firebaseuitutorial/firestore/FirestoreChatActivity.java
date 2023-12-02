@@ -20,13 +20,16 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 import java.util.Objects;
 
@@ -57,7 +60,7 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
 
     static final String TAG = FirestoreChatActivity.class.getSimpleName();
 
-    private DocumentReference messagesDatabase;
+    private CollectionReference messagesDatabase;
     private FirebaseAuth mFirebaseAuth;
     private FirestoreRecyclerAdapter firestoreRecyclerAdapter;
 
@@ -157,7 +160,7 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
         // see loadSignedInUserData as we use a new instance there
 
         messagesDatabase = FirebaseUtils.getFirestoreChatsReference();
-        messagesDatabase.keepSynced(true);
+        // TODO messagesDatabase.keepSynced(true);
 
         edtMessageLayout.setEndIconOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,24 +178,34 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
 
                 //MessageModel messageModel = new MessageModel(messageString, actualTime, timestamp, authUserId, receiveUserId);
                 MessageModel messageModel = new MessageModel(messageString, actualTime, actualTimeString, authUserId, receiveUserId);
-                messagesDatabase.child(roomId).push().setValue(messageModel);
-                // without push there is no new chatId key
-                // mDatabaseReference.child("messages").child(roomId).setValue(messageModel);
-                Toast.makeText(getApplicationContext(),
-                        "message written to database: " + messageString,
-                        Toast.LENGTH_SHORT).show();
+                CollectionReference collectionReference = FirebaseUtils.getFirestoreChatroomReference(roomId);
+                collectionReference.add(messageModel).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.i(TAG, "DocumentSnapshot successfully written for roomId: " + roomId);
+                        Toast.makeText(getApplicationContext(),
+                                "message written to chatroom " + roomId,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
                 edtMessage.setText("");
 
                 // store the message in recentMessages database of the receiver
                 // RecentMessageModel(String chatroomId, String chatMessage, String userId, String userName, String userEmail, String userProfileImage, long chatLastTime)
                 RecentMessageModel recentMessageModel = new RecentMessageModel(roomId, messageString, authUserId, authDisplayName, authUserEmail, authProfileImage, actualTime);
-                FirebaseUtils.getDatabaseUserRecentMessagesReference(receiveUserId)
-                        .push().setValue(recentMessageModel);
-                Log.d(TAG, "recent message reference written");
+                CollectionReference recentMessageCollectionReference = FirebaseUtils.getFirestoreUserRecentMessagesReference(receiveUserId);
+                recentMessageCollectionReference.add(recentMessageModel).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.i(TAG, "recent message reference written for receiveUserId: " + receiveUserId);
+                        Toast.makeText(getApplicationContext(),
+                                "recent message written to receiveUserId: " + receiveUserId,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
 
             }
         });
-
     }
 
     /**
@@ -262,18 +275,16 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
     }
 
     void setupChatRecyclerView(String ownUid, String receiverUid) {
-        roomId = FirebaseUtils.getChatroomId(ownUid, receiverUid);
-        messagesDatabase = FirebaseUtils.getFirestoreChatroomReference(roomId);
-        Query query = messagesDatabase
-                .child(roomId)
-                .orderByChild("messageTime");
 
-        /*
-        com.google.firebase.firestore.Query query = FirebaseUtils.getDatabaseChatroomReference(chatroomId)
-                .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING);
-*/
+        roomId = FirebaseUtils.getChatroomId(ownUid, receiverUid);
+        com.google.firebase.firestore.Query query = FirebaseUtils.getFirestoreChatroomQuery(roomId);
+        //Query orderedQuery = query.orderBy("messageTime", Query.Direction.ASCENDING);
+
+        CollectionReference collectionReference = FirebaseUtils.getFirestoreChatroomReference(roomId);
+        Query orderedQuery = collectionReference.orderBy("messageTime", Query.Direction.ASCENDING);
+
         FirestoreRecyclerOptions<MessageModel> options = new FirestoreRecyclerOptions.Builder<MessageModel>()
-                .setQuery(query, MessageModel.class)
+                .setQuery(orderedQuery, MessageModel.class)
                 .build();
 
         firestoreRecyclerAdapter = new FirestoreChatRecyclerAdapter(options, getApplicationContext());
@@ -349,72 +360,6 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
                     Toast.LENGTH_SHORT).show();
             //hideProgressBar();
         }
-    }
-
-    // generates the room id and prepares for the query
-    private void setDatabaseForRoom(String ownUid, String receiverUid) {
-        // get the roomId by comparing 2 UID strings
-        roomId = getRoomId(ownUid, receiverUid);
-        /*
-        String conversationString = "chat between " + ownUid + " (" + authDisplayName + ")"
-                + " and " + receiveUserId + " (" + receiveUserDisplayName + ")"
-                + " in room " + roomId;
-         */
-        String  conversationString = "DB chat with " + receiveUserDisplayName;
-        //header.setText(conversationString);
-        Log.i(TAG, conversationString);
-
-        // get the last 50 messages from database
-        // On the main screen of your app, you may want to show the 50 most recent chat messages.
-        // With Firebase you would use the following query:
-        /*
-        com.google.firebase.firestore.Query orderedQuery = messagesDatabase
-                .
-                .limitToLast(5);
-        Query query = messagesDatabase
-                .child(roomId);
-
-         */
-        //.limitToLast(10); // show the last 10 messages
-        //.limitToLast(50); // show the last 50 messages
-        // The FirebaseRecyclerAdapter binds a Query to a RecyclerView. When data is added, removed,
-        // or changed these updates are automatically applied to your UI in real time.
-        // First, configure the adapter by building FirebaseRecyclerOptions. In this case we will
-        // continue with our chat example:
-        FirestoreChatActivity<MessageModel> options =
-                new FirestoreRecyclerOptions.Builder<MessageModel>()
-                        .setQuery(query, MessageModel.class)
-                        .build();
-
-        // Connecting object of required Adapter class to
-        // the Adapter class itself
-        firestoreRecyclerAdapter = new FirestoreChatRecyclerAdapter(options, this);
-        //firebaseRecyclerAdapter = new ChatRecyclerAdapter(options, this);
-        messagesList.setAdapter(firestoreRecyclerAdapter);
-
-
-        /*
-
-        // Next create the FirebaseRecyclerAdapter object. You should already have a ViewHolder subclass
-        // for displaying each item. In this case we will use a custom ChatHolder class:
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<MessageModel, MessageHolder>(options) {
-            @Override
-            public MessageHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                // Create a new instance of the ViewHolder, in this case we are using a custom
-                // layout called R.layout.message for each item
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.message, parent, false);
-                return new MessageHolder(view);
-            }
-
-            @Override
-            protected void onBindViewHolder(MessageHolder holder, int position, MessageModel model) {
-                // Bind the Chat object to the ChatHolder
-                holder.bind(model);
-            }
-        };
-
-         */
     }
 
     private void reload() {

@@ -42,7 +42,6 @@ public class FirestoreListUserRecentMessagesActivity extends AppCompatActivity i
 
     private static String authUserId = "", authUserEmail, authDisplayName, authPhotoUrl;
 
-    private DatabaseReference recentMessagesDatabase;
     private RecyclerView recyclerView;
     private FirestoreRecentMessageModelAdapter adapter; // Create Object of the Adapter class
     private ProgressBar progressBar;
@@ -69,7 +68,7 @@ public class FirestoreListUserRecentMessagesActivity extends AppCompatActivity i
 
     private void listDatabaseUserRecentMessages() {
         //recentMessagesDatabase = FirebaseUtils.getDatabaseUserRecentMessagesReference(authUserId);
-        CollectionReference recentMessagesDatabase = FirebaseUtils.getFirestoreUsersReference();
+        CollectionReference recentMessagesDatabase = FirebaseUtils.getFirestoreUserRecentMessagesReference(authUserId);
         // This is a class provided by the FirebaseUI to make a
         // query in the database to fetch appropriate data
         Query orderedQuery = recentMessagesDatabase
@@ -78,7 +77,6 @@ public class FirestoreListUserRecentMessagesActivity extends AppCompatActivity i
         FirestoreRecyclerOptions<RecentMessageModel> options
                 = new FirestoreRecyclerOptions.Builder<RecentMessageModel>()
                 .setQuery(orderedQuery, RecentMessageModel.class)
-                //.setQuery(recentMessagesDatabase, RecentMessageModel.class)
                 .build();
         // Connecting object of required Adapter class to
         // the Adapter class itself

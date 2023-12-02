@@ -274,8 +274,6 @@ public class MainActivity extends AppCompatActivity {
                         .setNegativeButton(android.R.string.no, dialogClickListener)
                         .setTitle("DELETE the account")
                         .show();
-
-
             }
         });
 
