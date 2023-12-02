@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.androidcrypto.firebaseuitutorial.auth.AuthEditUserProfileActivity;
+import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileLegacyActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserLvActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserRecentMessagesActivity;
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
      * section Firebase Realtime Database
      */
 
-    private Button editDatabaseUserProfile, listDatabaseUser, listDatabaseUserLv;
+    private Button editDatabaseUserProfile, editDatabaseUserProfileLegacy, listDatabaseUser, listDatabaseUserLv;
     private Button listDatabaseUserRecentMessages;
     private Button presenceCheckDatabase;
     private DatabaseReference actualUserDatabaseReference;
@@ -284,6 +285,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        editDatabaseUserProfileLegacy = findViewById(R.id.btnMainDatabaseEditUserProfileLegacy);
+        editDatabaseUserProfileLegacy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "edit Database User Profile");
+                Intent intent = new Intent(MainActivity.this, DatabaseEditUserProfileLegacyActivity.class);
+                startActivity(intent);
+            }
+        });
+
         listDatabaseUser = findViewById(R.id.btnMainDatabaseListUser);
         listDatabaseUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -482,6 +493,7 @@ public class MainActivity extends AppCompatActivity {
         accountDeletion.setEnabled(isSignedIn);
         // realtime database
         editDatabaseUserProfile.setEnabled(isSignedIn);
+        editDatabaseUserProfileLegacy.setEnabled(isSignedIn);
         listDatabaseUser.setEnabled(isSignedIn);
         listDatabaseUserLv.setEnabled(isSignedIn);
         listDatabaseUserRecentMessages.setEnabled(isSignedIn);

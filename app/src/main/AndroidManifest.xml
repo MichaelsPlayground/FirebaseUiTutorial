@@ -4,6 +4,18 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!--
+        Required only if your app needs to access images or photos
+        that other apps created.
+    -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <!--
+        If your app doesn't need to access media files that other apps created,
+        set the "maxSdkVersion" attribute to "28" instead.
+    -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
     <queries>
         <intent>
@@ -43,6 +55,13 @@
         <activity
             android:name=".database.DatabaseEditUserProfileActivity"
             android:exported="false"/>
+        <activity
+            android:name=".database.DatabaseEditUserProfileLegacyActivity"
+            android:exported="false"/>
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:exported="false"
+            android:theme="@style/Base.Theme.AppCompat"/>
         <activity
             android:name=".database.DatabaseListUserActivity"
             android:exported="false"/>
