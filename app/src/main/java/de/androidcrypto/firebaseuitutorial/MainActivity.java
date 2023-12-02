@@ -36,11 +36,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.androidcrypto.firebaseuitutorial.auth.AuthEditUserProfileActivity;
-import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserLvActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserRecentMessagesActivity;
-import de.androidcrypto.firebaseuitutorial.database.DatabaseUpdateProfileImageActivity;
+import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
@@ -81,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
      * section Firebase Realtime Database
      */
 
-    private Button editDatabaseUserProfile, editDatabaseUserImage, listDatabaseUser, listDatabaseUserLv;
+    private Button editDatabaseUserProfile, listDatabaseUser, listDatabaseUserLv;
     private Button listDatabaseUserRecentMessages;
     private Button presenceCheckDatabase;
     private DatabaseReference actualUserDatabaseReference;
@@ -285,16 +284,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        editDatabaseUserImage = findViewById(R.id.btnMainDatabaseEditUserImage);
-        editDatabaseUserImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "edit Database User Image");
-                Intent intent = new Intent(MainActivity.this, DatabaseUpdateProfileImageActivity.class);
-                startActivity(intent);
-            }
-        });
-
         listDatabaseUser = findViewById(R.id.btnMainDatabaseListUser);
         listDatabaseUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -493,7 +482,6 @@ public class MainActivity extends AppCompatActivity {
         accountDeletion.setEnabled(isSignedIn);
         // realtime database
         editDatabaseUserProfile.setEnabled(isSignedIn);
-        editDatabaseUserImage.setEnabled(isSignedIn);
         listDatabaseUser.setEnabled(isSignedIn);
         listDatabaseUserLv.setEnabled(isSignedIn);
         listDatabaseUserRecentMessages.setEnabled(isSignedIn);

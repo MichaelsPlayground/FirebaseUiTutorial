@@ -10,7 +10,6 @@ import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -24,8 +23,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
-
-import de.androidcrypto.firebaseuitutorial.database.DatabaseUpdateProfileImageActivity;
 
 public class SelectImageUri extends AppCompatActivity {
 

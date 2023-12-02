@@ -80,7 +80,6 @@ public class AuthEditUserProfileActivity extends AppCompatActivity {
 
     // get the data from auth
     private static String authUserId = "", authUserEmail, authDisplayName, authPhotoUrl;
-    private FirebaseAuth firebaseAuth;
     private ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,21 +104,7 @@ public class AuthEditUserProfileActivity extends AppCompatActivity {
         // don't show the keyboard on startUp
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        // Initialize Firebase Auth
-        firebaseAuth = FirebaseAuth.getInstance();
-
-        Button loadData = findViewById(R.id.btnAuthUserLoad);
         Button savaData = findViewById(R.id.btnAuthUserSave);
-        Button backToMain = findViewById(R.id.btnAuthUserToMain);
-
-        loadData.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "NO FUNCTION");
-
-            }
-        });
-
         savaData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -139,17 +124,10 @@ public class AuthEditUserProfileActivity extends AppCompatActivity {
                 if (!authUserId.equals("")) {
                     if (!Objects.requireNonNull(userId.getText()).toString().equals("")) {
                         infoNoData.setVisibility(View.GONE);
-                        /*
-                        writeUserProfile(authUserId, Objects.requireNonNull(userName.getText()).toString(),
-                                Objects.requireNonNull(userEmail.getText()).toString(),
-                                Objects.requireNonNull(userPhotoUrl.getText()).toString(),
-                                );
-
-                         */
                         Snackbar snackbar = Snackbar
-                                .make(view, "data written to database", Snackbar.LENGTH_SHORT);
+                                .make(view, "data written to AUTH database", Snackbar.LENGTH_SHORT);
                         snackbar.show();
-                        // additionally write the data to the auth database
+                        // write the data only to the auth database
                         FirebaseUtils.writeToCurrentUserAuthData(userName.getText().toString(), userPhotoUrl.getText().toString());
                     } else {
                         Toast.makeText(getApplicationContext(),
@@ -166,14 +144,6 @@ public class AuthEditUserProfileActivity extends AppCompatActivity {
             }
         });
 
-        backToMain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(AuthEditUserProfileActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
     }
 
     @Override
@@ -253,98 +223,6 @@ public class AuthEditUserProfileActivity extends AppCompatActivity {
         } else {
             signedInUser.setText(null);
         }
-    }
-
-    private void loadUserFromDatabase() {
-        Log.i(TAG, "load user data from database for user id: " + authUserId);
-        infoNoData.setVisibility(View.GONE);
-
-
-        /*
-        showProgressBar();
-        databaseUserReference = FirebaseUtils.getDatabaseUserReference(authUserId);
-        if (!authUserId.equals("")) {
-            databaseUserReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DataSnapshot> task) {
-                    hideProgressBar();
-                    if (!task.isSuccessful()) {
-                        Log.e(TAG, "Error getting data", task.getException());
-                    } else {
-                        // check for a null value means no user data were saved before
-                        UserModel userModel = task.getResult().getValue(UserModel.class);
-                        Log.d(TAG, "User model: " + String.valueOf(userModel));
-                        if (userModel.getUserId() == null) {
-                            Log.i(TAG, "userModel is null, show message");
-                            infoNoData.setVisibility(View.VISIBLE);
-                            // get data from user
-                            userId.setText(authUserId);
-                            userEmail.setText(authUserEmail);
-                            userName.setText(FirebaseUtils.usernameFromEmail(authUserEmail));
-                            userPhotoUrl.setText(authPhotoUrl);
-                            userPublicKey.setText("");
-                            userPublicKeyNumber.setText("0");
-
-                            // automatically save a new dataset
-                            showProgressBar();
-                            writeUserProfile(authUserId, Objects.requireNonNull(userName.getText()).toString(),
-                                    Objects.requireNonNull(userEmail.getText()).toString(),
-                                    Objects.requireNonNull(userPhotoUrl.getText()).toString(),
-                                    Objects.requireNonNull(userPublicKey.getText()).toString(),
-                                    Objects.requireNonNull(userPublicKeyNumber.getText()).toString(),
-                                    FirebaseUtils.USER_ONLINE,
-                                    TimeUtils.getActualUtcZonedDateTime()
-                            );
-                            Snackbar snackbar = Snackbar
-                                    .make(progressBar, "data written to database", Snackbar.LENGTH_SHORT);
-                            snackbar.show();
-                            hideProgressBar();
-                        } else {
-                            Log.i(TAG, "userModel email: " + userModel.getUserMail());
-                            infoNoData.setVisibility(View.GONE);
-                            // get data from user
-                            userId.setText(authUserId);
-                            userEmail.setText(userModel.getUserMail());
-                            userName.setText(userModel.getUserName());
-                            String photoUrl = userModel.getUserPhotoUrl();
-                            userPhotoUrl.setText(photoUrl);
-                            userPublicKey.setText(userModel.getUserPublicKey());
-                            userPublicKeyNumber.setText(String.valueOf(userModel.getUserPublicKeyNumber()));
-                            // load image if userPhotoUrl is not empty
-                            if (!TextUtils.isEmpty(photoUrl)) {
-                                // Download directly from StorageReference using Glide
-                                // (See MyAppGlideModule for Loader registration)
-                                GlideApp.with(getApplicationContext())
-                                        .load(photoUrl)
-                                        .into(profileImageView);
-                            }
-                        }
-                    }
-                }
-            });
-        } else {
-            // this should not happen but...
-            Toast.makeText(getApplicationContext(),
-                    "sign in a user before loading",
-                    Toast.LENGTH_SHORT).show();
-            hideProgressBar();
-        }
-
-         */
-    }
-
-    public void writeUserProfile(String userId, String name, String email, String photoUrl, String publicKey, String publicKeyNumber, String userOnlineString, long userLastOnlineTime) {
-        /*
-        int publicKeyNumberInt;
-        try {
-            publicKeyNumberInt = Integer.parseInt(publicKeyNumber);
-        } catch (NumberFormatException e) {
-            publicKeyNumberInt = 0;
-        }
-        UserModel user = new UserModel(userId, name, email, photoUrl, publicKey, publicKeyNumberInt, userOnlineString, userLastOnlineTime);
-        databaseUserReference.setValue(user);
-
-         */
     }
 
     public void showProgressBar() {

@@ -186,15 +186,15 @@
                     android:text="edit user profile" />
 
                 <Button
-                    android:id="@+id/btnMainDatabaseEditUserImage"
+                    android:id="@+id/btnMainDatabasexxx"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
                     android:layout_weight="1"
-                    android:enabled="true"
-                    android:text="editUserImage" />
+                    android:enabled="false"
+                    android:text="xxx" />
 
             </LinearLayout>
 

@@ -44,9 +44,6 @@
             android:name=".database.DatabaseEditUserProfileActivity"
             android:exported="false"/>
         <activity
-            android:name=".database.DatabaseUpdateProfileImageActivity"
-            android:exported="false"/>
-        <activity
             android:name=".database.DatabaseListUserActivity"
             android:exported="false"/>
         <activity
