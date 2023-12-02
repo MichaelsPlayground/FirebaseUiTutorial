@@ -43,7 +43,8 @@ This app is showing but not actively using the "Email address verification".
 
 As the deletion is a permanently action I implemented a confirmation dialog, after confirming the user is deleted on the Auth database.
 
-**Note: this deletion does not remove any data on the databases or Firebase Storage, this needs to get implemented by yourself !**
+**Note: this deletion does not remove any data on the Realtime Database and Cloud Firestore Database or Firebase Storage, this needs to 
+get implemented by yourself !**
 
 ### additional data
 

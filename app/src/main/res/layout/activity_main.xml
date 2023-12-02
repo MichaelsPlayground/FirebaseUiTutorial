@@ -216,7 +216,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:enabled="true"
-                android:text="list user on database in RecyclerView" />
+                android:text="list user on database in RecyclerView (chat)" />
 
             <Button
                 android:id="@+id/btnMainDatabaseListUserRecentMessages"
@@ -238,46 +238,6 @@
                 android:enabled="true"
                 android:text="database presence check" />
 
-            <Button
-                android:id="@+id/btnMainDatabaseUserImage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:enabled="false"
-                android:text="update user image" />
-
-            <Button
-                android:id="@+id/btnMainDatabaseSendMessage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:enabled="false"
-                android:text="chat with another user" />
-
-            <Button
-                android:id="@+id/btnMainDatabaseListMessages"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:enabled="false"
-                android:text="list messages" />
-
-            <Button
-                android:id="@+id/btnMainDatabaseGenerateTestMessages"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:enabled="false"
-                android:text="generate test messages" />
-
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
@@ -296,25 +256,34 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/btnMainFirestoreDatabaseUser"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:enabled="false"
-                android:text="firestore database user profile" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btnMainFirestoreDatabaseUserImage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:enabled="false"
-                android:text="update user image on Firestore" />
+                <Button
+                    android:id="@+id/btnMainFirestoreEditUserProfile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:enabled="true"
+                    android:text="edit user profile" />
+
+                <Button
+                    android:id="@+id/btnMainFirestoreEditUserProfileLegacy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="1"
+                    android:enabled="false"
+                    android:text="edit user profile (legacy)" />
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/btnMainFirestoreSelectUser"
