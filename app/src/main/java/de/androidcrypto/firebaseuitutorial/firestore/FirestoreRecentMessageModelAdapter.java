@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 import de.androidcrypto.firebaseuitutorial.GlideApp;
 import de.androidcrypto.firebaseuitutorial.ItemClickListener;
@@ -26,14 +28,14 @@ import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 // FirestoreRecyclerAdapter is a class provided by
 // FirebaseUI. it provides functions to bind, adapt and show
 // database contents in a Recycler View
-public class FirestoreRecentMessageModelAdapter extends FirebaseRecyclerAdapter<
+public class FirestoreRecentMessageModelAdapter extends FirestoreRecyclerAdapter<
         RecentMessageModel, FirestoreRecentMessageModelAdapter.RecentMessageModelViewholder> {
 
     private static ItemClickListener clickListener;
     private Context context;
 
     public FirestoreRecentMessageModelAdapter(
-            @NonNull FirebaseRecyclerOptions<RecentMessageModel> options, Context context) {
+            @NonNull FirestoreRecyclerOptions<RecentMessageModel> options, Context context) {
         super(options);
         this.context = context;
     }

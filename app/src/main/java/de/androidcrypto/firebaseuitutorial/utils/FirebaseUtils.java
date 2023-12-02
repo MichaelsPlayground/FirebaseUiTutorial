@@ -2,7 +2,6 @@ package de.androidcrypto.firebaseuitutorial.utils;
 
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -10,7 +9,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -200,6 +198,17 @@ public class FirebaseUtils {
 
     public static DocumentReference getFirestoreUserReference(String userId) {
         return getFirestoreReference().collection(USERS_FOLDER_NAME).document(userId);
+    }
+
+    public static DocumentReference getFirestoreChatroomReference(String chatroomId) {
+        return getFirestoreReference().collection(CHATROOM_FOLDER_NAME).document(chatroomId);
+    }
+    public static CollectionReference getFirestoreChatsReference() {
+        return getFirestoreReference().collection(CHATROOM_FOLDER_NAME);
+    }
+
+    public static DocumentReference getFirestoreUserRecentMessagesReference(String userId) {
+        return getFirestoreReference().collection(RECENT_MESSAGES_FOLDER_NAME).document(userId);
     }
 
 

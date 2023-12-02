@@ -1,4 +1,4 @@
-package de.androidcrypto.firebaseuitutorial.database;
+package de.androidcrypto.firebaseuitutorial.firestore;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,19 +10,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.MessageModel;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
-public class ChatRecyclerAdapter extends FirebaseRecyclerAdapter<MessageModel, ChatRecyclerAdapter.ModelViewHolder> {
+public class FirestoreChatRecyclerAdapter extends FirestoreRecyclerAdapter<MessageModel, FirestoreChatRecyclerAdapter.ModelViewHolder> {
 
     Context context;
 
-    public ChatRecyclerAdapter(@NonNull FirebaseRecyclerOptions<MessageModel> options, Context context) {
+    public FirestoreChatRecyclerAdapter(@NonNull FirestoreRecyclerOptions<MessageModel> options, Context context) {
         super(options);
         this.context = context;
     }

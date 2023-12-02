@@ -16,11 +16,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.Query;
 
 import java.util.Objects;
 
@@ -42,7 +44,7 @@ public class FirestoreListUserRecentMessagesActivity extends AppCompatActivity i
 
     private DatabaseReference recentMessagesDatabase;
     private RecyclerView recyclerView;
-    private DatabaseRecentMessageModelAdapter adapter; // Create Object of the Adapter class
+    private FirestoreRecentMessageModelAdapter adapter; // Create Object of the Adapter class
     private ProgressBar progressBar;
 
     @Override
@@ -66,20 +68,21 @@ public class FirestoreListUserRecentMessagesActivity extends AppCompatActivity i
     }
 
     private void listDatabaseUserRecentMessages() {
-        recentMessagesDatabase = FirebaseUtils.getDatabaseUserRecentMessagesReference(authUserId);
+        //recentMessagesDatabase = FirebaseUtils.getDatabaseUserRecentMessagesReference(authUserId);
+        CollectionReference recentMessagesDatabase = FirebaseUtils.getFirestoreUsersReference();
         // This is a class provided by the FirebaseUI to make a
         // query in the database to fetch appropriate data
         Query orderedQuery = recentMessagesDatabase
-                .orderByChild("chatLastTime")
+                .orderBy("chatLastTime")
                 .limitToLast(5);
-        FirebaseRecyclerOptions<RecentMessageModel> options
-                = new FirebaseRecyclerOptions.Builder<RecentMessageModel>()
+        FirestoreRecyclerOptions<RecentMessageModel> options
+                = new FirestoreRecyclerOptions.Builder<RecentMessageModel>()
                 .setQuery(orderedQuery, RecentMessageModel.class)
                 //.setQuery(recentMessagesDatabase, RecentMessageModel.class)
                 .build();
         // Connecting object of required Adapter class to
         // the Adapter class itself
-        adapter = new DatabaseRecentMessageModelAdapter(options, this);
+        adapter = new FirestoreRecentMessageModelAdapter(options, this);
         adapter.setClickListener(this);
         // Connecting Adapter class with the Recycler view*/
         recyclerView.setAdapter(adapter);

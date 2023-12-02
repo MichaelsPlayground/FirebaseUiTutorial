@@ -1,4 +1,4 @@
-package de.androidcrypto.firebaseuitutorial.database;
+package de.androidcrypto.firebaseuitutorial.firestore;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,19 +17,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.firestore.DocumentReference;
 
 import java.util.Objects;
 
 import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
+import de.androidcrypto.firebaseuitutorial.database.DatabaseChatRecyclerAdapter;
 import de.androidcrypto.firebaseuitutorial.models.MessageModel;
 import de.androidcrypto.firebaseuitutorial.models.RecentMessageModel;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
@@ -37,8 +40,8 @@ import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class DatabaseChatActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
-    static final String TAG = DatabaseChatActivity.class.getSimpleName();
+public class FirestoreChatActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
+
     private com.google.android.material.textfield.TextInputEditText edtMessage;
     private com.google.android.material.textfield.TextInputLayout edtMessageLayout;
     private CircleImageView profileImage;
@@ -52,17 +55,18 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
     private static String receiveUserId = "", receiveUserEmail = "", receiveUserDisplayName = "", receiveProfileImage = "";
     private static String roomId = "";
 
-    private DatabaseReference mDatabaseReference;
-    private DatabaseReference messagesDatabase;
+    static final String TAG = FirestoreChatActivity.class.getSimpleName();
+
+    private DocumentReference messagesDatabase;
     private FirebaseAuth mFirebaseAuth;
-    private FirebaseRecyclerAdapter firebaseRecyclerAdapter;
+    private FirestoreRecyclerAdapter firestoreRecyclerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_database_chat);
+        setContentView(R.layout.activity_firestore_chat);
 
-        Toolbar toolbar = findViewById(R.id.tbChatDatabase);
+        Toolbar toolbar = findViewById(R.id.tbChatFirestore);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -70,20 +74,19 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
             @Override
             public void onClick(View view) {
                 // and this
-                startActivity(new Intent(DatabaseChatActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                startActivity(new Intent(FirestoreChatActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
         });
 
         //Toolbar myToolbar = (Toolbar) findViewById(R.id.chatToolbar);
         //setSupportActionBar(myToolbar);
+        
+        profileImage = findViewById(R.id.ciChatFirestoreProfileImage);
+        userName = findViewById(R.id.tvChatFirestoreUserName);
 
-        //header = findViewById(R.id.tvChatDatabaseHeader);
-        profileImage = findViewById(R.id.ciChatDatabaseProfileImage);
-        userName = findViewById(R.id.tvChatDatabaseUserName);
-
-        edtMessageLayout = findViewById(R.id.etChatDatabaseMessageLayout);
-        edtMessage = findViewById(R.id.etChatDatabaseMessage);
-        messagesList = findViewById(R.id.rvChatDatabase);
+        edtMessageLayout = findViewById(R.id.etChatFirestoreMessageLayout);
+        edtMessage = findViewById(R.id.etChatFirestoreMessage);
+        messagesList = findViewById(R.id.rvChatFirestore);
 
         messagesList.setHasFixedSize(true);
         messagesList.setLayoutManager(new LinearLayoutManager(this));
@@ -153,9 +156,7 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
         //mDatabase = FirebaseDatabase.getInstance().getReference();
         // see loadSignedInUserData as we use a new instance there
 
-        // Create a instance of the database and get its reference
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        messagesDatabase = FirebaseUtils.getDatabaseChatsReference();
+        messagesDatabase = FirebaseUtils.getFirestoreChatsReference();
         messagesDatabase.keepSynced(true);
 
         edtMessageLayout.setEndIconOnClickListener(new View.OnClickListener() {
@@ -227,13 +228,14 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
 
                  */
             } else {
+                //header.setText("you need to select a receiveUser first");
                 Log.i(TAG, "you need to select a receiveUser first");
             }
         } else {
             //signedInUser.setText("no user is signed in");
             authUserId = "";
             enableUiOnSignIn(false);
-            firebaseRecyclerAdapter.stopListening();
+            firestoreRecyclerAdapter.stopListening();
         }
         // startListening begins when a user is logged in
         //firebaseRecyclerAdapter.startListening();
@@ -243,8 +245,8 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
     @Override
     protected void onStop() {
         super.onStop();
-        if (firebaseRecyclerAdapter != null) {
-            firebaseRecyclerAdapter.stopListening();
+        if (firestoreRecyclerAdapter != null) {
+            firestoreRecyclerAdapter.stopListening();
         }
         FirebaseAuth.getInstance().removeAuthStateListener(this);
     }
@@ -261,7 +263,7 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
 
     void setupChatRecyclerView(String ownUid, String receiverUid) {
         roomId = FirebaseUtils.getChatroomId(ownUid, receiverUid);
-        messagesDatabase = FirebaseUtils.getDatabaseChatroomReference(roomId);
+        messagesDatabase = FirebaseUtils.getFirestoreChatroomReference(roomId);
         Query query = messagesDatabase
                 .child(roomId)
                 .orderByChild("messageTime");
@@ -270,23 +272,23 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
         com.google.firebase.firestore.Query query = FirebaseUtils.getDatabaseChatroomReference(chatroomId)
                 .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING);
 */
-        FirebaseRecyclerOptions<MessageModel> options = new FirebaseRecyclerOptions.Builder<MessageModel>()
+        FirestoreRecyclerOptions<MessageModel> options = new FirestoreRecyclerOptions.Builder<MessageModel>()
                 .setQuery(query, MessageModel.class)
                 .build();
 
-        firebaseRecyclerAdapter = new DatabaseChatRecyclerAdapter(options, getApplicationContext());
+        firestoreRecyclerAdapter = new FirestoreChatRecyclerAdapter(options, getApplicationContext());
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setReverseLayout(false); // true oldest element at bottom
         messagesList.setLayoutManager(manager);
-        messagesList.setAdapter(firebaseRecyclerAdapter);
-        firebaseRecyclerAdapter.startListening();
-        firebaseRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+        messagesList.setAdapter(firestoreRecyclerAdapter);
+        firestoreRecyclerAdapter.startListening();
+        firestoreRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 super.onItemRangeInserted(positionStart, itemCount);
                 //messagesList.smoothScrollToPosition(0); // scroll to top document
                 messagesList.smoothScrollToPosition(itemCount - 1); // scroll to last document
-                messagesList.smoothScrollToPosition(firebaseRecyclerAdapter.getItemCount()); // scroll to last document
+                messagesList.smoothScrollToPosition(firestoreRecyclerAdapter.getItemCount()); // scroll to last document
             }
         });
     }
@@ -365,24 +367,30 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
         // get the last 50 messages from database
         // On the main screen of your app, you may want to show the 50 most recent chat messages.
         // With Firebase you would use the following query:
+        /*
+        com.google.firebase.firestore.Query orderedQuery = messagesDatabase
+                .
+                .limitToLast(5);
         Query query = messagesDatabase
                 .child(roomId);
+
+         */
         //.limitToLast(10); // show the last 10 messages
         //.limitToLast(50); // show the last 50 messages
         // The FirebaseRecyclerAdapter binds a Query to a RecyclerView. When data is added, removed,
         // or changed these updates are automatically applied to your UI in real time.
         // First, configure the adapter by building FirebaseRecyclerOptions. In this case we will
         // continue with our chat example:
-        FirebaseRecyclerOptions<MessageModel> options =
-                new FirebaseRecyclerOptions.Builder<MessageModel>()
+        FirestoreChatActivity<MessageModel> options =
+                new FirestoreRecyclerOptions.Builder<MessageModel>()
                         .setQuery(query, MessageModel.class)
                         .build();
 
         // Connecting object of required Adapter class to
         // the Adapter class itself
-        firebaseRecyclerAdapter = new DatabaseChatRecyclerAdapter(options, this);
+        firestoreRecyclerAdapter = new FirestoreChatRecyclerAdapter(options, this);
         //firebaseRecyclerAdapter = new ChatRecyclerAdapter(options, this);
-        messagesList.setAdapter(firebaseRecyclerAdapter);
+        messagesList.setAdapter(firestoreRecyclerAdapter);
 
 
         /*

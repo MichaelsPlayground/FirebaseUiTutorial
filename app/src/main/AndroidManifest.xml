@@ -84,6 +84,9 @@
             android:name=".firestore.FirestoreListUserActivity"
             android:exported="false"/>
         <activity
+            android:name=".firestore.FirestoreChatActivity"
+            android:exported="false"/>
+        <activity
             android:name=".firestore.FirestoreListUserRecentMessagesActivity"
             android:exported="false"/>
 
