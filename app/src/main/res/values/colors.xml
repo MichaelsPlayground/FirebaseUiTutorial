@@ -10,6 +10,7 @@
 
     <color name="off_white">#FAFAFA</color>
     <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#2196F3</color>
     <color name="colorStatusBar">#1E88E5</color>
     <color name="colorAccent">#8E24AA</color>
     <color name="grey_300">#EEEEEE</color>
