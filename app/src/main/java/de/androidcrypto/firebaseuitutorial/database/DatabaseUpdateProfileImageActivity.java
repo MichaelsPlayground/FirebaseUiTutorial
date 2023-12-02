@@ -660,7 +660,7 @@ public class DatabaseUpdateProfileImageActivity extends AppCompatActivity {
         infoNoData.setVisibility(View.GONE);
         showProgressBar();
         databaseUserReference = FirebaseUtils.getDatabaseUserReference(authUserId);
-        if (!authUserId.equals("")) {
+        if (!TextUtils.isEmpty(authUserId)) {
             databaseUserReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DataSnapshot> task) {

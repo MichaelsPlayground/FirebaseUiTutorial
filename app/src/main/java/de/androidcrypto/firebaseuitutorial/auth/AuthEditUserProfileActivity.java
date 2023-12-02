@@ -109,8 +109,6 @@ public class AuthEditUserProfileActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
 
         Button loadData = findViewById(R.id.btnAuthUserLoad);
-
-
         Button savaData = findViewById(R.id.btnAuthUserSave);
         Button backToMain = findViewById(R.id.btnAuthUserToMain);
 
@@ -241,15 +239,17 @@ public class AuthEditUserProfileActivity extends AppCompatActivity {
                 sb.append("Email verification: ").append("Email address is NOT verified");
             }
             signedInUser.setText(sb.toString());
-
-            if (user.isEmailVerified()) {
-//                mBinding.verifyEmailButton.setVisibility(View.GONE);
-            } else {
-//                mBinding.verifyEmailButton.setVisibility(View.VISIBLE);
+            userId.setText(authUserId);
+            userName.setText(authDisplayName);
+            userEmail.setText(authUserEmail);
+            userPhotoUrl.setText(authPhotoUrl);
+            if (!TextUtils.isEmpty(authPhotoUrl)) {
+                // Download directly from StorageReference using Glide
+                // (See MyAppGlideModule for Loader registration)
+                GlideApp.with(getApplicationContext())
+                        .load(authPhotoUrl)
+                        .into(profileImageView);
             }
-
-            // automatically load the user from database
-            loadUserFromDatabase();
         } else {
             signedInUser.setText(null);
         }

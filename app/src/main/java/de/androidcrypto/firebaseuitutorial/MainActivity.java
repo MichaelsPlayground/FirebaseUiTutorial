@@ -143,6 +143,8 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "User Signed In", Toast.LENGTH_SHORT).show();
                     signedInUser.setText(user.getEmail() + "\nDisplayName: " + user.getDisplayName());
                     activeButtonsWhileUserIsSignedIn(true);
+                    // generate or update database user entry
+                    FirebaseUtils.copyAuthDatabaseToUserDatabase(); // this is set by copyAuth...
                 } else {
                     Log.e(TAG, "Could not retrieve onAuthStateChanged, user is NULL");
                     signedInUser.setText("");
@@ -499,6 +501,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void activeButtonsWhileUserIsSignedIn(boolean isSignedIn) {
         // auth
+        editAuthUserProfile.setEnabled(isSignedIn);
         verification.setEnabled(isSignedIn);
         accountDeletion.setEnabled(isSignedIn);
         // realtime database
