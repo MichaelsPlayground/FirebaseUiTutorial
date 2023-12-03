@@ -286,16 +286,6 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/btnMainFirestoreEditUserProfileCanHub"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:enabled="true"
-                android:text="edit user profile (CanHub cropper)" />
-
-            <Button
                 android:id="@+id/btnMainFirestoreListUser"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
