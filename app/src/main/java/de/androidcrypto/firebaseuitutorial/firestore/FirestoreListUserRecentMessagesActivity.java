@@ -63,7 +63,6 @@ public class FirestoreListUserRecentMessagesActivity extends AppCompatActivity i
         layoutManager.setReverseLayout(true);
         layoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(layoutManager);
-
     }
 
     private void listDatabaseUserRecentMessages() {
@@ -73,7 +72,8 @@ public class FirestoreListUserRecentMessagesActivity extends AppCompatActivity i
         // query in the database to fetch appropriate data
         Query orderedQuery = recentMessagesDatabase
                 .orderBy("chatLastTime")
-                .limitToLast(5);
+                //.limitToLast(5)
+                ;
         FirestoreRecyclerOptions<RecentMessageModel> options
                 = new FirestoreRecyclerOptions.Builder<RecentMessageModel>()
                 .setQuery(orderedQuery, RecentMessageModel.class)
