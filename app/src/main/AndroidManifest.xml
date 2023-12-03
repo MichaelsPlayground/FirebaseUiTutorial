@@ -89,7 +89,9 @@
         <activity
             android:name=".firestore.FirestoreListUserRecentMessagesActivity"
             android:exported="false"/>
-
+        <activity
+            android:name=".firestore.FirestoreListUserNotificationMessagesActivity"
+            android:exported="false"/>
         <!-- Provider to cache images to the internal App cache -->
         <provider
             android:name="androidx.core.content.FileProvider"

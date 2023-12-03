@@ -37,6 +37,7 @@ import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseChatRecyclerAdapter;
 import de.androidcrypto.firebaseuitutorial.models.MessageModel;
+import de.androidcrypto.firebaseuitutorial.models.NotificationMessageModel;
 import de.androidcrypto.firebaseuitutorial.models.RecentMessageModel;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
@@ -162,6 +163,8 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
         messagesDatabase = FirebaseUtils.getFirestoreChatsReference();
         // TODO messagesDatabase.keepSynced(true);
 
+        String finalReceiveUserString = receiveUserString;
+        String finalReceiveUserString1 = receiveUserString;
         edtMessageLayout.setEndIconOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -204,6 +207,29 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
                     }
                 });
 
+                // store one notificationMessage per user
+                NotificationMessageModel notificationMessageModel = new NotificationMessageModel(roomId, authUserId, authDisplayName, authUserEmail, authProfileImage, actualTime);
+                FirebaseUtils.getFirestoreUserNotificationMessagesDocumentSetTask(receiveUserId, notificationMessageModel).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.i(TAG, "notification message reference written for receiveUserId: " + receiveUserId);
+                        Toast.makeText(getApplicationContext(),
+                                "notification message written to receiveUserId: " + receiveUserId,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+/*
+                FirebaseUtils.getFirestoreUserNotificationMessagesAddTask(receiveUserId, authUserId, notificationMessageModel).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    //FirebaseUtils.getFirestoreUserNotificationMessagesTask(receiveUserId, notificationMessageModel).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.i(TAG, "notification message reference written for receiveUserId: " + receiveUserId);
+                        Toast.makeText(getApplicationContext(),
+                                "notification message written to receiveUserId: " + receiveUserId,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+*/
             }
         });
     }

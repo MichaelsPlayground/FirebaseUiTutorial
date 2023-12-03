@@ -45,6 +45,7 @@ import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActiv
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileLegacyActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserActivity;
+import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserNotificationMessagesActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserRecentMessagesActivity;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private Button editFirestoreUserProfile, editFirestoreUserProfileLegacy, listFirestoreUser;
-    private Button listFirestoreUserRecentMessages;
+    private Button listFirestoreUserRecentMessages, listFirestoreUserNotificationMessages;
 
 
     /**
@@ -419,6 +420,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d(TAG, "list Firestore user recent messages RecyclerView");
                 Intent intent = new Intent(MainActivity.this, FirestoreListUserRecentMessagesActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        listFirestoreUserNotificationMessages = findViewById(R.id.btnMainFirestoreListUserNotificationMessages);
+        listFirestoreUserNotificationMessages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "list Firestore user notification messages RecyclerView");
+                Intent intent = new Intent(MainActivity.this, FirestoreListUserNotificationMessagesActivity.class);
                 startActivity(intent);
             }
         });

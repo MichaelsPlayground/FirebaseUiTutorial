@@ -13,8 +13,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
@@ -22,20 +20,21 @@ import de.androidcrypto.firebaseuitutorial.GlideApp;
 import de.androidcrypto.firebaseuitutorial.ItemClickListener;
 import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseChatActivity;
+import de.androidcrypto.firebaseuitutorial.models.NotificationMessageModel;
 import de.androidcrypto.firebaseuitutorial.models.RecentMessageModel;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
 // FirestoreRecyclerAdapter is a class provided by
 // FirebaseUI. it provides functions to bind, adapt and show
 // database contents in a Recycler View
-public class FirestoreRecentMessageModelAdapter extends FirestoreRecyclerAdapter<
-        RecentMessageModel, FirestoreRecentMessageModelAdapter.RecentMessageModelViewholder> {
+public class FirestoreNotificationMessageModelAdapter extends FirestoreRecyclerAdapter<
+        NotificationMessageModel, FirestoreNotificationMessageModelAdapter.NotificationMessageModelViewholder> {
 
     private static ItemClickListener clickListener;
     private Context context;
 
-    public FirestoreRecentMessageModelAdapter(
-            @NonNull FirestoreRecyclerOptions<RecentMessageModel> options, Context context) {
+    public FirestoreNotificationMessageModelAdapter(
+            @NonNull FirestoreRecyclerOptions<NotificationMessageModel> options, Context context) {
         super(options);
         this.context = context;
     }
@@ -44,9 +43,9 @@ public class FirestoreRecentMessageModelAdapter extends FirestoreRecyclerAdapter
 
     @Override
     protected void
-    onBindViewHolder(@NonNull RecentMessageModelViewholder holder,
-                     int position, @NonNull RecentMessageModel model) {
-        holder.message.setText(model.getChatMessage());
+    onBindViewHolder(@NonNull NotificationMessageModelViewholder holder,
+                     int position, @NonNull NotificationMessageModel model) {
+        //holder.message.setText(model.getChatMessage());
         holder.userNameEmail.setText(model.getUserName() + " (" + model.getUserEmail() + ")");
         holder.messageTime.setText(TimeUtils.getZoneDatedStringMediumLocale(model.getChatLastTime()));
         if (!TextUtils.isEmpty(model.getUserProfileImage())) {
@@ -83,27 +82,26 @@ public class FirestoreRecentMessageModelAdapter extends FirestoreRecyclerAdapter
     // Function to tell the class about the Card view in which the data will be shown
     @NonNull
     @Override
-    public RecentMessageModelViewholder
+    public NotificationMessageModelViewholder
     onCreateViewHolder(@NonNull ViewGroup parent,
                        int viewType) {
         View view
                 = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.recent_message_item, parent, false);
-        return new RecentMessageModelViewholder(view);
+                .inflate(R.layout.notification_message_item, parent, false);
+        return new NotificationMessageModelViewholder(view);
     }
 
     // Sub Class to create references of the views in Card
     // view (here "person.xml")
-    static class RecentMessageModelViewholder
+    static class NotificationMessageModelViewholder
             extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView userProfileImage;
-        private TextView message, userNameEmail, messageTime;
+        private TextView userNameEmail, messageTime;
 
-        public RecentMessageModelViewholder(@NonNull View itemView) {
+        public NotificationMessageModelViewholder(@NonNull View itemView) {
             super(itemView);
             userProfileImage = itemView.findViewById(R.id.ciUserProfileImage);
             userNameEmail = itemView.findViewById(R.id.tvUserNameEmail);
-            message = itemView.findViewById(R.id.tvMessage);
             messageTime = itemView.findViewById(R.id.tvMessageTime);
             itemView.setOnClickListener(this);
         }

@@ -306,24 +306,14 @@
                 android:text="list recent user messages in RecyclerView" />
 
             <Button
-                android:id="@+id/btnMainFirestoreSelectUser"
+                android:id="@+id/btnMainFirestoreListUserNotificationMessages"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:enabled="false"
-                android:text="select firestore database user" />
-
-            <Button
-                android:id="@+id/btnMainFirestoreSelectUserRv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:enabled="false"
-                android:text="select firestore database user in RecyclerView" />
+                android:enabled="true"
+                android:text="list notification user messages in RecyclerView" />
 
             <Button
                 android:id="@+id/btnMainFirestoreChatMessage"
