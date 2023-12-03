@@ -30,6 +30,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -459,11 +460,16 @@ public class MainActivity extends AppCompatActivity {
         String currentUserId = FirebaseUtils.getCurrentUserId();
         // update only if a user is signed in
         if (!TextUtils.isEmpty(currentUserId)) {
+            // Firebase
             actualUserDatabaseReference = FirebaseUtils.getDatabaseUserReference(currentUserId);
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put("userOnlineString", status);
             hashMap.put("userLastOnlineTime", utcTimestamp);
             actualUserDatabaseReference.updateChildren(hashMap);
+
+            // Firestore
+            DocumentReference actualUserFirebaseReference = FirebaseUtils.getFirestoreUserReference(currentUserId);
+            actualUserFirebaseReference.update(hashMap);
         }
     }
 

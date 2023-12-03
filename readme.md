@@ -22,7 +22,7 @@ When FirebaseUI detects a new user a user dataset is stored in Realtime Database
 
 The user is signed out from Firebase.
 
-### edit the user profile on Auth
+### edit the user profile on Auth database
 
 This is editing the available data on the Auth database. You read the user ID, email, display name and photo URL.
 
@@ -86,20 +86,26 @@ is very easy.
 
 ### List user on database (Listview)
 
+Get a list of all users on Realtime Database including yourself. The data is presented in a ListView. When clicking on an entry the 
+chatroom with this user is opened.
 
 ### list user on database in RecyclerView (chat)
 
+This is the preferred way of presenting database entries: get a list of all users on Realtime Database (your entry is excluded). If the 
+user setup a profile image it is shown, together with his user name and his email address. The second row contains the last timestamp 
+when the user was online in the Firebase UI Tutorial app. When clicking on an entry the chatroom with this user is opened.
+
+Beneath the profile image is a small image - green means that the user is probably online, gray is "offline". 
+
+Why do I say "probably" - the app recognizes when going to background and will change the entry, but when the user stops the internet connection 
+the app has no more chance to send the "offline" information to the  Firebase database.
 
 ### list recent user messages in RecyclerView
 
+This is a second database that collects all chat messages. This is for a simple reason: Without that list you don't know that you received a 
+chat from a user (there is no "new chat" information).
 
 ### database presence check
-
-
-
-
-
-
 
 
 
@@ -152,6 +158,8 @@ is very easy.
 Note: maybe you have noticed that there is no ListView choice, but FirebaseUi does not offer an implementation (helper) for that.
 
 ### list recent user messages in RecyclerView
+
+The functionality is identical to the Realtime Firebase's implementation.
 
 ### 
 
