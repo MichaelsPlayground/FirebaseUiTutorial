@@ -22,6 +22,8 @@ import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,7 +32,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -98,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button editFirestoreUserProfile, editFirestoreUserProfileLegacy, listFirestoreUser;
     private Button listFirestoreUserRecentMessages, listFirestoreUserNotificationMessages;
-
+    private Button operationsFirestoreUserRecentMessages;
 
     /**
      * section
@@ -421,6 +428,77 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "list Firestore user recent messages RecyclerView");
                 Intent intent = new Intent(MainActivity.this, FirestoreListUserRecentMessagesActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        operationsFirestoreUserRecentMessages = findViewById(R.id.btnMainFirestoreListUserRecentMessagesOperations);
+        operationsFirestoreUserRecentMessages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "Operations Firestore user recent messages RecyclerView");
+                String actualUserId = FirebaseUtils.getCurrentUserId();
+                CollectionReference recentMessagesDatabase = FirebaseUtils.getFirestoreUserRecentMessagesReference(actualUserId);
+
+                String userIdQ2 = "BZvNvebDK0dg8X8Jksi3k4LaNOZ2";
+                // this will list all documents = notifications send by 'userId'
+                Query query = recentMessagesDatabase.whereEqualTo("userId", userIdQ2);
+                query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                // G5EjpPaHyZsoosbJJinb, mmS7DPaFeAnUDP5sukwV, uNSoeiBzmKEOzvjlUrzm
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+                // delete a document
+                Log.d(TAG, "DELETE A DOCUMENT");
+                String docId = "mmS7DPaFeAnUDP5sukwV";
+                //String docId = "uNSoeiBzmKEOzvjlUrzm1";
+
+                Log.d(TAG, "*** read single docId " + docId);
+                recentMessagesDatabase.document(docId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot ds = task.getResult();
+                                Log.d(TAG, ds.getId() + " => " + ds.getData());
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+
+                recentMessagesDatabase.document(docId).delete()
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "Task delete a document success");
+                                } else {
+                                    Log.d(TAG, "Task Error on deleting  document");
+                                }
+                            }
+                        })
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Log.d(TAG, "delete a document success");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "Error on deleting  document");
+                            }
+                        });
+
             }
         });
 
