@@ -39,6 +39,8 @@ public class FirebaseUtils {
     public static final String USERS_FOLDER_NAME = "users";
     public static final String CHATROOM_FOLDER_NAME = "messages";
     private static final String RECENT_MESSAGES_FOLDER_NAME = "recentMessages";
+
+    public static final String USERS_NOTIFICATION_FOLDER_NAME = "usersNotifications";
     private static final String NOTIFICATION_MESSAGES_FOLDER_NAME = "notificationMessages";
     public static final String CHATROOMS_FOLDER_NAME = "chatrooms";
     public static final String INFO_CONNECTED = ".info/connected";
@@ -219,7 +221,9 @@ public class FirebaseUtils {
                 .collection(CHATROOM_COLLECTION_FOLDER_NAME);
     }
 
-
+    public static DocumentReference getFirestoreUserNotificationReference(String userId) {
+        return getFirestoreReference().collection(USERS_NOTIFICATION_FOLDER_NAME).document(userId);
+    }
 
 
     public static CollectionReference getFirestoreUserNotificationMessagesCollectionReference() {

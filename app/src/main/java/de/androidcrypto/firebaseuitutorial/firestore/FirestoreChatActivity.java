@@ -31,6 +31,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 import de.androidcrypto.firebaseuitutorial.MainActivity;
@@ -233,6 +234,27 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
             }
         });
     }
+
+    private void userNotification(String receiveUserId, String senderUserId, long actualTime) {
+        String currentUserId = FirebaseUtils.getCurrentUserId();
+        // update only if a user is signed in
+        if (!TextUtils.isEmpty(currentUserId)) {
+
+            // Firebase
+
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("userOnlineString", senderUserId);
+            hashMap.put("userLastOnlineTime", actualTime);
+            /*
+            actualUserDatabaseReference = FirebaseUtils.getDatabaseUserReference(currentUserId);
+            actualUserDatabaseReference.updateChildren(hashMap);
+*/
+            // Firestore
+            DocumentReference actualUsersNotificationFirebaseReference = FirebaseUtils.getFirestoreUserNotificationReference(receiveUserId);
+            actualUsersNotificationFirebaseReference.update(hashMap);
+        }
+    }
+
 
     /**
      * service methods
