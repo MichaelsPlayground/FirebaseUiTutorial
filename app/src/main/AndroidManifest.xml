@@ -81,6 +81,9 @@
             android:name=".firestore.FirestoreEditUserProfileLegacyActivity"
             android:exported="false"/>
         <activity
+            android:name=".firestore.FirestoreEditUserProfileCanHubActivity"
+            android:exported="false"/>
+        <activity
             android:name=".firestore.FirestoreListUserActivity"
             android:exported="false"/>
         <activity

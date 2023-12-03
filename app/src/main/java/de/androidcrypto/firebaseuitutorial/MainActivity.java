@@ -42,6 +42,7 @@ import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserLvActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserRecentMessagesActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileActivity;
+import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileCanHubActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileLegacyActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserRecentMessagesActivity;
@@ -95,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private Button editFirestoreUserProfile, editFirestoreUserProfileLegacy, listFirestoreUser;
+    private Button editFirestoreUserProfileCanHub;
     private Button listFirestoreUserRecentMessages;
 
 
@@ -398,6 +400,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d(TAG, "edit Firestore User Profile Legacy");
                 Intent intent = new Intent(MainActivity.this, FirestoreEditUserProfileLegacyActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        editFirestoreUserProfileCanHub = findViewById(R.id.btnMainFirestoreEditUserProfileCanHub);
+        editFirestoreUserProfileCanHub.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "edit Firestore User Profile CanHub");
+                Intent intent = new Intent(MainActivity.this, FirestoreEditUserProfileCanHubActivity.class);
                 startActivity(intent);
             }
         });
