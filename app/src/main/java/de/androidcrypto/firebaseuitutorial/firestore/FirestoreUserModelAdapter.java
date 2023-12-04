@@ -1,6 +1,5 @@
 package de.androidcrypto.firebaseuitutorial.firestore;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
@@ -13,8 +12,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
@@ -24,14 +21,10 @@ import java.util.List;
 import de.androidcrypto.firebaseuitutorial.GlideApp;
 import de.androidcrypto.firebaseuitutorial.ItemClickListener;
 import de.androidcrypto.firebaseuitutorial.R;
-import de.androidcrypto.firebaseuitutorial.database.DatabaseChatActivity;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.utils.AndroidUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
-// FirebaseRecyclerAdapter is a class provided by
-// FirebaseUI. it provides functions to bind, adapt and show
-// database contents in a Recycler View
 public class FirestoreUserModelAdapter extends FirestoreRecyclerAdapter<
         UserModel, FirestoreUserModelAdapter.UserModelViewholder> {
 
@@ -96,18 +89,6 @@ public class FirestoreUserModelAdapter extends FirestoreRecyclerAdapter<
                 AndroidUtils.passUserModelAsIntent(intent, otherUserModel);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
-
-                /*
-                intent.putExtra("UID", model.getUserId());
-                intent.putExtra("EMAIL", model.getUserMail());
-                intent.putExtra("DISPLAYNAME", model.getUserName());
-                intent.putExtra("AUTH_EMAIL", "test@test.com");
-                intent.putExtra("AUTH_DISPLAYNAME", "authDisplayName");
-                intent.putExtra("PROFILE_IMAGE", model.getUserPhotoUrl());
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
-                ((Activity)context).finish();
-                */
             });
         } else {
             holder.itemView.setVisibility(View.GONE);

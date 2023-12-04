@@ -2,12 +2,10 @@ package de.androidcrypto.firebaseuitutorial.firestore;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,7 +15,6 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 import de.androidcrypto.firebaseuitutorial.GlideApp;
-import de.androidcrypto.firebaseuitutorial.firestore.FirestoreChatActivity;
 import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.ChatroomModel;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
@@ -28,7 +25,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FirestoreChatroomRecyclerAdapter extends FirestoreRecyclerAdapter<ChatroomModel, FirestoreChatroomRecyclerAdapter.ChatroomModelViewHolder> {
 
-    Context context;
+    private Context context;
 
     public FirestoreChatroomRecyclerAdapter(@NonNull FirestoreRecyclerOptions<ChatroomModel> options, Context context) {
         super(options);

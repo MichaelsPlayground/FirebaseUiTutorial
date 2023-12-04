@@ -12,8 +12,8 @@ import de.androidcrypto.firebaseuitutorial.models.UserModel;
 
 public class AndroidUtils {
 
-    private static final String INTENT_USER_ID = "uswerId";
-    private static final String INTENT_USER_NAME = "uswerName";
+    private static final String INTENT_USER_ID = "userId";
+    private static final String INTENT_USER_NAME = "userName";
     private static final String INTENT_USER_EMAIL = "userEmail";
     private static final String INTENT_USER_PHOTO_URL = "userPhotoUrl";
     private static final String INTENT_USER_DEVICE_TOKEN = "userDeviceToken";

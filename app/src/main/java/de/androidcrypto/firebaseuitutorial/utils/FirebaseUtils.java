@@ -25,7 +25,6 @@ import com.google.firebase.storage.StorageReference;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import de.androidcrypto.firebaseuitutorial.models.NotificationMessageModel;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
 
 public class FirebaseUtils {
@@ -230,45 +229,8 @@ public class FirebaseUtils {
         return FirebaseFirestore.getInstance().collection(CHATROOMS_FOLDER_NAME);
     }
 
-    public static DocumentReference getFirestoreUserNotificationReference(String userId) {
-        return getFirestoreReference().collection(USERS_NOTIFICATION_FOLDER_NAME).document(userId);
-    }
-
-
     public static CollectionReference getFirestoreUserNotificationMessagesCollectionReference() {
         return getFirestoreReference().collection(NOTIFICATION_MESSAGES_FOLDER_NAME);
-    }
-
-    public static CollectionReference getFirestoreUserNotificationMessagesCollectionReference(String receiveUserId) {
-        return getFirestoreReference().collection(NOTIFICATION_MESSAGES_FOLDER_NAME).document("a").collection(receiveUserId);
-    }
-
-    public static DocumentReference getFirestoreUserNotificationMessagesDocumentReference(String userId) {
-        return getFirestoreReference().collection(NOTIFICATION_MESSAGES_FOLDER_NAME).document(userId);
-    }
-
-    public static Task<Void> getFirestoreUserNotificationMessagesDocumentSetTask(String userId, NotificationMessageModel notificationMessageModel) {
-        return getFirestoreUserNotificationMessagesDocumentReference(userId).set(notificationMessageModel);
-    }
-
-
-
-
-
-    public static CollectionReference getFirestoreUserNotificationMessagesDocumentReference1(String userId) {
-        return getFirestoreReference().collection(NOTIFICATION_MESSAGES_FOLDER_NAME).document("a").collection(userId);
-    }
-/*
-    public static Task getFirestoreUserNotificationMessagesTask(String userId, NotificationMessageModel notificationMessageModel) {
-        return getFirestoreUserNotificationMessagesDocumentReference(userId).add(notificationMessageModel);
-    }
-*/
-    public static CollectionReference getFirestoreUserNotificationMessagesDocumentReference(String userId, String fromUserId) {
-        return getFirestoreReference().collection(NOTIFICATION_MESSAGES_FOLDER_NAME).document("a").collection(userId).document(fromUserId).collection("b");
-    }
-
-    public static Task getFirestoreUserNotificationMessagesAddTask(String receiveUserId, String fromUserId, NotificationMessageModel notificationMessageModel) {
-        return getFirestoreUserNotificationMessagesDocumentReference(receiveUserId, fromUserId).add(notificationMessageModel);
     }
 
     public static com.google.firebase.firestore.Query getFirestoreChatroomQuery(String chatroomId) {

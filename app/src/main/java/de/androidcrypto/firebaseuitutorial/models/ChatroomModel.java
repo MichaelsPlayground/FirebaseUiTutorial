@@ -1,7 +1,5 @@
 package de.androidcrypto.firebaseuitutorial.models;
 
-import com.google.firebase.Timestamp;
-
 import java.util.List;
 
 public class ChatroomModel {
