@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,7 +65,7 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firestore_chat);
-
+        //LinearLayout llView = findViewById(R.layout.activity_firestore_chat);
         Toolbar toolbar = findViewById(R.id.tbChatFirestore);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Chat with ");
@@ -91,11 +92,10 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
 
         // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
-        // set the persistance first but in MainActivity
+        // set the persistence first but in MainActivity
         //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         loadSignedInUserData(mFirebaseAuth.getCurrentUser().getUid());
 
-        //get UserModel
         otherUserModel = AndroidUtils.getUserModelFromIntent(getIntent());
         if (otherUserModel != null) {
             receiveUserId = otherUserModel.getUserId();
@@ -112,7 +112,8 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
                 profileImage.setImageResource(R.drawable.person_icon);
             }
         } else {
-
+            Toast.makeText(this, "could not get the  data from other user, aborted", Toast.LENGTH_SHORT).show();
+            /*
             // read data received from ListUserOnDatabase
             Intent intent = getIntent();
             receiveUserId = intent.getStringExtra("UID");
@@ -137,6 +138,7 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
             } else {
                 receiveProfileImage = "";
             }
+            */
         }
 
         roomId = FirebaseUtils.getChatroomId(FirebaseUtils.getCurrentUserId(), receiveUserId);
@@ -176,7 +178,7 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.i(TAG, "DocumentSnapshot successfully written for roomId: " + roomId);
-                        Toast.makeText(getApplicationContext(),
+                        Toast.makeText(view.getContext(),
                                 "message written to chatroom " + roomId,
                                 Toast.LENGTH_SHORT).show();
 
@@ -230,10 +232,10 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
                     );
                     FirebaseUtils.getFirestoreChatroomReference(roomId).set(chatroomModel);
                 } else {
-                    System.out.println("*** chatroomModel is NOT NULL ***");
+                    // do nothing, we have read the chatroomModel
                 }
             } else {
-                System.out.println("*** task IS NOT successful ***");
+                AndroidUtils.showSnackbarRedLong(recyclerView, "could not create a chatroomID, aborted");
             }
         });
     }
@@ -309,7 +311,6 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
 
         roomId = FirebaseUtils.getChatroomId(ownUid, receiverUid);
         com.google.firebase.firestore.Query query = FirebaseUtils.getFirestoreChatroomQuery(roomId);
-        //Query orderedQuery = query.orderBy("messageTime", Query.Direction.ASCENDING);
 
         CollectionReference collectionReference = FirebaseUtils.getFirestoreChatroomCollectionReference(roomId);
         Query orderedQuery = collectionReference.orderBy("messageTime", Query.Direction.ASCENDING);
@@ -335,28 +336,6 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
         });
     }
 
-
-/*
-    private void attachRecyclerViewAdapter() {
-        final RecyclerView.Adapter adapter = firebaseRecyclerAdapter;
-        if (adapter != null) {
-            Log.i(TAG, "attachRecyclerViewAdapter");
-            // Scroll to bottom on new messages
-            adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-                @Override
-                public void onItemRangeInserted(int positionStart, int itemCount) {
-                    //mBinding.recyclerView.smoothScrollToPosition(adapter.getItemCount());
-                    recyclerView.smoothScrollToPosition(adapter.getItemCount());
-                }
-            });
-
-            //mBinding.recyclerView.setAdapter(adapter);
-            recyclerView.setAdapter(adapter);
-        } else {
-            Log.i(TAG, "attachRecyclerViewAdapter NOT set, firebaseRecyclerAdapter is null");
-        }
-    }
-*/
     private boolean isSignedIn() {
         return FirebaseAuth.getInstance().getCurrentUser() != null;
     }

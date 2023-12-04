@@ -3,11 +3,16 @@ package de.androidcrypto.firebaseuitutorial.utils;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.view.View;
 import android.widget.ImageView;
+
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.snackbar.Snackbar;
 
+import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
 
 public class AndroidUtils {
@@ -46,5 +51,16 @@ public class AndroidUtils {
 
     public static void setProfilePic(Context context, Uri imageUri, ImageView imageView){
         Glide.with(context).load(imageUri).apply(RequestOptions.circleCropTransform()).into(imageView);
+    }
+
+    public static void showSnackbarGreenShort(View view, String message) {
+        Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
+        snackbar.setBackgroundTint(ContextCompat.getColor(view.getContext(), R.color.green_snackbar));
+        snackbar.show();
+    }
+    public static void showSnackbarRedLong(View view, String message) {
+        Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
+        snackbar.setBackgroundTint(ContextCompat.getColor(view.getContext(), R.color.red_snackbar));
+        snackbar.show();
     }
 }

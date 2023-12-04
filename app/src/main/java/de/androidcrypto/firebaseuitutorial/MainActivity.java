@@ -566,81 +566,9 @@ public class MainActivity extends AppCompatActivity {
         editFirestoreUserProfile.setEnabled(isSignedIn);
         editFirestoreUserProfileLegacy.setEnabled(isSignedIn);
         listFirestoreUser.setEnabled(isSignedIn);
+        listFirestoreUserRecentMessages.setEnabled(isSignedIn);
+        listFirestoreUserChatrooms.setEnabled(isSignedIn);
 
-        /*
-        databaseUserProfile.setEnabled(isSignedIn);
-        databaseUpdateUserImage.setEnabled(isSignedIn);
-        databaseListUser.setEnabled(isSignedIn);
-        databaseListUserRv.setEnabled(isSignedIn);
-        databaseSendMessage.setEnabled(isSignedIn);
-        databaseGenerateTestMessages.setEnabled(isSignedIn);
-        firestoreDatabaseUserProfile.setEnabled(isSignedIn);
-        firestoreDatabaseUpdateUserImage.setEnabled(isSignedIn);
-        firestoreDatabaseSelectUser.setEnabled(isSignedIn);
-        firestoreDatabaseSelectUserRv.setEnabled(isSignedIn);
-        firestoreDatabaseChatMessage.setEnabled(isSignedIn);
-        images.setEnabled(isSignedIn);
-        uploadImage.setEnabled(isSignedIn);
-        uploadCropImage.setEnabled(isSignedIn);
-        uploadResizedImage.setEnabled(isSignedIn);
-        uploadCropImageNotUi.setEnabled(isSignedIn);
-        listImages.setEnabled(isSignedIn);
-        listResizedImages.setEnabled(isSignedIn);
-        */
-    }
-
-    /*
-    @Override
-    public void onActivityResult(FirebaseAuthUIAuthenticationResult result) {
-        // Successfully signed in
-        IdpResponse response = result.getIdpResponse();
-        handleSignInResponse(result.getResultCode(), response);
-    }
-
-     */
-
-    private void handleSignInResponse(int resultCode, @Nullable IdpResponse response) {
-        // Successfully signed in
-        if (resultCode == RESULT_OK) {
-            Log.d(TAG, "handleSignInResponse: RESULT_OK");
-            //startSignedInActivity(response);
-            //finish();
-        } else {
-            // Sign in failed
-            if (response == null) {
-                // User pressed back button
-                Log.d(TAG, "handleSignInResponse: RESPONSE == null");
-                //showSnackbar(R.string.sign_in_cancelled);
-                return;
-            }
-
-            if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
-                Log.d(TAG, "handleSignInResponse: no_internet_connection");
-                //showSnackbar(R.string.no_internet_connection);
-                return;
-            }
-
-            if (response.getError().getErrorCode() == ErrorCodes.ANONYMOUS_UPGRADE_MERGE_CONFLICT) {
-                Log.d(TAG, "handleSignInResponse: ANONYMOUS_UPGRADE_MERGE_CONFLICT");
-                return;
-                /*
-                Intent intent = new Intent(this, AnonymousUpgradeActivity.class).putExtra
-                        (ExtraConstants.IDP_RESPONSE, response);
-                startActivity(intent);
-
-                 */
-            }
-
-            if (response.getError().getErrorCode() == ErrorCodes.ERROR_USER_DISABLED) {
-                Log.d(TAG, "handleSignInResponse: account_disabled");
-                //showSnackbar(R.string.account_disabled);
-                return;
-            }
-            Log.d(TAG, "handleSignInResponse: unknown_error");
-            //showSnackbar(R.string.unknown_error);
-            Log.e(TAG, "Sign-in error: ", response.getError());
-            return;
-        }
     }
 
 }

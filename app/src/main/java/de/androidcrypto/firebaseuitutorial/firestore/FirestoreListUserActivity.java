@@ -29,8 +29,7 @@ import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 
-public class FirestoreListUserActivity extends AppCompatActivity implements ItemClickListener {
-    // https://www.geeksforgeeks.org/how-to-populate-recyclerview-with-firebase-data-using-firebaseui-in-android-studio/
+public class FirestoreListUserActivity extends AppCompatActivity {
 
     private static final String TAG = FirestoreListUserActivity.class.getSimpleName();
 
@@ -69,11 +68,9 @@ public class FirestoreListUserActivity extends AppCompatActivity implements Item
         // the Adapter class itself
         System.out.println("*** before adapter = new UserModelAdapter");
         adapter = new FirestoreUserModelAdapter(options, true, FirebaseUtils.getCurrentUserId(), this);
-        adapter.setClickListener(this);
         // Connecting Adapter class with the Recycler view*/
         recyclerView.setAdapter(adapter);
 
-        // note: the onClick listener is implemented in UserModelAdapter
     }
 
     private void listDatabaseUser() {
@@ -101,37 +98,12 @@ public class FirestoreListUserActivity extends AppCompatActivity implements Item
         adapter.stopListening();
     }
 
-    // called when clicking on recyclerview
-    @Override
-    public void onClick(View view, int position, String userId) {
-        Log.i(TAG, "recyclerview clicked on position: " + position + " userId: " + userId);
-
-        /*
-        String uidSelected = uidList.get(position);
-        String emailSelected = emailList.get(position);
-        String displayNameSelected = displayNameList.get(position);
-
-        Intent intent = new Intent(ListUserRecyclerviewActivity.this, ChatActivity.class);
-        intent.putExtra("UID", uidSelected);
-        intent.putExtra("EMAIL", emailSelected);
-        intent.putExtra("DISPLAYNAME", displayNameSelected);
-        startActivity(intent);
-        finish();
-        */
-    }
-
-
     private void reload() {
         Objects.requireNonNull(FirebaseUtils.getCurrentUser()).reload().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                     updateUI(FirebaseUtils.getCurrentUser());
-                    /*
-                    Toast.makeText(getApplicationContext(),
-                            "Reload successful!",
-                            Toast.LENGTH_SHORT).show();
-                     */
                 } else {
                     Log.e(TAG, "reload", task.getException());
                     Toast.makeText(getApplicationContext(),
@@ -185,9 +157,6 @@ public class FirestoreListUserActivity extends AppCompatActivity implements Item
                 return false;
             }
         });
-
         return super.onCreateOptionsMenu(menu);
     }
-
-
 }

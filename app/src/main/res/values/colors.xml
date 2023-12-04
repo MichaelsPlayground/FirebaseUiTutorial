@@ -28,4 +28,8 @@
     <color name="chat_color_sender">#1E88E5</color>
     <color name="chat_color_receiver">#7CB342</color>
 
+    <color name="red_snackbar">#D50000</color>
+    <color name="green_snackbar">#00C853</color>
+    <color name="orange_snackbar">#FFAB00</color>
+
 </resources>

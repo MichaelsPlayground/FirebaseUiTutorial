@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.androidcrypto.firebaseuitutorial.GlideApp;
-import de.androidcrypto.firebaseuitutorial.ItemClickListener;
 import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.utils.AndroidUtils;
@@ -28,7 +27,6 @@ import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 public class FirestoreUserModelAdapter extends FirestoreRecyclerAdapter<
         UserModel, FirestoreUserModelAdapter.UserModelViewholder> {
 
-    private static ItemClickListener clickListener;
     public List<UserModel> userList = new ArrayList<>();
     private boolean isChat;
     private String ownUserId;
@@ -42,8 +40,6 @@ public class FirestoreUserModelAdapter extends FirestoreRecyclerAdapter<
         this.context = context;
     }
 
-    // Function to bind the view in Card view (here "user.xml") with data in
-    // model class (here "UserModel.class")
     @Override
     protected void
     onBindViewHolder(@NonNull UserModelViewholder holder,
@@ -96,11 +92,6 @@ public class FirestoreUserModelAdapter extends FirestoreRecyclerAdapter<
         }
     }
 
-    public void setClickListener(ItemClickListener itemClickListener) {
-        clickListener = itemClickListener;
-    }
-
-    // Function to tell the class about the Card view in which the data will be shown
     @NonNull
     @Override
     public UserModelViewholder
@@ -112,10 +103,8 @@ public class FirestoreUserModelAdapter extends FirestoreRecyclerAdapter<
         return new UserModelViewholder(view);
     }
 
-    // Sub Class to create references of the views in Card
-    // view (here "person.xml")
     static class UserModelViewholder
-            extends RecyclerView.ViewHolder implements View.OnClickListener {
+            extends RecyclerView.ViewHolder {
         private TextView userNameEmail, userLastOnlineTime, userId;
         private ImageView userProfileImage;
         private ImageView img_on;
@@ -129,13 +118,7 @@ public class FirestoreUserModelAdapter extends FirestoreRecyclerAdapter<
             userId = itemView.findViewById(R.id.userId); // dummy
             img_on = itemView.findViewById(R.id.img_on);
             img_off = itemView.findViewById(R.id.img_off);
-            itemView.setOnClickListener(this);
         }
 
-        @Override
-        public void onClick(View view) {
-            if (clickListener != null)
-                clickListener.onClick(view, getBindingAdapterPosition(), userId.getText().toString());
-        }
     }
 }
