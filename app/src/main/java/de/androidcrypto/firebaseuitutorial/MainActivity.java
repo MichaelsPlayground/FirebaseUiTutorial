@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.androidcrypto.firebaseuitutorial.auth.AuthEditUserProfileActivity;
+import de.androidcrypto.firebaseuitutorial.database.DatabaseChatroomsActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileLegacyActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserLvActivity;
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button editDatabaseUserProfile, editDatabaseUserProfileLegacy, listDatabaseUser, listDatabaseUserLv;
     private Button listDatabaseUserRecentMessages;
+    private Button listDatabaseUserChatrooms;
     private Button presenceCheckDatabase;
     private DatabaseReference actualUserDatabaseReference;
 
@@ -340,6 +342,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        listDatabaseUserChatrooms = findViewById(R.id.btnMainDatabaseListUserChatrooms);
+        listDatabaseUserChatrooms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "list Database user chatrooms RecyclerView");
+                Intent intent = new Intent(MainActivity.this, DatabaseChatroomsActivity.class);
+                startActivity(intent);
+            }
+        });
+
         presenceCheckDatabase = findViewById(R.id.btnMainDatabasePresenceCheck);
         presenceCheckDatabase.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -562,6 +574,7 @@ public class MainActivity extends AppCompatActivity {
         listDatabaseUser.setEnabled(isSignedIn);
         listDatabaseUserLv.setEnabled(isSignedIn);
         listDatabaseUserRecentMessages.setEnabled(isSignedIn);
+        listDatabaseUserChatrooms.setEnabled(isSignedIn);
         // firestore database
         editFirestoreUserProfile.setEnabled(isSignedIn);
         editFirestoreUserProfileLegacy.setEnabled(isSignedIn);

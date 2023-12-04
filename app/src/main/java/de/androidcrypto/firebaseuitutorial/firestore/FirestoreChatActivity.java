@@ -113,32 +113,6 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
             }
         } else {
             Toast.makeText(this, "could not get the  data from other user, aborted", Toast.LENGTH_SHORT).show();
-            /*
-            // read data received from ListUserOnDatabase
-            Intent intent = getIntent();
-            receiveUserId = intent.getStringExtra("UID");
-            if (receiveUserId != null) {
-                Log.i(TAG, "selectedUid: " + receiveUserId);
-            } else {
-                receiveUserId = "";
-            }
-            receiveUserEmail = intent.getStringExtra("EMAIL");
-            if (receiveUserEmail != null) {
-                Log.i(TAG, "selectedEmail: " + receiveUserEmail);
-            }
-            receiveUserDisplayName = intent.getStringExtra("DISPLAYNAME");
-            if (receiveUserDisplayName != null) {
-                Log.i(TAG, "selectedDisplayName: " + receiveUserDisplayName);
-            } else {
-                receiveUserDisplayName = receiveUserEmail;
-            }
-            receiveProfileImage = intent.getStringExtra("PROFILE_IMAGE");
-            if (receiveProfileImage != null) {
-                Log.i(TAG, "selectedProfileImage: " + receiveProfileImage);
-            } else {
-                receiveProfileImage = "";
-            }
-            */
         }
 
         roomId = FirebaseUtils.getChatroomId(FirebaseUtils.getCurrentUserId(), receiveUserId);

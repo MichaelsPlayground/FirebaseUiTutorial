@@ -152,6 +152,10 @@ public class FirebaseUtils {
         return getDatabaseReference().child(USERS_FOLDER_NAME).child(userId).child(CHATROOMS_FOLDER_NAME);
     }
 
+    public static DatabaseReference getDatabaseAllChatroomCollectionReference(){
+        return getDatabaseReference().child(CHATROOM_FOLDER_NAME);
+    }
+
     // https://firebase.google.com/docs/database/android/offline-capabilities#section-presence
     public static DatabaseReference getDatabaseUserConnectionReference(String userId) {
         return getDatabaseUserReference(userId).child(DATABASE_CONNECTIONS);

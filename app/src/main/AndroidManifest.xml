@@ -75,6 +75,9 @@
             android:name=".database.DatabaseListUserRecentMessagesActivity"
             android:exported="false"/>
         <activity
+            android:name=".database.DatabaseChatroomsActivity"
+            android:exported="false"/>
+        <activity
             android:name=".firestore.FirestoreEditUserProfileActivity"
             android:exported="false"/>
         <activity
