@@ -23,6 +23,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import de.androidcrypto.firebaseuitutorial.models.NotificationMessageModel;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
@@ -210,6 +211,10 @@ public class FirebaseUtils {
         return getFirestoreReference().collection(USERS_FOLDER_NAME).document(userId);
     }
 
+    public static CollectionReference getFirestoreAllUserCollectionReference(){
+        return FirebaseFirestore.getInstance().collection(USERS_FOLDER_NAME);
+    }
+
     public static CollectionReference getFirestoreChatsReference() {
         return getFirestoreReference().collection(CHATROOM_FOLDER_NAME);
     }
@@ -219,6 +224,10 @@ public class FirebaseUtils {
                 .collection(FirebaseUtils.RECENT_MESSAGES_FOLDER_NAME)
                 .document(userId)
                 .collection(CHATROOM_COLLECTION_FOLDER_NAME);
+    }
+
+    public static CollectionReference getFirestoreAllChatroomCollectionReference(){
+        return FirebaseFirestore.getInstance().collection(CHATROOMS_FOLDER_NAME);
     }
 
     public static DocumentReference getFirestoreUserNotificationReference(String userId) {
@@ -270,7 +279,14 @@ public class FirebaseUtils {
                 .orderBy(CHATROOM_MESSAGE_TIME);
     }
 
-    public static CollectionReference getFirestoreChatroomReference(String chatroomId) {
+    public static DocumentReference getFirestoreChatroomReference(String chatroomId){
+        return FirebaseFirestore.getInstance().collection(CHATROOMS_FOLDER_NAME).document(chatroomId);
+    }
+    public static CollectionReference getFirestoreChatroomMessageReference(String chatroomId){
+        return getFirestoreChatroomReference(chatroomId).collection(CHATROOM_FOLDER_NAME);
+    }
+
+    public static CollectionReference getFirestoreChatroomCollectionReference(String chatroomId) {
         return getFirestoreReference()
                 .collection(FirebaseUtils.CHATROOM_FOLDER_NAME)
                 .document(chatroomId)
@@ -302,6 +318,14 @@ public class FirebaseUtils {
         }
     }
 
+    public static DocumentReference getFirestoreOtherUserFromChatroom(List<String> userIds){
+        if(userIds.get(0).equals(FirebaseUtils.getCurrentUserId())){
+            return getFirestoreAllUserCollectionReference().document(userIds.get(1));
+        }else{
+            return getFirestoreAllUserCollectionReference().document(userIds.get(0));
+        }
+    }
+
     /**
      * section Firebase Storage
      */
@@ -314,6 +338,10 @@ public class FirebaseUtils {
         return FirebaseStorage.getInstance().getReference().child(child);
     }
 
+    public static StorageReference getStorageOtherProfilePicStorageRef(String otherUserId){
+        return FirebaseStorage.getInstance().getReference().child(STORAGE_PROFILE_IMAGES_FOLDER_NAME)
+                .child(otherUserId);
+    }
 
     /**
      * section for conversions

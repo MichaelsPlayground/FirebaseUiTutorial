@@ -90,6 +90,9 @@
             android:name=".firestore.FirestoreListUserRecentMessagesActivity"
             android:exported="false"/>
         <activity
+            android:name=".firestore.FirestoreChatroomsActivity"
+            android:exported="false"/>
+        <activity
             android:name=".firestore.FirestoreListUserNotificationMessagesActivity"
             android:exported="false"/>
         <!-- Provider to cache images to the internal App cache -->

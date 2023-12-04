@@ -49,6 +49,7 @@ import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserLvActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserRecentMessagesActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActivity;
+import de.androidcrypto.firebaseuitutorial.firestore.FirestoreChatroomsActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileLegacyActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserActivity;
@@ -106,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
     private Button editFirestoreUserProfile, editFirestoreUserProfileLegacy, listFirestoreUser;
     private Button listFirestoreUserRecentMessages, listFirestoreUserNotificationMessages;
     private Button operationsFirestoreUserRecentMessages;
+    private Button listFirestoreUserChatrooms;
 
     /**
      * section
@@ -499,6 +501,16 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
 
+            }
+        });
+
+        listFirestoreUserChatrooms = findViewById(R.id.btnMainFirestoreListUserChatrooms);
+        listFirestoreUserChatrooms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "list Firestore user chatrooms RecyclerView");
+                Intent intent = new Intent(MainActivity.this, FirestoreChatroomsActivity.class);
+                startActivity(intent);
             }
         });
 
