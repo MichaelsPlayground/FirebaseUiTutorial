@@ -77,9 +77,6 @@ public class FirestoreChatroomsActivity_old extends AppCompatActivity implements
         //Toolbar myToolbar = (Toolbar) findViewById(R.id.chatToolbar);
         //setSupportActionBar(myToolbar);
 
-        profileImage = findViewById(R.id.ciChatroomsFirestoreProfileImage);
-        userName = findViewById(R.id.tvChatroomsFirestoreUserName);
-
         //edtMessageLayout = findViewById(R.id.etChatroomsFirestoreMessageLayout);
         //edtMessage = findViewById(R.id.etChatroomsFirestoreMessage);
 

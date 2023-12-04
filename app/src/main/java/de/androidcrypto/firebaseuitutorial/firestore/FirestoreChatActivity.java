@@ -322,6 +322,9 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
         firestoreRecyclerAdapter = new FirestoreChatRecyclerAdapter(options, getApplicationContext());
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setReverseLayout(false); // true oldest element at bottom
+        manager.setStackFromEnd(true);
+
+
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(firestoreRecyclerAdapter);
         firestoreRecyclerAdapter.startListening();
