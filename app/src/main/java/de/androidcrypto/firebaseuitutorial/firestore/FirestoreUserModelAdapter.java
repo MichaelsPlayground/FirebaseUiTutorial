@@ -90,13 +90,14 @@ public class FirestoreUserModelAdapter extends FirestoreRecyclerAdapter<
 
             holder.itemView.setOnClickListener(v -> {
                 //navigate to chat activity
-            /*
-            Intent intent = new Intent(context, ChatActivity.class);
-            AndroidUtil.passUserModelAsIntent(intent,otherUserModel);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);*/
-                System.out.println("*** you clicked on userId: " + model.getUserId() + " ***");
+                System.out.println("*** you clicked on userId: " + model.getUserId() + " photoUrl: " + model.getUserPhotoUrl() + " ***");
                 Intent intent = new Intent(context, FirestoreChatActivity.class);
+                UserModel otherUserModel = new UserModel(model.getUserId(), model.getUserName(), model.getUserMail(), model.getUserPhotoUrl());
+                AndroidUtils.passUserModelAsIntent(intent, otherUserModel);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+
+                /*
                 intent.putExtra("UID", model.getUserId());
                 intent.putExtra("EMAIL", model.getUserMail());
                 intent.putExtra("DISPLAYNAME", model.getUserName());
@@ -106,6 +107,7 @@ public class FirestoreUserModelAdapter extends FirestoreRecyclerAdapter<
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
                 ((Activity)context).finish();
+                */
             });
         } else {
             holder.itemView.setVisibility(View.GONE);

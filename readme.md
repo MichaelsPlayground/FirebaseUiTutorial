@@ -182,6 +182,81 @@ service cloud.firestore {
 }
 ```
 
+## Error handling
+
+When running the Query on chatrooms (FirestoreChatroomsActivity) you receive an error because Firestore is missing an index.
+
+```plaintext
+Query query = FirebaseUtils.getFirestoreAllChatroomCollectionReference()
+                .whereArrayContains("userIds",FirebaseUtils.getCurrentUserId())
+                .orderBy("lastMessageTime",Query.Direction.DESCENDING);
+```
+
+```plaintext
+(23.0.1) [Firestore]: Listen for Query(target=Query(chatrooms where userIds array_contains # com.google.firestore.v1.Value@1a83ab28
+integer_value: 0
+string_value: "rpv1yNXRgnhCb7flsXBkyaTgSZ22" order by -lastMessageTime, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/fir-tutorial-365bc/firestore/indexes?create_composite=ClRwcm9qZWN0cy9maXItdHV0b3JpYWwtMzY1YmMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2NoYXRyb29tcy9pbmRleGVzL18QARoLCgd1c2VySWRzGAEaEwoPbGFzdE1lc3NhZ2VUaW1lEAIaDAoIX19uYW1lX18QAg, cause=null}
+onError
+com.google.firebase.firestore.FirebaseFirestoreException: FAILED_PRECONDITION: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/fir-tutorial-365bc/firestore/indexes?create_composite=ClRwcm9qZWN0cy9maXItdHV0b3JpYWwtMzY1YmMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2NoYXRyb29tcy9pbmRleGVzL18QARoLCgd1c2VySWRzGAEaEwoPbGFzdE1lc3NhZ2VUaW1lEAIaDAoIX19uYW1lX18QAg
+	at com.google.firebase.firestore.util.Util.exceptionFromStatus(Util.java:117)
+	at com.google.firebase.firestore.core.EventManager.onError(EventManager.java:166)
+	at com.google.firebase.firestore.core.SyncEngine.removeAndCleanupTarget(SyncEngine.java:588)
+	at com.google.firebase.firestore.core.SyncEngine.handleRejectedListen(SyncEngine.java:424)
+	at com.google.firebase.firestore.core.MemoryComponentProvider$RemoteStoreCallback.handleRejectedListen(MemoryComponentProvider.java:99)
+	at com.google.firebase.firestore.remote.RemoteStore.processTargetError(RemoteStore.java:562)
+	at com.google.firebase.firestore.remote.RemoteStore.handleWatchChange(RemoteStore.java:446)
+	at com.google.firebase.firestore.remote.RemoteStore.access$100(RemoteStore.java:53)
+	at com.google.firebase.firestore.remote.RemoteStore$1.onWatchChange(RemoteStore.java:176)
+	at com.google.firebase.firestore.remote.WatchStream.onNext(WatchStream.java:108)
+	at com.google.firebase.firestore.remote.WatchStream.onNext(WatchStream.java:38)
+	at com.google.firebase.firestore.remote.AbstractStream$StreamObserver.lambda$onNext$1$com-google-firebase-firestore-remote-AbstractStream$StreamObserver(AbstractStream.java:119)
+	at com.google.firebase.firestore.remote.AbstractStream$StreamObserver$$ExternalSyntheticLambda2.run(Unknown Source:4)
+	at com.google.firebase.firestore.remote.AbstractStream$CloseGuardedRunner.run(AbstractStream.java:67)
+	at com.google.firebase.firestore.remote.AbstractStream$StreamObserver.onNext(AbstractStream.java:110)
+	at com.google.firebase.firestore.remote.FirestoreChannel$1.onMessage(FirestoreChannel.java:125)
+	at io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1MessagesAvailable.runInternal(ClientCallImpl.java:658)
+	at io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1MessagesAvailable.runInContext(ClientCallImpl.java:643)
+	at io.grpc.internal.ContextRunnable.run(ContextRunnable.java:37)
+	at io.grpc.internal.SerializingExecutor.run(SerializingExecutor.java:123)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:463)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:307)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1137)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:637)
+	at com.google.firebase.firestore.util.AsyncQueue$SynchronizedShutdownAwareExecutor$DelayedStartFactory.run(AsyncQueue.java:229)
+	at java.lang.Thread.run(Thread.java:1012)
+Caused by: io.grpc.StatusException: FAILED_PRECONDITION: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/fir-tutorial-365bc/firestore/indexes?create_composite=ClRwcm9qZWN0cy9maXItdHV0b3JpYWwtMzY1YmMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2NoYXRyb29tcy9pbmRleGVzL18QARoLCgd1c2VySWRzGAEaEwoPbGFzdE1lc3NhZ2VUaW1lEAIaDAoIX19uYW1lX18QAg
+	at io.grpc.Status.asException(Status.java:541)
+	at com.google.firebase.firestore.util.Util.exceptionFromStatus(Util.java:115)
+	at com.google.firebase.firestore.core.EventManager.onError(EventManager.java:166) 
+	at com.google.firebase.firestore.core.SyncEngine.removeAndCleanupTarget(SyncEngine.java:588) 
+	at com.google.firebase.firestore.core.SyncEngine.handleRejectedListen(SyncEngine.java:424) 
+	at com.google.firebase.firestore.core.MemoryComponentProvider$RemoteStoreCallback.handleRejectedListen(MemoryComponentProvider.java:99) 
+	at com.google.firebase.firestore.remote.RemoteStore.processTargetError(RemoteStore.java:562) 
+	at com.google.firebase.firestore.remote.RemoteStore.handleWatchChange(RemoteStore.java:446) 
+	at com.google.firebase.firestore.remote.RemoteStore.access$100(RemoteStore.java:53) 
+	at com.google.firebase.firestore.remote.RemoteStore$1.onWatchChange(RemoteStore.java:176) 
+	at com.google.firebase.firestore.remote.WatchStream.onNext(WatchStream.java:108) 
+	at com.google.firebase.firestore.remote.WatchStream.onNext(WatchStream.java:38) 
+	at com.google.firebase.firestore.remote.AbstractStream$StreamObserver.lambda$onNext$1$com-google-firebase-firestore-remote-AbstractStream$StreamObserver(AbstractStream.java:119) 
+	at com.google.firebase.firestore.remote.AbstractStream$StreamObserver$$ExternalSyntheticLambda2.run(Unknown Source:4) 
+	at com.google.firebase.firestore.remote.AbstractStream$CloseGuardedRunner.run(AbstractStream.java:67) 
+	at com.google.firebase.firestore.remote.AbstractStream$StreamObserver.onNext(AbstractStream.java:110) 
+	at com.google.firebase.firestore.remote.FirestoreChannel$1.onMessage(FirestoreChannel.java:125) 
+	at io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1MessagesAvailable.runInternal(ClientCallImpl.java:658) 
+	at io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1MessagesAvailable.runInContext(ClientCallImpl.java:643) 
+	at io.grpc.internal.ContextRunnable.run(ContextRunnable.java:37) 
+	at io.grpc.internal.SerializingExecutor.run(SerializingExecutor.java:123) 
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:463) 
+	at java.util.concurrent.FutureTask.run(FutureTask.java:264) 
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:307) 
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1137) 
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:637) 
+	at com.google.firebase.firestore.util.AsyncQueue$SynchronizedShutdownAwareExecutor$DelayedStartFactory.run(AsyncQueue.java:229) 
+	at java.lang.Thread.run(Thread.java:1012) 
+
+```
+
 ## Firebase Storage
 
 Step-by-step tutorial for Storage:

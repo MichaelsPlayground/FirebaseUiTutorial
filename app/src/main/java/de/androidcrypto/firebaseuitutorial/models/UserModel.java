@@ -12,6 +12,13 @@ public class UserModel {
     public UserModel() {
     }
 
+    public UserModel(String userId, String userName, String userMail, String userPhotoUrl) {
+        this.userName = userName;
+        this.userMail = userMail;
+        this.userId = userId;
+        this.userPhotoUrl = userPhotoUrl;
+    }
+
     public UserModel(String userId, String userName, String userMail, String userPhotoUrl, String userPublicKey, int userPublicKeyNumber, String userOnlineString, long userLastOnlineTime) {
         this.userId = userId;
         this.userName = userName;

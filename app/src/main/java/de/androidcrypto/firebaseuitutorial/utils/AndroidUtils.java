@@ -12,6 +12,12 @@ import de.androidcrypto.firebaseuitutorial.models.UserModel;
 
 public class AndroidUtils {
 
+    private static final String INTENT_USER_ID = "uswerId";
+    private static final String INTENT_USER_NAME = "uswerName";
+    private static final String INTENT_USER_EMAIL = "userEmail";
+    private static final String INTENT_USER_PHOTO_URL = "userPhotoUrl";
+    private static final String INTENT_USER_DEVICE_TOKEN = "userDeviceToken";
+
     public static String shortenString(String input, int maxLength) {
         if (input != null && input.length() > maxLength) {
             return input.substring(0, (maxLength - 3)) + " ..";
@@ -21,21 +27,20 @@ public class AndroidUtils {
     }
 
     public static void passUserModelAsIntent(Intent intent, UserModel model){
-        intent.putExtra("username",model.getUserName());
-        // todo change putExtra ("phone" to "email"
-        intent.putExtra("phone",model.getUserMail());
-        intent.putExtra("userId",model.getUserId());
-        intent.putExtra("fcmToken",model.getDeviceToken());
-
+        intent.putExtra(INTENT_USER_ID, model.getUserId());
+        intent.putExtra(INTENT_USER_NAME, model.getUserName());
+        intent.putExtra(INTENT_USER_EMAIL, model.getUserMail());
+        intent.putExtra(INTENT_USER_PHOTO_URL, model.getUserPhotoUrl());
+        intent.putExtra(INTENT_USER_DEVICE_TOKEN, model.getDeviceToken());
     }
 
     public static UserModel getUserModelFromIntent(Intent intent){
         UserModel userModel = new UserModel();
-        userModel.setUserName(intent.getStringExtra("username"));
-        // todo change intent.getStringExtra("phone") to intent.getStringExtra("email")
-        userModel.setUserMail(intent.getStringExtra("phone"));
-        userModel.setUserId(intent.getStringExtra("userId"));
-        userModel.setDeviceToken(intent.getStringExtra("fcmToken"));
+        userModel.setUserId(intent.getStringExtra(INTENT_USER_ID));
+        userModel.setUserName(intent.getStringExtra(INTENT_USER_NAME));
+        userModel.setUserMail(intent.getStringExtra(INTENT_USER_EMAIL));
+        userModel.setUserPhotoUrl(intent.getStringExtra(INTENT_USER_PHOTO_URL));
+        userModel.setDeviceToken(intent.getStringExtra(INTENT_USER_DEVICE_TOKEN));
         return userModel;
     }
 

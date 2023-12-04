@@ -7,14 +7,12 @@
     android:background="@drawable/edit_text_rounded_corner"
     android:elevation="2dp">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/ciProfileImage"
+    <include
+        layout="@layout/profile_pic_view"
         android:layout_width="52dp"
         android:layout_height="52dp"
-        android:layout_centerInParent="true"
         android:layout_gravity="center"
-        android:layout_margin="10dp"
-        android:src="@drawable/person_icon" />
+        android:layout_margin="10dp" />
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -319,12 +319,21 @@ public class FirebaseUtils {
     }
 
     public static DocumentReference getFirestoreOtherUserFromChatroom(List<String> userIds){
-        if(userIds.get(0).equals(FirebaseUtils.getCurrentUserId())){
+        if (userIds.get(0).equals(FirebaseUtils.getCurrentUserId())) {
             return getFirestoreAllUserCollectionReference().document(userIds.get(1));
-        }else{
+        } else {
             return getFirestoreAllUserCollectionReference().document(userIds.get(0));
         }
     }
+
+    public static String getFirestoreOtherUserIdFromChatroom(List<String> userIds){
+        if (userIds.get(0).equals(FirebaseUtils.getCurrentUserId())) {
+            return userIds.get(1);
+        } else {
+            return userIds.get(0);
+        }
+    }
+
 
     /**
      * section Firebase Storage

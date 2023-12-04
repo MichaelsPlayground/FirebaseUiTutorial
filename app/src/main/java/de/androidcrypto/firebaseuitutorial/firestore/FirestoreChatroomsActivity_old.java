@@ -15,93 +15,74 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Objects;
 
-import de.androidcrypto.firebaseuitutorial.GlideApp;
 import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
-import de.androidcrypto.firebaseuitutorial.database.DatabaseChatRecyclerAdapter;
 import de.androidcrypto.firebaseuitutorial.models.ChatroomModel;
-import de.androidcrypto.firebaseuitutorial.models.MessageModel;
-import de.androidcrypto.firebaseuitutorial.models.NotificationMessageModel;
-import de.androidcrypto.firebaseuitutorial.models.RecentMessageModel;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
-import de.androidcrypto.firebaseuitutorial.utils.AndroidUtils;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
-import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class FirestoreChatActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
+public class FirestoreChatroomsActivity_old extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
 
     private com.google.android.material.textfield.TextInputEditText edtMessage;
     private com.google.android.material.textfield.TextInputLayout edtMessageLayout;
     private CircleImageView profileImage;
     private TextView userName;
-    private RecyclerView messagesList;
+    private RecyclerView recyclerView;
 
     private static String authUserId = "";
     private static String authUserEmail = "";
     private static String authDisplayName = "";
     private static String authProfileImage = "";
     private static String receiveUserId = "", receiveUserEmail = "", receiveUserDisplayName = "", receiveProfileImage = "";
-    private UserModel otherUserModel;
     private static String roomId = "";
 
-    static final String TAG = FirestoreChatActivity.class.getSimpleName();
+    static final String TAG = FirestoreChatroomsActivity_old.class.getSimpleName();
 
     private CollectionReference messagesDatabase;
     private FirebaseAuth mFirebaseAuth;
     private FirestoreRecyclerAdapter firestoreRecyclerAdapter;
-    private ChatroomModel chatroomModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_firestore_chat);
+        setContentView(R.layout.activity_firestore_chatrooms);
 
-        Toolbar toolbar = findViewById(R.id.tbChatFirestore);
+        Toolbar toolbar = findViewById(R.id.tbChatroomsFirestore);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
+        getSupportActionBar().setTitle("User Chatrooms");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // and this
-                startActivity(new Intent(FirestoreChatActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                startActivity(new Intent(FirestoreChatroomsActivity_old.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
         });
 
         //Toolbar myToolbar = (Toolbar) findViewById(R.id.chatToolbar);
         //setSupportActionBar(myToolbar);
-        
-        profileImage = findViewById(R.id.ciChatFirestoreProfileImage);
-        userName = findViewById(R.id.tvChatFirestoreUserName);
 
-        edtMessageLayout = findViewById(R.id.etChatFirestoreMessageLayout);
-        edtMessage = findViewById(R.id.etChatFirestoreMessage);
-        messagesList = findViewById(R.id.rvChatFirestore);
+        profileImage = findViewById(R.id.ciChatroomsFirestoreProfileImage);
+        userName = findViewById(R.id.tvChatroomsFirestoreUserName);
 
-        messagesList.setHasFixedSize(true);
-        messagesList.setLayoutManager(new LinearLayoutManager(this));
+        //edtMessageLayout = findViewById(R.id.etChatroomsFirestoreMessageLayout);
+        //edtMessage = findViewById(R.id.etChatroomsFirestoreMessage);
+
 
         // start with a disabled ui
         enableUiOnSignIn(false);
@@ -112,53 +93,30 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
         //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         loadSignedInUserData(mFirebaseAuth.getCurrentUser().getUid());
 
-        //get UserModel
-        otherUserModel = AndroidUtils.getUserModelFromIntent(getIntent());
-        if (otherUserModel != null) {
-            receiveUserId = otherUserModel.getUserId();
-            receiveUserDisplayName = otherUserModel.getUserName();
-            receiveUserEmail = otherUserModel.getUserMail();
-            receiveProfileImage = otherUserModel.getUserPhotoUrl();
-            Log.d(TAG, "incoming intent otherPhotoUrl: " + receiveProfileImage);
-            if (!TextUtils.isEmpty(receiveProfileImage)) {
-                GlideApp.with(this)
-                        .load(receiveProfileImage)
-                        .into(profileImage);
-            } else {
-                Log.d(TAG, "cannot set receiver profile image");
-                profileImage.setImageResource(R.drawable.person_icon);
-            }
+        // read data received from ListUserOnDatabase
+        Intent intent = getIntent();
+        receiveUserId = intent.getStringExtra("UID");
+        if (receiveUserId != null) {
+            Log.i(TAG, "selectedUid: " + receiveUserId);
         } else {
-
-            // read data received from ListUserOnDatabase
-            Intent intent = getIntent();
-            receiveUserId = intent.getStringExtra("UID");
-            if (receiveUserId != null) {
-                Log.i(TAG, "selectedUid: " + receiveUserId);
-            } else {
-                receiveUserId = "";
-            }
-            receiveUserEmail = intent.getStringExtra("EMAIL");
-            if (receiveUserEmail != null) {
-                Log.i(TAG, "selectedEmail: " + receiveUserEmail);
-            }
-            receiveUserDisplayName = intent.getStringExtra("DISPLAYNAME");
-            if (receiveUserDisplayName != null) {
-                Log.i(TAG, "selectedDisplayName: " + receiveUserDisplayName);
-            } else {
-                receiveUserDisplayName = receiveUserEmail;
-            }
-            receiveProfileImage = intent.getStringExtra("PROFILE_IMAGE");
-            if (receiveProfileImage != null) {
-                Log.i(TAG, "selectedProfileImage: " + receiveProfileImage);
-            } else {
-                receiveProfileImage = "";
-            }
+            receiveUserId = "";
         }
-
-        roomId = FirebaseUtils.getChatroomId(FirebaseUtils.getCurrentUserId(), receiveUserId);
-        System.out.println("*** getOrCreateChatroomModel ***");
-        getOrCreateChatroomModel();
+        receiveUserEmail = intent.getStringExtra("EMAIL");
+        if (receiveUserEmail != null) {
+            Log.i(TAG, "selectedEmail: " + receiveUserEmail);
+        }
+        receiveUserDisplayName = intent.getStringExtra("DISPLAYNAME");
+        if (receiveUserDisplayName != null) {
+            Log.i(TAG, "selectedDisplayName: " + receiveUserDisplayName);
+        } else {
+            receiveUserDisplayName = receiveUserEmail;
+        }
+        receiveProfileImage = intent.getStringExtra("PROFILE_IMAGE");
+        if (receiveProfileImage != null) {
+            Log.i(TAG, "selectedProfileImage: " + receiveProfileImage);
+        } else {
+            receiveProfileImage = "";
+        }
 
         String receiveUserString = "Email: " + receiveUserEmail;
         receiveUserString += "\nUID: " + receiveUserId;
@@ -167,12 +125,18 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
 
         // fill toolbar
         userName.setText(receiveUserDisplayName);
+        if (TextUtils.isEmpty(receiveProfileImage)) {
+            profileImage.setImageResource(R.drawable.person_icon);
+        } else {
+            //and this
+            Glide.with(getApplicationContext()).load(receiveProfileImage).into(profileImage);
+        }
+
 
         Log.i(TAG, "receiveUser: " + receiveUserString);
         // get own data
-        //authUserEmail = intent.getStringExtra("AUTH_EMAIL");
-        authDisplayName = mFirebaseAuth.getCurrentUser().getDisplayName().toString();
-        authUserEmail = mFirebaseAuth.getCurrentUser().getEmail().toString();
+        authUserEmail = intent.getStringExtra("AUTH_EMAIL");
+        authDisplayName = intent.getStringExtra("AUTH_DISPLAYNAME");
         authProfileImage = mFirebaseAuth.getCurrentUser().getPhotoUrl().toString();
 
         // Initialize Firebase Auth
@@ -190,133 +154,36 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
 
         String finalReceiveUserString = receiveUserString;
         String finalReceiveUserString1 = receiveUserString;
-        edtMessageLayout.setEndIconOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //showProgressBar();
-                Log.i(TAG, "clickOnIconEnd");
-                String messageString = edtMessage.getText().toString();
-                Log.i(TAG, "message: " + messageString);
-                // now we are going to send data to the database
-                long actualTime = TimeUtils.getActualUtcZonedDateTime();
-                String actualTimeString = TimeUtils.getZoneDatedStringMediumLocale(actualTime);
-                // retrieve the time string in GMT
-                //SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                //String millisInString  = dateFormat.format(new Date());
 
-                //MessageModel messageModel = new MessageModel(messageString, actualTime, timestamp, authUserId, receiveUserId);
-                MessageModel messageModel = new MessageModel(messageString, actualTime, actualTimeString, authUserId, receiveUserId);
-                CollectionReference collectionReference = FirebaseUtils.getFirestoreChatroomCollectionReference(roomId);
-                collectionReference.add(messageModel).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.i(TAG, "DocumentSnapshot successfully written for roomId: " + roomId);
-                        Toast.makeText(getApplicationContext(),
-                                "message written to chatroom " + roomId,
-                                Toast.LENGTH_SHORT).show();
 
-                        // update the chatroom
-                        //getOrCreateChatroomModel();
-                        chatroomModel.setLastMessageTime(TimeUtils.getActualUtcZonedDateTime());
-                        chatroomModel.setLastMessageSenderId(FirebaseUtils.getCurrentUserId());
-                        chatroomModel.setLastMessage(messageString);
-                        chatroomModel.setSenderName(authDisplayName);
-                        chatroomModel.setSenderEmail(authUserEmail);
-                        chatroomModel.setSenderPhotoUrl(authProfileImage);
-                        chatroomModel.setReceiverName(otherUserModel.getUserName());
-                        chatroomModel.setReceiverEmail(otherUserModel.getUserMail());
-                        chatroomModel.setReceiverPhotoUrl(otherUserModel.getUserPhotoUrl());
-                        FirebaseUtils.getFirestoreChatroomReference(roomId).set(chatroomModel);
 
-                    }
-                });
-                edtMessage.setText("");
+    }
 
-                // store the message in recentMessages database of the receiver
-                // RecentMessageModel(String chatroomId, String chatMessage, String userId, String userName, String userEmail, String userProfileImage, long chatLastTime)
-                RecentMessageModel recentMessageModel = new RecentMessageModel(roomId, messageString, authUserId, authDisplayName, authUserEmail, authProfileImage, actualTime);
-                CollectionReference recentMessageCollectionReference = FirebaseUtils.getFirestoreUserRecentMessagesReference(receiveUserId);
-                recentMessageCollectionReference.add(recentMessageModel).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.i(TAG, "recent message reference written for receiveUserId: " + receiveUserId);
-                        Toast.makeText(getApplicationContext(),
-                                "recent message written to receiveUserId: " + receiveUserId,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+    void setupRecyclerView(){
 
-                // store one notificationMessage per user
-                NotificationMessageModel notificationMessageModel = new NotificationMessageModel(roomId, authUserId, authDisplayName, authUserEmail, authProfileImage, actualTime);
-                FirebaseUtils.getFirestoreUserNotificationMessagesDocumentSetTask(receiveUserId, notificationMessageModel).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Log.i(TAG, "notification message reference written for receiveUserId: " + receiveUserId);
-                        Toast.makeText(getApplicationContext(),
-                                "notification message written to receiveUserId: " + receiveUserId,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+        Query query = FirebaseUtils.getFirestoreAllChatroomCollectionReference()
+                .whereArrayContains("userIds",FirebaseUtils.getCurrentUserId())
+                .orderBy("lastMessageTime",Query.Direction.DESCENDING);
 /*
-                FirebaseUtils.getFirestoreUserNotificationMessagesAddTask(receiveUserId, authUserId, notificationMessageModel).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    //FirebaseUtils.getFirestoreUserNotificationMessagesTask(receiveUserId, notificationMessageModel).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.i(TAG, "notification message reference written for receiveUserId: " + receiveUserId);
-                        Toast.makeText(getApplicationContext(),
-                                "notification message written to receiveUserId: " + receiveUserId,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
-*/
-            }
-        });
+        Query query = FirebaseUtils.getFirestoreAllChatroomCollectionReference()
+                .whereArrayContains("userIds",FirebaseUtils.getCurrentUserId())
+                .orderBy("lastMessageTime",Query.Direction.DESCENDING);
+  */
+        CollectionReference cr = FirebaseUtils.getFirestoreAllChatroomCollectionReference();
+        /*
+        FirestoreRecyclerOptions<ChatroomModel> options = new FirestoreRecyclerOptions.Builder<ChatroomModel>()
+                .setQuery(query,ChatroomModel.class).build();
+                
+         */
+        FirestoreRecyclerOptions<ChatroomModel> options = new FirestoreRecyclerOptions.Builder<ChatroomModel>()
+                .setQuery(cr,ChatroomModel.class).build();
+
+        firestoreRecyclerAdapter = new FirestoreChatroomRecyclerAdapter(options, FirestoreChatroomsActivity_old.this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(FirestoreChatroomsActivity_old.this));
+        recyclerView.setAdapter(firestoreRecyclerAdapter);
+        firestoreRecyclerAdapter.startListening();
+
     }
-
-    void getOrCreateChatroomModel() {
-        System.out.println("*** getOrCreateChatroomModel roomId: " + roomId + " ***");
-        FirebaseUtils.getFirestoreChatroomReference(roomId).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                chatroomModel = task.getResult().toObject(ChatroomModel.class);
-                if (chatroomModel == null) {
-                    //first time chat
-                    System.out.println("*** firstTimeChat in chatroom " + roomId + " ***");
-                    chatroomModel = new ChatroomModel(
-                            roomId,
-                            Arrays.asList(FirebaseUtils.getCurrentUserId(), receiveUserId),
-                            TimeUtils.getActualUtcZonedDateTime(),
-                            ""
-                    );
-                    FirebaseUtils.getFirestoreChatroomReference(roomId).set(chatroomModel);
-                } else {
-                    System.out.println("*** chatroomModel is NOT NULL ***");
-                }
-            } else {
-                System.out.println("*** task IS NOT successful ***");
-            }
-        });
-    }
-
-    private void userNotification(String receiveUserId, String senderUserId, long actualTime) {
-        String currentUserId = FirebaseUtils.getCurrentUserId();
-        // update only if a user is signed in
-        if (!TextUtils.isEmpty(currentUserId)) {
-
-            // Firebase
-
-            HashMap<String, Object> hashMap = new HashMap<>();
-            hashMap.put("userOnlineString", senderUserId);
-            hashMap.put("userLastOnlineTime", actualTime);
-            /*
-            actualUserDatabaseReference = FirebaseUtils.getDatabaseUserReference(currentUserId);
-            actualUserDatabaseReference.updateChildren(hashMap);
-*/
-            // Firestore
-            DocumentReference actualUsersNotificationFirebaseReference = FirebaseUtils.getFirestoreUserNotificationReference(receiveUserId);
-            actualUsersNotificationFirebaseReference.update(hashMap);
-        }
-    }
-
 
     /**
      * service methods
@@ -343,7 +210,7 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
                 Log.i(TAG, "onStart prepare database for chat");
                 reload();
                 enableUiOnSignIn(true);
-                setupChatRecyclerView(currentUser.getUid(), receiveUserId);
+                setupRecyclerView();
                 /*
                 setDatabaseForRoom(currentUser.getUid(), receiveUserId);
                 firebaseRecyclerAdapter.startListening();
@@ -383,15 +250,14 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
             //auth.signInAnonymously().addOnCompleteListener(new SignInResultNotifier(this));
         }
     }
-
-
+/*
     void setupChatRecyclerView(String ownUid, String receiverUid) {
 
         roomId = FirebaseUtils.getChatroomId(ownUid, receiverUid);
-        com.google.firebase.firestore.Query query = FirebaseUtils.getFirestoreChatroomQuery(roomId);
+        Query query = FirebaseUtils.getFirestoreChatroomQuery(roomId);
         //Query orderedQuery = query.orderBy("messageTime", Query.Direction.ASCENDING);
 
-        CollectionReference collectionReference = FirebaseUtils.getFirestoreChatroomCollectionReference(roomId);
+        CollectionReference collectionReference = FirebaseUtils.getFirestoreChatroomReference(roomId);
         Query orderedQuery = collectionReference.orderBy("messageTime", Query.Direction.ASCENDING);
 
         FirestoreRecyclerOptions<MessageModel> options = new FirestoreRecyclerOptions.Builder<MessageModel>()
@@ -415,7 +281,7 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
         });
     }
 
-
+ */
 /*
     private void attachRecyclerViewAdapter() {
         final RecyclerView.Adapter adapter = firebaseRecyclerAdapter;
@@ -520,9 +386,9 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
     private void enableUiOnSignIn(boolean userIsSignedIn) {
         if (!userIsSignedIn) {
             //header.setText("you need to be signed in before starting a chat");
-            edtMessageLayout.setEnabled(userIsSignedIn);
+            //edtMessageLayout.setEnabled(userIsSignedIn);
         } else {
-            edtMessageLayout.setEnabled(userIsSignedIn);
+            //edtMessageLayout.setEnabled(userIsSignedIn);
         }
     }
 
