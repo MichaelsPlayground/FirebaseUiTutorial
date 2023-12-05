@@ -46,6 +46,7 @@ import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileAct
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileLegacyActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserRecentMessagesActivity;
+import de.androidcrypto.firebaseuitutorial.storage.StorageUploadFilesAndImagesActivity;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
@@ -110,9 +111,10 @@ public class MainActivity extends AppCompatActivity {
     private Button listFirestoreUserChatrooms;
 
     /**
-     * section
+     * section Firebase Storage
      */
 
+    private Button uploadStorageFilesAndImages;
 
     /**
      * section
@@ -448,8 +450,18 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /**
-         * section for
+         * section for Firebase Storage
          */
+
+        uploadStorageFilesAndImages = findViewById(R.id.btnMainStorageUploadFilesImages);
+        uploadStorageFilesAndImages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "upload Firebase Storage files and images");
+                Intent intent = new Intent(MainActivity.this, StorageUploadFilesAndImagesActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         /**

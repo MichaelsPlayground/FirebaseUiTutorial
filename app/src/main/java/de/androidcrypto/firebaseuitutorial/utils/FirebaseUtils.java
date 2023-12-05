@@ -59,7 +59,8 @@ public class FirebaseUtils {
     public static final String NOTIFICATION_COLLECTION_FOLDER_NAME = "notificationMessages";
 
     // storage
-
+    public static final String STORAGE_FILES_FOLDER_NAME = "files";
+    public static final String STORAGE_IMAGES_FOLDER_NAME = "images";
     public static final String STORAGE_PROFILE_IMAGES_FOLDER_NAME = "profile_images";
     public static final String STORAGE_PROFILE_IMAGE_FILE_EXTENSION = ".jpg";
 
@@ -288,6 +289,14 @@ public class FirebaseUtils {
     /**
      * section Firebase Storage
      */
+
+    public static StorageReference getStorageCurrentUserFilesReference(String fileName) {
+        return FirebaseStorage.getInstance().getReference().child(getCurrentUserId()).child(STORAGE_FILES_FOLDER_NAME + "/" + fileName);
+    }
+
+    public static StorageReference getStorageCurrentUserImagesReference(String fileName) {
+        return FirebaseStorage.getInstance().getReference().child(getCurrentUserId()).child(STORAGE_IMAGES_FOLDER_NAME + "/" + fileName);
+    }
 
     public static StorageReference getStorageProfileImagesReference(String userId) {
         return getStorageChildReference(STORAGE_PROFILE_IMAGES_FOLDER_NAME).child(userId + STORAGE_PROFILE_IMAGE_FILE_EXTENSION);

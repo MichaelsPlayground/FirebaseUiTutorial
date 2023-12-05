@@ -26,6 +26,7 @@
         </intent>
         <intent>
             <action android:name="android.intent.action.PICK" />
+
             <data android:mimeType="vnd.android.cursor.dir/image" />
         </intent>
     </queries>
@@ -41,6 +42,9 @@
         android:theme="@style/Theme.FirebaseUiTutorial"
         tools:targetApi="31">
         <activity
+            android:name=".storage.StorageUploadFilesAndImagesActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -51,51 +55,50 @@
         </activity>
         <activity
             android:name=".auth.AuthEditUserProfileActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".database.DatabaseEditUserProfileActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".database.DatabaseEditUserProfileLegacyActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:exported="false"
-            android:theme="@style/Base.Theme.AppCompat"/>
+            android:theme="@style/Base.Theme.AppCompat" />
         <activity
             android:name=".database.DatabaseListUserActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".database.DatabaseListUserLvActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".database.DatabaseChatActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".database.DatabaseListUserRecentMessagesActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".database.DatabaseChatroomsActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".firestore.FirestoreEditUserProfileActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".firestore.FirestoreEditUserProfileLegacyActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".firestore.FirestoreListUserActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".firestore.FirestoreChatActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".firestore.FirestoreListUserRecentMessagesActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".firestore.FirestoreChatroomsActivity"
-            android:exported="false"/>
-        <!-- Provider to cache images to the internal App cache -->
+            android:exported="false" /> <!-- Provider to cache images to the internal App cache -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -105,8 +108,7 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
-        </provider>
-        <!-- Trigger Google Play services to install the back ported photo picker module. -->
+        </provider> <!-- Trigger Google Play services to install the back ported photo picker module. -->
         <service
             android:name="com.google.android.gms.metadata.ModuleDependencies"
             android:enabled="false"
@@ -115,11 +117,11 @@
             <intent-filter>
                 <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
             </intent-filter>
+
             <meta-data
                 android:name="photopicker_activity:0:required"
                 android:value="" />
         </service>
-
     </application>
 
 </manifest>

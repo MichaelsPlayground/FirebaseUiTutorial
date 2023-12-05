@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
@@ -62,5 +63,9 @@ public class AndroidUtils {
         Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
         snackbar.setBackgroundTint(ContextCompat.getColor(view.getContext(), R.color.red_snackbar));
         snackbar.show();
+    }
+
+    public static  void showToast(Context context,String message){
+        Toast.makeText(context,message,Toast.LENGTH_SHORT).show();
     }
 }
