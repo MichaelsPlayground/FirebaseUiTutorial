@@ -15,25 +15,21 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.Query;
 
 import java.util.Objects;
 
-import de.androidcrypto.firebaseuitutorial.ItemClickListener;
 import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
-import de.androidcrypto.firebaseuitutorial.database.DatabaseRecentMessageModelAdapter;
 import de.androidcrypto.firebaseuitutorial.models.RecentMessageModel;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 
-public class FirestoreListUserRecentMessagesActivity extends AppCompatActivity implements ItemClickListener {
+public class FirestoreListUserRecentMessagesActivity extends AppCompatActivity {
     // https://www.geeksforgeeks.org/how-to-populate-recyclerview-with-firebase-data-using-firebaseui-in-android-studio/
 
     private static final String TAG = FirestoreListUserRecentMessagesActivity.class.getSimpleName();
@@ -81,7 +77,6 @@ public class FirestoreListUserRecentMessagesActivity extends AppCompatActivity i
         // Connecting object of required Adapter class to
         // the Adapter class itself
         adapter = new FirestoreRecentMessageModelAdapter(options, this);
-        adapter.setClickListener(this);
         // Connecting Adapter class with the Recycler view*/
         recyclerView.setAdapter(adapter);
         adapter.startListening();
@@ -117,25 +112,6 @@ public class FirestoreListUserRecentMessagesActivity extends AppCompatActivity i
     {
         super.onStop();
         adapter.stopListening();
-    }
-
-    // called when clicking on recyclerview
-    @Override
-    public void onClick(View view, int position, String userId) {
-        Log.i(TAG, "recyclerview clicked on position: " + position + " userId: " + userId);
-
-        /*
-        String uidSelected = uidList.get(position);
-        String emailSelected = emailList.get(position);
-        String displayNameSelected = displayNameList.get(position);
-
-        Intent intent = new Intent(ListUserRecyclerviewActivity.this, ChatActivity.class);
-        intent.putExtra("UID", uidSelected);
-        intent.putExtra("EMAIL", emailSelected);
-        intent.putExtra("DISPLAYNAME", displayNameSelected);
-        startActivity(intent);
-        finish();
-        */
     }
 
 
@@ -206,6 +182,4 @@ public class FirestoreListUserRecentMessagesActivity extends AppCompatActivity i
 
         return super.onCreateOptionsMenu(menu);
     }
-
-
 }

@@ -2,16 +2,13 @@ package de.androidcrypto.firebaseuitutorial.firestore;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.Query;
@@ -20,7 +17,6 @@ import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.ChatroomModel;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FirestoreChatroomsActivity extends AppCompatActivity {
     private static final String TAG = FirestoreChatroomsActivity.class.getSimpleName();
@@ -70,7 +66,6 @@ public class FirestoreChatroomsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(FirestoreChatroomsActivity.this));
         recyclerView.setAdapter(firestoreRecyclerAdapter);
         firestoreRecyclerAdapter.startListening();
-        System.out.println("*** setupRecyclerView done");
     }
 
     @Override
@@ -95,5 +90,4 @@ public class FirestoreChatroomsActivity extends AppCompatActivity {
             firestoreRecyclerAdapter.notifyDataSetChanged();
         }
     }
-
 }

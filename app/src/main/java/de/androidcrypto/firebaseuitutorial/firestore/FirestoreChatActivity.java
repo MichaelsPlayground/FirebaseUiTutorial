@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,7 +54,7 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
     private static String authProfileImage = "";
     private static String receiveUserId = "", receiveUserEmail = "", receiveUserDisplayName = "", receiveProfileImage = "";
     private UserModel otherUserModel;
-    private static String roomId = "";
+    private static String chatroomId = "";
     private FirebaseAuth mFirebaseAuth;
     private RecyclerView recyclerView;
     private FirestoreRecyclerAdapter firestoreRecyclerAdapter;
@@ -65,7 +64,6 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firestore_chat);
-        //LinearLayout llView = findViewById(R.layout.activity_firestore_chat);
         Toolbar toolbar = findViewById(R.id.tbChatFirestore);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Chat with ");
@@ -115,7 +113,7 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
             Toast.makeText(this, "could not get the  data from other user, aborted", Toast.LENGTH_SHORT).show();
         }
 
-        roomId = FirebaseUtils.getChatroomId(FirebaseUtils.getCurrentUserId(), receiveUserId);
+        chatroomId = FirebaseUtils.getChatroomId(FirebaseUtils.getCurrentUserId(), receiveUserId);
         System.out.println("*** getOrCreateChatroomModel ***");
         getOrCreateChatroomModel();
 
@@ -144,24 +142,22 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
             @Override
             public void onClick(View view) {
                 //showProgressBar();
-                Log.i(TAG, "clickOnIconEnd");
                 String messageString = edtMessage.getText().toString();
                 if (TextUtils.isEmpty(messageString)) {
                     AndroidUtils.showSnackbarRedLong(view, "you need to enter minimum 1 char");
                     return;
                 }
-                Log.i(TAG, "message: " + messageString);
                 // now we are going to send data to the database
                 long actualTime = TimeUtils.getActualUtcZonedDateTime();
                 String actualTimeString = TimeUtils.getZoneDatedStringMediumLocale(actualTime);
                 MessageModel messageModel = new MessageModel(messageString, actualTime, actualTimeString, authUserId, receiveUserId);
-                CollectionReference collectionReference = FirebaseUtils.getFirestoreChatroomCollectionReference(roomId);
+                CollectionReference collectionReference = FirebaseUtils.getFirestoreChatroomCollectionReference(chatroomId);
                 collectionReference.add(messageModel).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
-                        Log.i(TAG, "DocumentSnapshot successfully written for roomId: " + roomId);
+                        Log.i(TAG, "DocumentSnapshot successfully written for chatroomId: " + chatroomId);
                         Toast.makeText(view.getContext(),
-                                "message written to chatroom " + roomId,
+                                "message written to chatroom " + chatroomId,
                                 Toast.LENGTH_SHORT).show();
 
                         // update the chatroom
@@ -175,14 +171,14 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
                         chatroomModel.setReceiverName(otherUserModel.getUserName());
                         chatroomModel.setReceiverEmail(otherUserModel.getUserMail());
                         chatroomModel.setReceiverPhotoUrl(otherUserModel.getUserPhotoUrl());
-                        FirebaseUtils.getFirestoreChatroomReference(roomId).set(chatroomModel);
+                        FirebaseUtils.getFirestoreChatroomReference(chatroomId).set(chatroomModel);
                     }
                 });
                 edtMessage.setText("");
 
                 // store the message in recentMessages database of the receiver
                 // RecentMessageModel(String chatroomId, String chatMessage, String userId, String userName, String userEmail, String userProfileImage, long chatLastTime)
-                RecentMessageModel recentMessageModel = new RecentMessageModel(roomId, messageString, authUserId, authDisplayName, authUserEmail, authProfileImage, actualTime);
+                RecentMessageModel recentMessageModel = new RecentMessageModel(chatroomId, messageString, authUserId, authDisplayName, authUserEmail, authProfileImage, actualTime);
                 CollectionReference recentMessageCollectionReference = FirebaseUtils.getFirestoreUserRecentMessagesReference(receiveUserId);
                 recentMessageCollectionReference.add(recentMessageModel).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
@@ -198,20 +194,19 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
     }
 
     void getOrCreateChatroomModel() {
-        System.out.println("*** getOrCreateChatroomModel roomId: " + roomId + " ***");
-        FirebaseUtils.getFirestoreChatroomReference(roomId).get().addOnCompleteListener(task -> {
+        FirebaseUtils.getFirestoreChatroomReference(chatroomId).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 chatroomModel = task.getResult().toObject(ChatroomModel.class);
                 if (chatroomModel == null) {
                     //first time chat
-                    System.out.println("*** firstTimeChat in chatroom " + roomId + " ***");
+                    System.out.println("*** firstTimeChat in chatroom " + chatroomId + " ***");
                     chatroomModel = new ChatroomModel(
-                            roomId,
+                            chatroomId,
                             Arrays.asList(FirebaseUtils.getCurrentUserId(), receiveUserId),
                             TimeUtils.getActualUtcZonedDateTime(),
                             ""
                     );
-                    FirebaseUtils.getFirestoreChatroomReference(roomId).set(chatroomModel);
+                    FirebaseUtils.getFirestoreChatroomReference(chatroomId).set(chatroomModel);
                 } else {
                     // do nothing, we have read the chatroomModel
                 }
@@ -224,13 +219,6 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
     /**
      * service methods
      */
-
-    // compare two strings and build a new string: if a < b: ab if a > b: ba, if a = b: ab
-    private String getRoomId(String a, String b) {
-        int compare = a.compareTo(b);
-        if (compare > 0) return b + "_" + a;
-        else return a + "_" + b;
-    }
 
     /**
      * basic
@@ -290,10 +278,10 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
 
     void setupChatRecyclerView(String ownUid, String receiverUid) {
 
-        roomId = FirebaseUtils.getChatroomId(ownUid, receiverUid);
-        com.google.firebase.firestore.Query query = FirebaseUtils.getFirestoreChatsQuery(roomId);
+        chatroomId = FirebaseUtils.getChatroomId(ownUid, receiverUid);
+        com.google.firebase.firestore.Query query = FirebaseUtils.getFirestoreChatsQuery(chatroomId);
 
-        CollectionReference collectionReference = FirebaseUtils.getFirestoreChatroomCollectionReference(roomId);
+        CollectionReference collectionReference = FirebaseUtils.getFirestoreChatroomCollectionReference(chatroomId);
         Query orderedQuery = collectionReference.orderBy("messageTime", Query.Direction.ASCENDING);
 
         FirestoreRecyclerOptions<MessageModel> options = new FirestoreRecyclerOptions.Builder<MessageModel>()
@@ -304,7 +292,6 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setReverseLayout(false); // true oldest element at bottom
         manager.setStackFromEnd(true);
-
 
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(firestoreRecyclerAdapter);
@@ -408,5 +395,4 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
             edtMessageLayout.setEnabled(userIsSignedIn);
         }
     }
-
 }

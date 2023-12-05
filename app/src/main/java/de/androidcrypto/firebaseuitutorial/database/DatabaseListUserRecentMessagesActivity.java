@@ -74,7 +74,6 @@ public class DatabaseListUserRecentMessagesActivity extends AppCompatActivity {
         // Connecting object of required Adapter class to
         // the Adapter class itself
         adapter = new DatabaseRecentMessageModelAdapter(options, this);
-        adapter.setClickListener(this);
         // Connecting Adapter class with the Recycler view*/
         recyclerView.setAdapter(adapter);
         adapter.startListening();

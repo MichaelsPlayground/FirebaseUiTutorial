@@ -49,13 +49,6 @@ public class FirestoreEditUserProfileLegacyActivity extends AppCompatActivity {
 
     private static final String TAG = FirestoreEditUserProfileLegacyActivity.class.getSimpleName();
 
-    /*
-    This class uses Glide to download and show the image
-    https://egemenhamutcu.medium.com/displaying-images-from-firebase-storage-using-glide-for-kotlin-projects-3e4950f6c103
-    https://itecnote.com/tecnote/java-using-firebase-storage-image-with-glide/
-    https://firebaseopensource.com/projects/firebase/firebaseui-android/storage/readme
-     */
-
     /**
      * This class is NOT using firestoreUi for the upload purposes
      */
@@ -113,10 +106,6 @@ public class FirestoreEditUserProfileLegacyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "click on profileImage");
-                //savedView = v;
-                // Launch the photo picker and let the user choose only images.
-                https:
-//developer.android.com/training/data-storage/shared/photopicker
                 pickMediaActivityResultLauncher.launch(new PickVisualMediaRequest.Builder()
                         .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                         .build());

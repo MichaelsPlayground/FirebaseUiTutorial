@@ -215,13 +215,6 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
      * service methods
      */
 
-    // compare two strings and build a new string: if a < b: ab if a > b: ba, if a = b: ab
-    private String getRoomId(String a, String b) {
-        int compare = a.compareTo(b);
-        if (compare > 0) return b + "_" + a;
-        else return a + "_" + b;
-    }
-
     /**
      * basic
      */
@@ -334,7 +327,7 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
     // generates the room id and prepares for the query
     private void setDatabaseForRoom(String ownUid, String receiverUid) {
         // get the chatroomId by comparing 2 UID strings
-        chatroomId = getRoomId(ownUid, receiverUid);
+        chatroomId = FirebaseUtils.getChatroomId(ownUid, receiverUid);
         /*
         String conversationString = "chat between " + ownUid + " (" + authDisplayName + ")"
                 + " and " + receiveUserId + " (" + receiveUserDisplayName + ")"

@@ -59,13 +59,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FirestoreEditUserProfileActivity extends AppCompatActivity {
 
-    /*
-    This class uses Glide to download and show the image
-    https://egemenhamutcu.medium.com/displaying-images-from-firebase-storage-using-glide-for-kotlin-projects-3e4950f6c103
-    https://itecnote.com/tecnote/java-using-firebase-storage-image-with-glide/
-    https://firebaseopensource.com/projects/firebase/firebaseui-android/storage/readme
-     */
-
     /**
      * This class is NOT using firestoreUi for the upload purposes
      */
@@ -143,19 +136,6 @@ public class FirestoreEditUserProfileActivity extends AppCompatActivity {
             }
         });
 
-        /*
-        // use the external selector
-        profileImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "click on profileImage");
-                // Launch the photo picker and let the user choose only images.
-                //https://developer.android.com/training/data-storage/shared/photopicker
-
-                selectImageUriX = new SelectImageUri(v.getContext(), true);
-            }
-        });
-*/
         cropImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -236,56 +216,10 @@ public class FirestoreEditUserProfileActivity extends AppCompatActivity {
 
                         // start cropping directly
                         onCropImage();
-
-/*
-                        Bitmap inputImage = loadFromUri(intermediateProvider);
-                        //Bitmap rotated = rotateBitmap(getResizedBitmap(inputImage, 800), imageUriFull);
-                        Bitmap rotated = getResizedBitmap(inputImage, 500);
-                        profileImageView.setImageBitmap(rotated);
-
-                        int height = profileImageView.getHeight();
-                        int width = profileImageView.getWidth();
-
-                        //Bitmap inputImage = uriToBitmap(imageUriFull);
-                        String imageInfo = "height: " + height + " width: " + width + " resolution: " + (height * width) +
-                                "\nOriginal Bitmap height: " + inputImage.getHeight() + " width: " + inputImage.getWidth() +
-                                " res: " + (inputImage.getHeight() * inputImage.getWidth());
-                        //tvFull.setText(imageInfo);
-                        Log.d(TAG, "imageInfo: " + imageInfo);
-
- */
                     } else {
                         Log.d(TAG, "No media selected");
                     }
                 });
-/*
-        pickMediaActivityResultLauncher =
-                registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
-                    // Callback is invoked after the user selects a media item or closes the
-                    // photo picker.
-                    if (uri != null) {
-                        imageUriFull = uri;
-                        saveBitmapFileToIntermediate(imageUriFull);
-
-                        Bitmap inputImage = loadFromUri(intermediateProvider);
-                        //Bitmap rotated = rotateBitmap(getResizedBitmap(inputImage, 800), imageUriFull);
-                        Bitmap rotated = getResizedBitmap(inputImage, 500);
-                        profileImageView.setImageBitmap(rotated);
-
-                        int height = profileImageView.getHeight();
-                        int width = profileImageView.getWidth();
-
-                        //Bitmap inputImage = uriToBitmap(imageUriFull);
-                        String imageInfo = "height: " + height + " width: " + width + " resolution: " + (height * width) +
-                                "\nOriginal Bitmap height: " + inputImage.getHeight() + " width: " + inputImage.getWidth() +
-                                " res: " + (inputImage.getHeight() * inputImage.getWidth());
-                        //tvFull.setText(imageInfo);
-                        Log.d(TAG, "imageInfo: " + imageInfo);
-                    } else {
-                        Log.d(TAG, "No media selected");
-                    }
-                });
-*/
 
         cropActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -303,22 +237,6 @@ public class FirestoreEditUserProfileActivity extends AppCompatActivity {
                         uploadImage(imageUriCrop);
                     }
                 });
-
-        /*
-        cropActivityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        imageUriCrop = resultProvider;
-                        Bitmap croppedImage = loadFromUri(resultProvider);
-                        profileImageView.setImageBitmap(getResizedBitmap(croppedImage, 500));
-                        String imageInfo = "Cropped Bitmap height: " + croppedImage.getHeight() + " width: " + croppedImage.getWidth() +
-                                " res: " + (croppedImage.getHeight() * croppedImage.getWidth());
-                        //tvCrop.setText(imageInfo);
-                        Log.d(TAG, "imageInfo: " + imageInfo);
-                    }
-                });
-*/
     }
 
     /**
@@ -432,24 +350,6 @@ public class FirestoreEditUserProfileActivity extends AppCompatActivity {
                 cropIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 grantUriPermission(res.activityInfo.packageName, resultProvider, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 cropIntent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-
-                /*
-                if (rbChooseCropperApplicationFixed0.isChecked()) {
-                    ResolveInfo res = list.get(0);
-                    cropIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    cropIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    grantUriPermission(res.activityInfo.packageName, resultProvider, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    cropIntent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-                } else {
-                    // granting the rights for all registered cropping apps
-                    for (int i = 0; i < list.size(); i++) {
-                        ResolveInfo res = list.get(i);
-                        cropIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        cropIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                        grantUriPermission(res.activityInfo.packageName, resultProvider, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    }
-                }
-                 */
                 cropActivityResultLauncher.launch(cropIntent);
             }
         } else {

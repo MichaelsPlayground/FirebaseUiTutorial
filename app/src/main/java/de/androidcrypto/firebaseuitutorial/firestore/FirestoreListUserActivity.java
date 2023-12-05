@@ -23,7 +23,6 @@ import com.google.firebase.firestore.CollectionReference;
 
 import java.util.Objects;
 
-import de.androidcrypto.firebaseuitutorial.ItemClickListener;
 import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
@@ -90,8 +89,6 @@ public class FirestoreListUserActivity extends AppCompatActivity {
         //adapter.startListening();
     }
 
-    // Function to tell the app to stop getting
-    // data from database on stopping of the activity
     @Override protected void onStop()
     {
         super.onStop();

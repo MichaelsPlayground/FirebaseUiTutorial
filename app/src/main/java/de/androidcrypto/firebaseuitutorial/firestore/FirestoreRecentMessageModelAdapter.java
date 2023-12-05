@@ -13,25 +13,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.Query;
-
 
 import de.androidcrypto.firebaseuitutorial.GlideApp;
 import de.androidcrypto.firebaseuitutorial.ItemClickListener;
 import de.androidcrypto.firebaseuitutorial.R;
-import de.androidcrypto.firebaseuitutorial.database.DatabaseChatActivity;
 import de.androidcrypto.firebaseuitutorial.models.RecentMessageModel;
-import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
-// FirestoreRecyclerAdapter is a class provided by
-// FirebaseUI. it provides functions to bind, adapt and show
-// database contents in a Recycler View
 public class FirestoreRecentMessageModelAdapter extends FirestoreRecyclerAdapter<
         RecentMessageModel, FirestoreRecentMessageModelAdapter.RecentMessageModelViewholder> {
 
@@ -43,8 +33,6 @@ public class FirestoreRecentMessageModelAdapter extends FirestoreRecyclerAdapter
         super(options);
         this.context = context;
     }
-
-    // Function to bind the view in Card view with data in
 
     @Override
     protected void
@@ -79,11 +67,6 @@ public class FirestoreRecentMessageModelAdapter extends FirestoreRecyclerAdapter
         });
     }
 
-
-    public void setClickListener(ItemClickListener itemClickListener) {
-        clickListener = itemClickListener;
-    }
-
     // Function to tell the class about the Card view in which the data will be shown
     @NonNull
     @Override
@@ -96,8 +79,6 @@ public class FirestoreRecentMessageModelAdapter extends FirestoreRecyclerAdapter
         return new RecentMessageModelViewholder(view);
     }
 
-    // Sub Class to create references of the views in Card
-    // view (here "person.xml")
     static class RecentMessageModelViewholder
             extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView userProfileImage;
