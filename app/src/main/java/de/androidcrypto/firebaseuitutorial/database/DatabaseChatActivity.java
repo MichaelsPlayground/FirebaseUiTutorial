@@ -25,8 +25,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import de.androidcrypto.firebaseuitutorial.MainActivity;
@@ -163,6 +167,9 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
         edtMessageLayout.setEndIconOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // todo check on empty message
+
                 //showProgressBar();
                 Log.i(TAG, "clickOnIconEnd");
                 String messageString = edtMessage.getText().toString();
@@ -194,9 +201,28 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
                 chatroomModel.setReceiverName(receiveUserDisplayName);
                 chatroomModel.setReceiverEmail(receiveUserEmail);
                 chatroomModel.setReceiverPhotoUrl(receiveProfileImage);
-                FirebaseUtils.getDatabaseUserChatroomsReference(receiveUserId, authUserId).push().setValue(chatroomModel);
-                FirebaseUtils.getDatabaseUserChatroomsReference(authUserId, receiveUserId).push().setValue(chatroomModel);
+                Map chatroomModelMap = FirebaseUtils.convertModelToMap(chatroomModel);
+                FirebaseUtils.getDatabaseUserChatroomsReference(receiveUserId, authUserId).updateChildren(chatroomModelMap);
+                FirebaseUtils.getDatabaseUserChatroomsReference(authUserId, receiveUserId).updateChildren(chatroomModelMap);
 
+
+                //FirebaseUtils.getDatabaseUserChatroomsReference(receiveUserId, authUserId).push().setValue(chatroomModel);
+                //FirebaseUtils.getDatabaseUserChatroomsReference(authUserId, receiveUserId).push().setValue(chatroomModel);
+/*
+                HashMap<String, Object> hashMap = new HashMap<>();
+                hashMap.put("senderId", authUserId);
+                hashMap.put("senderEmail", authUserEmail);
+                hashMap.put("lastMesssage", messageString);
+                hashMap.put("actualTime", actualTime);
+                FirebaseUtils.getDatabaseUserChatroomsReference(receiveUserId, authUserId).updateChildren(hashMap);
+*/
+                /*
+                Gson gson = new Gson();
+                String json = gson.toJson(chatroomModel);
+                Map<String, Object> map = gson.fromJson(json, new TypeToken<Map<String, Object>>() {}.getType());
+                FirebaseUtils.getDatabaseUserChatroomsReference(receiveUserId, authUserId).updateChildren(map);
+                Log.d(TAG, "chatroomModel written");
+*/
                 // store the message in recentMessages database of the receiver
                 // RecentMessageModel(String chatroomId, String chatMessage, String userId, String userName, String userEmail, String userProfileImage, long chatLastTime)
                 RecentMessageModel recentMessageModel = new RecentMessageModel(roomId, messageString, authUserId, authDisplayName, authUserEmail, authProfileImage, actualTime);

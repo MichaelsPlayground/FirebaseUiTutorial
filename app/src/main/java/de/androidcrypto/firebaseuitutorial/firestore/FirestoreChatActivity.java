@@ -140,6 +140,9 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
             @Override
             public void onClick(View view) {
                 //showProgressBar();
+
+                // todo check on empty message
+
                 Log.i(TAG, "clickOnIconEnd");
                 String messageString = edtMessage.getText().toString();
                 Log.i(TAG, "message: " + messageString);

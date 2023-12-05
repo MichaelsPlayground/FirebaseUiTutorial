@@ -9,9 +9,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.firestore.Query;
 
 import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
@@ -22,7 +21,7 @@ public class DatabaseChatroomsActivity extends AppCompatActivity {
     private static final String TAG = DatabaseChatroomsActivity.class.getSimpleName();
     private RecyclerView recyclerView;
     private DatabaseReference chatroomsDatabase;
-    private DatabaseRecyclerAdapter databaseRecyclerAdapter;
+    private DatabaseChatroomRecyclerAdapter databaseChatroomRecyclerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,40 +54,45 @@ public class DatabaseChatroomsActivity extends AppCompatActivity {
     }
 
     void setupRecyclerView(){
-        chatroomsDatabase = FirebaseUtils.getDatabaseAllChatsCollectionReference();
+        chatroomsDatabase = FirebaseUtils.getDatabaseUserChatroomsReference(FirebaseUtils.getCurrentUserId());
+        FirebaseRecyclerOptions<ChatroomModel> options = new FirebaseRecyclerOptions.Builder<ChatroomModel>()
+                .setQuery(chatroomsDatabase, ChatroomModel.class)
+                .build();
+        /*
+
         Query query = FirebaseUtils.getFirestoreAllChatroomCollectionReference()
                 .whereArrayContains("userIds",FirebaseUtils.getCurrentUserId())
                 .orderBy("lastMessageTime",Query.Direction.DESCENDING);
         FirestoreRecyclerOptions<ChatroomModel> options = new FirestoreRecyclerOptions.Builder<ChatroomModel>()
                 .setQuery(query,ChatroomModel.class).build();
-
-        databaseRecyclerAdapter = new DatabaseRecyclerAdapter(options, DatabaseChatroomsActivity.this);
+*/
+        databaseChatroomRecyclerAdapter = new DatabaseChatroomRecyclerAdapter(options, DatabaseChatroomsActivity.this);
         recyclerView.setLayoutManager(new LinearLayoutManager(DatabaseChatroomsActivity.this));
-        recyclerView.setAdapter(databaseRecyclerAdapter);
-        databaseRecyclerAdapter.startListening();
+        recyclerView.setAdapter(databaseChatroomRecyclerAdapter);
+        databaseChatroomRecyclerAdapter.startListening();
         System.out.println("*** setupRecyclerView done");
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if(databaseRecyclerAdapter !=null)
-            databaseRecyclerAdapter.startListening();
+        if(databaseChatroomRecyclerAdapter !=null)
+            databaseChatroomRecyclerAdapter.startListening();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (databaseRecyclerAdapter != null) {
-            databaseRecyclerAdapter.stopListening();
+        if (databaseChatroomRecyclerAdapter != null) {
+            databaseChatroomRecyclerAdapter.stopListening();
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (databaseRecyclerAdapter != null) {
-            databaseRecyclerAdapter.notifyDataSetChanged();
+        if (databaseChatroomRecyclerAdapter != null) {
+            databaseChatroomRecyclerAdapter.notifyDataSetChanged();
         }
     }
 

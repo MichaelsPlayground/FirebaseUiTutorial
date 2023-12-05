@@ -21,9 +21,12 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
 
@@ -143,12 +146,6 @@ public class FirebaseUtils {
     public static DatabaseReference getDatabaseUserRecentMessagesReference(String userId) {
         return getDatabaseReference().child(RECENT_MESSAGES_FOLDER_NAME).child(userId);
     }
-
-    /*
-    public static DatabaseReference getDatabaseUserChatroomsReference(String userId, String chatroomId) {
-        return getDatabaseUserChatroomsReference(userId).child(chatroomId);
-    }
-    */
 
     public static DatabaseReference getDatabaseUserChatroomsReference(String userId, String otherUserId) {
         return getDatabaseUserChatroomsReference(userId).child(otherUserId);
@@ -342,6 +339,13 @@ public class FirebaseUtils {
         } else {
             return email;
         }
+    }
+
+    public static Map convertModelToMap(Object model) {
+        Gson gson = new Gson();
+        String json = gson.toJson(model);
+        Map<String, Object> map = gson.fromJson(json, new TypeToken<Map<String, Object>>() {}.getType());
+        return map;
     }
 
 }

@@ -11,8 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 import de.androidcrypto.firebaseuitutorial.GlideApp;
 import de.androidcrypto.firebaseuitutorial.R;
@@ -24,11 +25,11 @@ import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class DatabaseRecyclerAdapter extends FirestoreRecyclerAdapter<ChatroomModel, DatabaseRecyclerAdapter.ChatroomModelViewHolder> {
+public class DatabaseChatroomRecyclerAdapter extends FirebaseRecyclerAdapter<ChatroomModel, DatabaseChatroomRecyclerAdapter.ChatroomModelViewHolder> {
 
     private Context context;
 
-    public DatabaseRecyclerAdapter(@NonNull FirestoreRecyclerOptions<ChatroomModel> options, Context context) {
+    public DatabaseChatroomRecyclerAdapter(@NonNull FirebaseRecyclerOptions<ChatroomModel> options, Context context) {
         super(options);
         this.context = context;
     }
@@ -59,8 +60,8 @@ public class DatabaseRecyclerAdapter extends FirestoreRecyclerAdapter<ChatroomMo
 
         holder.itemView.setOnClickListener(v -> {
             //navigate to chat activity
-            Intent intent = new Intent(context, FirestoreChatActivity.class);
-            String otherUserId = FirebaseUtils.getFirestoreOtherUserIdFromChatroom(model.getUserIds());
+            Intent intent = new Intent(context, DatabaseChatActivity.class);
+            String otherUserId = FirebaseUtils.getFirestoreOtherUserIdFromChatroom(model.getUserIds()); // todo work on this
             UserModel otherUserModel;
             if (lastMessageSentByMe) {
                 otherUserModel = new UserModel(otherUserId, model.getReceiverName(), model.getReceiverEmail(), model.getReceiverPhotoUrl());
