@@ -284,7 +284,7 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
     void setupChatRecyclerView(String ownUid, String receiverUid) {
 
         roomId = FirebaseUtils.getChatroomId(ownUid, receiverUid);
-        com.google.firebase.firestore.Query query = FirebaseUtils.getFirestoreChatroomQuery(roomId);
+        com.google.firebase.firestore.Query query = FirebaseUtils.getFirestoreChatsQuery(roomId);
 
         CollectionReference collectionReference = FirebaseUtils.getFirestoreChatroomCollectionReference(roomId);
         Query orderedQuery = collectionReference.orderBy("messageTime", Query.Direction.ASCENDING);

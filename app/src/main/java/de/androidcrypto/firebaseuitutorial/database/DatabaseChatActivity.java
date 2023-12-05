@@ -26,10 +26,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
+import de.androidcrypto.firebaseuitutorial.models.ChatroomModel;
 import de.androidcrypto.firebaseuitutorial.models.MessageModel;
 import de.androidcrypto.firebaseuitutorial.models.RecentMessageModel;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
@@ -182,6 +184,19 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
                         Toast.LENGTH_SHORT).show();
                 edtMessage.setText("");
 
+                // store an entry in chatrooms
+                // String chatroomId, List<String> userIds, long lastMessageTime, String lastMessageSenderId
+                ChatroomModel chatroomModel = new ChatroomModel(roomId, Arrays.asList(authUserId, receiveUserId), actualTime, authUserId);
+                chatroomModel.setLastMessage(messageString);
+                chatroomModel.setSenderName(authDisplayName);
+                chatroomModel.setSenderEmail(authUserEmail);
+                chatroomModel.setSenderPhotoUrl(authProfileImage);
+                chatroomModel.setReceiverName(receiveUserDisplayName);
+                chatroomModel.setReceiverEmail(receiveUserEmail);
+                chatroomModel.setReceiverPhotoUrl(receiveProfileImage);
+                FirebaseUtils.getDatabaseUserChatroomsReference(receiveUserId, authUserId).push().setValue(chatroomModel);
+                FirebaseUtils.getDatabaseUserChatroomsReference(authUserId, receiveUserId).push().setValue(chatroomModel);
+
                 // store the message in recentMessages database of the receiver
                 // RecentMessageModel(String chatroomId, String chatMessage, String userId, String userName, String userEmail, String userProfileImage, long chatLastTime)
                 RecentMessageModel recentMessageModel = new RecentMessageModel(roomId, messageString, authUserId, authDisplayName, authUserEmail, authProfileImage, actualTime);
@@ -261,7 +276,7 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
 
     void setupChatRecyclerView(String ownUid, String receiverUid) {
         roomId = FirebaseUtils.getChatroomId(ownUid, receiverUid);
-        messagesDatabase = FirebaseUtils.getDatabaseChatroomReference(roomId);
+        messagesDatabase = FirebaseUtils.getDatabaseChatsReference(roomId);
         Query query = messagesDatabase
                 .child(roomId)
                 .orderByChild("messageTime");

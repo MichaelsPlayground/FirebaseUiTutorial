@@ -37,7 +37,7 @@ public class FirebaseUtils {
     public static final String USER_OFFLINE = "offline";
     public static final String USER_ONLINE = "online";
     public static final String USERS_FOLDER_NAME = "users";
-    public static final String CHATROOM_FOLDER_NAME = "messages";
+    public static final String MESSAGES_FOLDER_NAME = "messages";
     private static final String RECENT_MESSAGES_FOLDER_NAME = "recentMessages";
 
     public static final String USERS_NOTIFICATION_FOLDER_NAME = "usersNotifications";
@@ -133,27 +133,33 @@ public class FirebaseUtils {
     }
 
     public static DatabaseReference getDatabaseChatsReference() {
-        return getDatabaseReference().child(CHATROOM_FOLDER_NAME);
+        return getDatabaseReference().child(MESSAGES_FOLDER_NAME);
     }
 
-    public static DatabaseReference getDatabaseChatroomReference(String chatroomId) {
-        return getDatabaseReference().child(CHATROOM_FOLDER_NAME).child(chatroomId);
+    public static DatabaseReference getDatabaseChatsReference(String chatroomId) {
+        return getDatabaseReference().child(MESSAGES_FOLDER_NAME).child(chatroomId);
     }
 
     public static DatabaseReference getDatabaseUserRecentMessagesReference(String userId) {
         return getDatabaseReference().child(RECENT_MESSAGES_FOLDER_NAME).child(userId);
     }
 
+    /*
     public static DatabaseReference getDatabaseUserChatroomsReference(String userId, String chatroomId) {
         return getDatabaseUserChatroomsReference(userId).child(chatroomId);
     }
+    */
 
-    public static DatabaseReference getDatabaseUserChatroomsReference(String userId) {
-        return getDatabaseReference().child(USERS_FOLDER_NAME).child(userId).child(CHATROOMS_FOLDER_NAME);
+    public static DatabaseReference getDatabaseUserChatroomsReference(String userId, String otherUserId) {
+        return getDatabaseUserChatroomsReference(userId).child(otherUserId);
     }
 
-    public static DatabaseReference getDatabaseAllChatroomCollectionReference(){
-        return getDatabaseReference().child(CHATROOM_FOLDER_NAME);
+    public static DatabaseReference getDatabaseUserChatroomsReference(String userId) {
+        return getDatabaseReference().child(CHATROOMS_FOLDER_NAME).child(userId);
+    }
+
+    public static DatabaseReference getDatabaseAllChatsCollectionReference(){
+        return getDatabaseReference().child(MESSAGES_FOLDER_NAME);
     }
 
     // https://firebase.google.com/docs/database/android/offline-capabilities#section-presence
@@ -219,7 +225,7 @@ public class FirebaseUtils {
     }
 
     public static CollectionReference getFirestoreChatsReference() {
-        return getFirestoreReference().collection(CHATROOM_FOLDER_NAME);
+        return getFirestoreReference().collection(MESSAGES_FOLDER_NAME);
     }
 
     public static CollectionReference getFirestoreUserRecentMessagesReference(String userId) {
@@ -237,9 +243,9 @@ public class FirebaseUtils {
         return getFirestoreReference().collection(NOTIFICATION_MESSAGES_FOLDER_NAME);
     }
 
-    public static com.google.firebase.firestore.Query getFirestoreChatroomQuery(String chatroomId) {
+    public static com.google.firebase.firestore.Query getFirestoreChatsQuery(String chatroomId) {
         return getFirestoreReference()
-                .collection(FirebaseUtils.CHATROOM_FOLDER_NAME)
+                .collection(FirebaseUtils.MESSAGES_FOLDER_NAME)
                 .document(chatroomId)
                 .collection(CHATROOM_COLLECTION_FOLDER_NAME)
                 .orderBy(CHATROOM_MESSAGE_TIME);
@@ -249,12 +255,12 @@ public class FirebaseUtils {
         return FirebaseFirestore.getInstance().collection(CHATROOMS_FOLDER_NAME).document(chatroomId);
     }
     public static CollectionReference getFirestoreChatroomMessageReference(String chatroomId){
-        return getFirestoreChatroomReference(chatroomId).collection(CHATROOM_FOLDER_NAME);
+        return getFirestoreChatroomReference(chatroomId).collection(MESSAGES_FOLDER_NAME);
     }
 
     public static CollectionReference getFirestoreChatroomCollectionReference(String chatroomId) {
         return getFirestoreReference()
-                .collection(FirebaseUtils.CHATROOM_FOLDER_NAME)
+                .collection(FirebaseUtils.MESSAGES_FOLDER_NAME)
                 .document(chatroomId)
                 .collection(CHATROOM_COLLECTION_FOLDER_NAME);
     }

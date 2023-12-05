@@ -55,7 +55,7 @@ public class DatabaseChatroomsActivity extends AppCompatActivity {
     }
 
     void setupRecyclerView(){
-        chatroomsDatabase = FirebaseUtils.getDatabaseAllChatroomCollectionReference();
+        chatroomsDatabase = FirebaseUtils.getDatabaseAllChatsCollectionReference();
         Query query = FirebaseUtils.getFirestoreAllChatroomCollectionReference()
                 .whereArrayContains("userIds",FirebaseUtils.getCurrentUserId())
                 .orderBy("lastMessageTime",Query.Direction.DESCENDING);
