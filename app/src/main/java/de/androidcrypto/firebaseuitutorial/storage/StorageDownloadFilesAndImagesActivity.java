@@ -86,6 +86,9 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
         downloadProgressIndicator = findViewById(R.id.lpiStorageDownloadProgress);
         storageRecyclerView = findViewById(R.id.rvStorageDownload);
 
+        // preset is the unencrypted files selection
+        downloadSelector = FirebaseUtils.STORAGE_FILES_FOLDER_NAME;
+
         ActivityCompat.requestPermissions(this,
                 new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 1);
@@ -98,6 +101,7 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
         rbDownloadFileListener = new View.OnClickListener() {
             public void onClick(View v) {
                 downloadSectionVisibilityOff();
+                downloadSelector = FirebaseUtils.STORAGE_FILES_FOLDER_NAME;
                 downloadFile.setVisibility(View.VISIBLE);
             }
         };
@@ -107,6 +111,7 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
         rbDownloadImageListener = new View.OnClickListener() {
             public void onClick(View v) {
                 downloadSectionVisibilityOff();
+                downloadSelector = FirebaseUtils.STORAGE_IMAGES_FOLDER_NAME;
                 downloadImage.setVisibility(View.VISIBLE);
             }
         };
@@ -117,12 +122,13 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
          */
 
         downloadFile.setOnClickListener((v -> {
-
+            downloadSelector = FirebaseUtils.STORAGE_FILES_FOLDER_NAME;
             downloadListFilesBtnClick();
 
         }));
 
         downloadImage.setOnClickListener((v -> {
+            downloadSelector = FirebaseUtils.STORAGE_IMAGES_FOLDER_NAME;
             downloadListFilesBtnClick();
 
             /*
