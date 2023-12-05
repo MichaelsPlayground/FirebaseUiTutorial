@@ -105,6 +105,11 @@ the app has no more chance to send the "offline" information to the  Firebase da
 This is a second database that collects all chat messages. This is for a simple reason: Without that list you don't know that you received a 
 chat from a user (there is no "new chat" information).
 
+### list user chatrooms in RecyclerView
+
+The activity shows how to handle the last received messages from other users. It shows a sorted list of chatrooms, the chatroom with the youngest 
+message is on the top.
+
 ### database presence check
 
 
@@ -333,3 +338,30 @@ Code: https://github.com/KODDevYouTube/ChatAppTutorial
 CircleImageView: implementation 'de.hdodenhof:circleimageview:3.1.0'
 
 Image cropper by Arthur: api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
+
+Firestore vs. Realtime Database: Choosing the Right Database for Your Android App: https://medium.com/@myofficework000/firestore-vs-realtime-database-choosing-the-right-database-for-your-android-app-746447f19322
+
+# Google Firebase Pricing
+
+Pricing for Spark ("free") and Blaze ("paid"): https://firebase.google.com/pricing and https://firebase.google.com/support/faq#pricing
+
+## What happens if I exceed Spark plan storage or download limits for Realtime Database?
+
+To provide you with a predictable price, the resources available to you in the Spark plans are capped. This means that when you exceed 
+any plan limit in any month, your app will be turned off to prevent any further resource usage and additional charges.
+
+If you exceed the no-cost quota limit in a calendar month for any product, your project's usage of that specific product will be shut off 
+for the remainder of that month. This applies to all apps registered with that Firebase project.
+
+To use that specific product again, you'll need to wait until the next billing cycle or upgrade to the Blaze pricing plan.
+
+Paid Google Cloud products and features (like Pub/Sub, Cloud Run, or BigQuery streaming for Analytics) are not available for projects on the Spark plan.
+
+App Logo: https://pixabay.com/vectors/data-technology-digital-computer-6769727/ by symphysismarketing
+
+See license summary: https://pixabay.com/service/license-summary/ and full license: https://pixabay.com/service/terms 
+
+App icon background color: 9AE8FA
+
+
+
