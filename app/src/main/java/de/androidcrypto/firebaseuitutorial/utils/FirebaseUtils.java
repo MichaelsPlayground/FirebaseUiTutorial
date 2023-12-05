@@ -290,6 +290,14 @@ public class FirebaseUtils {
      * section Firebase Storage
      */
 
+    public static StorageReference getStorageCurrentUserFilesReference() {
+        return FirebaseStorage.getInstance().getReference().child(getCurrentUserId()).child(STORAGE_FILES_FOLDER_NAME);
+    }
+
+    public static StorageReference getStorageCurrentUserImagesReference() {
+        return FirebaseStorage.getInstance().getReference().child(getCurrentUserId()).child(STORAGE_IMAGES_FOLDER_NAME);
+    }
+
     public static StorageReference getStorageCurrentUserFilesReference(String fileName) {
         return FirebaseStorage.getInstance().getReference().child(getCurrentUserId()).child(STORAGE_FILES_FOLDER_NAME + "/" + fileName);
     }
@@ -300,6 +308,10 @@ public class FirebaseUtils {
 
     public static StorageReference getStorageProfileImagesReference(String userId) {
         return getStorageChildReference(STORAGE_PROFILE_IMAGES_FOLDER_NAME).child(userId + STORAGE_PROFILE_IMAGE_FILE_EXTENSION);
+    }
+
+    public static StorageReference getStorageCurrentUserStorageImagesReference() {
+        return FirebaseStorage.getInstance().getReference().child(getCurrentUserId()).child(STORAGE_PROFILE_IMAGES_FOLDER_NAME);
     }
 
     public static StorageReference getStorageChildReference(String child) {

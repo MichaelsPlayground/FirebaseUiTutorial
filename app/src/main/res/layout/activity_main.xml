@@ -356,6 +356,16 @@
                 android:text="upload of files and images to Storage" />
 
             <Button
+                android:id="@+id/btnMainStorageDownloadFilesImages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:enabled="true"
+                android:text="download of files and images from Storage" />
+
+            <Button
                 android:id="@+id/btnMainImages"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

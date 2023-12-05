@@ -42,9 +42,6 @@
         android:theme="@style/Theme.FirebaseUiTutorial"
         tools:targetApi="31">
         <activity
-            android:name=".storage.StorageUploadFilesAndImagesActivity"
-            android:exported="false" />
-        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -99,6 +96,12 @@
         <activity
             android:name=".firestore.FirestoreChatroomsActivity"
             android:exported="false" /> <!-- Provider to cache images to the internal App cache -->
+        <activity
+            android:name=".storage.StorageUploadFilesAndImagesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".storage.StorageDownloadFilesAndImagesActivity"
+            android:exported="false" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

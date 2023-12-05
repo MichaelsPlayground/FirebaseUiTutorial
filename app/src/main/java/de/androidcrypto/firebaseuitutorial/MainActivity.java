@@ -46,6 +46,7 @@ import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileAct
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileLegacyActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserRecentMessagesActivity;
+import de.androidcrypto.firebaseuitutorial.storage.StorageDownloadFilesAndImagesActivity;
 import de.androidcrypto.firebaseuitutorial.storage.StorageUploadFilesAndImagesActivity;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
@@ -114,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
      * section Firebase Storage
      */
 
-    private Button uploadStorageFilesAndImages;
+    private Button uploadStorageFilesAndImages, downloadStorageFilesAndImages;
 
     /**
      * section
@@ -463,6 +464,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        downloadStorageFilesAndImages = findViewById(R.id.btnMainStorageDownloadFilesImages);
+        downloadStorageFilesAndImages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "download Firebase Storage files and images");
+                Intent intent = new Intent(MainActivity.this, StorageDownloadFilesAndImagesActivity.class);
+                startActivity(intent);
+            }
+        });
 
         /**
          * section for
