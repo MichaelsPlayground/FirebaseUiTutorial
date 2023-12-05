@@ -6,6 +6,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,19 +16,31 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.Objects;
+
+import de.androidcrypto.firebaseuitutorial.GlideApp;
+import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
+import de.androidcrypto.firebaseuitutorial.auth.AuthEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.models.FileInformation;
 import de.androidcrypto.firebaseuitutorial.utils.AndroidUtils;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
@@ -35,7 +48,12 @@ import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
 public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
 
+    /**
+     * This class is NOT using FirestoreUi for the upload purposes
+     */
+
     private static final String TAG = StorageUploadFilesAndImagesActivity.class.getSimpleName();
+    private com.google.android.material.textfield.TextInputEditText signedInUser;
     private RadioButton rbUploadFile, rbUploadImage;
     private Button uploadFile, uploadImage;
     private LinearProgressIndicator uploadProgressIndicator;
@@ -47,12 +65,15 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_storage_upload_files_and_images);
 
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.sub_toolbar);
+        setSupportActionBar(myToolbar);
+
+        signedInUser = findViewById(R.id.etStorageUserSignedInUser);
         rbUploadFile = findViewById(R.id.rbStorageUploadFile);
         rbUploadImage = findViewById(R.id.rbStorageUploadImage);
         uploadFile = findViewById(R.id.btnStorageUploadUnencryptedFile);
         uploadImage = findViewById(R.id.btnStorageUploadUnencryptedImage);
         uploadProgressIndicator = findViewById(R.id.lpiStorageUploadProgress);
-
 
         /**
          * file type chooser
@@ -81,25 +102,30 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
          */
 
         uploadFile.setOnClickListener((v -> {
-
-        }));
-
-        uploadImage.setOnClickListener((v -> {
             // select a file in download folder and upload it to firebase cloud storage
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("*/*");
             // Optionally, specify a URI for the file that should appear in the
             // system file picker when it loads.
-            boolean pickerInitialUri = false;
-            intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
-
+            //boolean pickerInitialUri = false;
+            //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
             fileStorageReference = FirebaseUtils.STORAGE_FILES_FOLDER_NAME;
             fileUploadUnencryptedChooserActivityResultLauncher.launch(intent);
         }));
 
-
-
+        uploadImage.setOnClickListener((v -> {
+            // select an image in download folder and upload it to firebase cloud storage
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("image/*");
+            // Optionally, specify a URI for the file that should appear in the
+            // system file picker when it loads.
+            //boolean pickerInitialUri = false;
+            //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
+            fileStorageReference = FirebaseUtils.STORAGE_IMAGES_FOLDER_NAME;
+            fileUploadUnencryptedChooserActivityResultLauncher.launch(intent);
+        }));
     }
 
     ActivityResultLauncher<Intent> fileUploadUnencryptedChooserActivityResultLauncher = registerForActivityResult(
@@ -142,6 +168,7 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
                                             fileInformation.setTimestamp(actualTimeString);
                                             addFileInformationToDatabaseUserCollection(fileStorageReferenceLocal, fileInformation.getFileName(), fileInformation);
                                             addFileInformationToFirestoreUserCollection(fileStorageReferenceLocal, fileInformation.getFileName(), fileInformation);
+                                            AndroidUtils.showSnackbarGreenShort(uploadFile, "upload SUCCESS");
                                         }
                                     });
                                 }
@@ -149,7 +176,7 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     Toast.makeText(getApplicationContext(), "File upload error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-
+                                    AndroidUtils.showSnackbarRedLong(uploadFile, "File upload error: " + e.getMessage());
                                 }
                             }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                                 @Override
@@ -239,6 +266,80 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
     private void uploadSectionVisibilityOff() {
         uploadFile.setVisibility(View.GONE);
         uploadImage.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = FirebaseUtils.getCurrentUser();
+        if(currentUser != null){
+            reload();
+        } else {
+            signedInUser.setText("no user is signed in");
+        }
+    }
+
+    private void reload() {
+        Objects.requireNonNull(FirebaseUtils.getCurrentUser()).reload().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    updateUI(FirebaseUtils.getCurrentUser());
+                } else {
+                    Log.e(TAG, "reload", task.getException());
+                    Toast.makeText(getApplicationContext(),
+                            "Failed to reload user",
+                            Toast.LENGTH_SHORT).show();
+                    AndroidUtils.showSnackbarRedLong(uploadFile, "Failed to reload user");
+                }
+            }
+        });
+    }
+
+    private void updateUI(FirebaseUser user) {
+        if (user != null) {
+            String authDisplayName;
+            if (user.getDisplayName() != null) {
+                authDisplayName = Objects.requireNonNull(user.getDisplayName()).toString();
+            } else {
+                authDisplayName = "";
+            }
+            StringBuilder sb = new StringBuilder();
+            sb.append("Data from Auth Database").append("\n");
+            sb.append("User id: ").append(user.getUid()).append("\n");
+            sb.append("Email: ").append(user.getEmail()).append("\n");
+            if (TextUtils.isEmpty(authDisplayName)) {
+                sb.append("Display name: ").append("no display name available").append("\n");
+            } else {
+                sb.append("Display name: ").append(authDisplayName);
+            }
+            signedInUser.setText(sb.toString());
+        } else {
+            signedInUser.setText(null);
+        }
+    }
+
+    /**
+     * section for options menu
+     */
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_return_home, menu);
+
+        MenuItem mGoToHome = menu.findItem(R.id.action_return_main);
+        mGoToHome.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(StorageUploadFilesAndImagesActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
     }
 
 }

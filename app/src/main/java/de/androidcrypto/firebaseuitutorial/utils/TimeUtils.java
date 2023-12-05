@@ -15,14 +15,6 @@ import java.util.Locale;
 
 public class TimeUtils {
 
-    // gives an 19 byte long timestamp yyyy.MM.dd HH:mm:ss
-    public static String getUtcTimestamp() {
-        // gives a 19 character long string
-        ZonedDateTime zonedDateTime = ZonedDateTime.);
-        return getActualUtcZonedDateTime()
-                .format(DateTimeFormatter.ofPattern("uuuu.MM.dd HH:mm:ss"));
-    }
-
     public static String getTimestamp() {
         // gives a 19 character long string
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
