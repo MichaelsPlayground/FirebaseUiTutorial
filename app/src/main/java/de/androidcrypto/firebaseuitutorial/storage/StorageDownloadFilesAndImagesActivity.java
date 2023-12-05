@@ -157,7 +157,7 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
         if (downloadSelector.equals(FirebaseUtils.STORAGE_FILES_FOLDER_NAME)) {
             ref = FirebaseUtils.getStorageCurrentUserFilesReference();
         } else if(downloadSelector.equals(FirebaseUtils.STORAGE_IMAGES_FOLDER_NAME)) {
-            ref = FirebaseUtils.getStorageCurrentUserStorageImagesReference();
+            ref = FirebaseUtils.getStorageCurrentUserImagesReference();
         } else {
             // some data are wrong
             AndroidUtils.showToast(StorageDownloadFilesAndImagesActivity.this, "something got wrong, aborted");
