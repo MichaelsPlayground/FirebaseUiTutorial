@@ -140,11 +140,12 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
             @Override
             public void onClick(View view) {
                 //showProgressBar();
-
-                // todo check on empty message
-
                 Log.i(TAG, "clickOnIconEnd");
                 String messageString = edtMessage.getText().toString();
+                if (TextUtils.isEmpty(messageString)) {
+                    AndroidUtils.showSnackbarRedLong(view, "you need to enter minimum 1 char");
+                    return;
+                }
                 Log.i(TAG, "message: " + messageString);
                 // now we are going to send data to the database
                 long actualTime = TimeUtils.getActualUtcZonedDateTime();
@@ -188,7 +189,6 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
-
             }
         });
     }

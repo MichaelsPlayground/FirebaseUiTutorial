@@ -19,6 +19,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -39,6 +40,7 @@ import de.androidcrypto.firebaseuitutorial.models.ChatroomModel;
 import de.androidcrypto.firebaseuitutorial.models.MessageModel;
 import de.androidcrypto.firebaseuitutorial.models.RecentMessageModel;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
+import de.androidcrypto.firebaseuitutorial.utils.AndroidUtils;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -167,12 +169,13 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
         edtMessageLayout.setEndIconOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                // todo check on empty message
-
                 //showProgressBar();
                 Log.i(TAG, "clickOnIconEnd");
                 String messageString = edtMessage.getText().toString();
+                if (TextUtils.isEmpty(messageString)) {
+                    AndroidUtils.showSnackbarRedLong(view, "you need to enter minimum 1 char");
+                    return;
+                }
                 Log.i(TAG, "message: " + messageString);
                 // now we are going to send data to the database
                 long actualTime = TimeUtils.getActualUtcZonedDateTime();
