@@ -193,12 +193,16 @@ public class FirebaseUtils {
     public static void copyAuthDatabaseToDatabaseUser() {
         FirebaseUser user = getCurrentUser();
         String userId = user.getUid();
-        System.out.println("*** copyAuthDatabaseToDatabaseUser for userId: " + userId);
         if (!TextUtils.isEmpty(userId)) {
+            String photoUrl;
+            try {
+                photoUrl = user.getPhotoUrl().toString();
+            } catch (NullPointerException e) {
+                photoUrl = "";
+            }
             UserModel userModel = new UserModel(
-                    userId, user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString(), "", 0, USER_ONLINE, TimeUtils.getActualUtcZonedDateTime());
+                    userId, user.getDisplayName(), user.getEmail(), photoUrl, "", 0, USER_ONLINE, TimeUtils.getActualUtcZonedDateTime());
             FirebaseUtils.getDatabaseUserReference(userId).setValue(userModel);
-            System.out.println("*** uName: " + user.getDisplayName() + " url: " + user.getPhotoUrl());
         }
     }
 
@@ -268,9 +272,15 @@ public class FirebaseUtils {
     public static void copyAuthDatabaseToFirestoreUser() {
         FirebaseUser user = getCurrentUser();
         String userId = user.getUid();
-        if (TextUtils.isEmpty(userId)) {
+        if (!TextUtils.isEmpty(userId)) {
+            String photoUrl;
+            try {
+                photoUrl = user.getPhotoUrl().toString();
+            } catch (NullPointerException e) {
+                photoUrl = "";
+            }
             UserModel userModel = new UserModel(
-                    userId, user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString(), "", 0, USER_ONLINE, TimeUtils.getActualUtcZonedDateTime());
+                    userId, user.getDisplayName(), user.getEmail(), photoUrl, "", 0, USER_ONLINE, TimeUtils.getActualUtcZonedDateTime());
             FirebaseUtils.getFirestoreUserReference(userId).set(userModel)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -284,7 +294,6 @@ public class FirebaseUtils {
                             // failure
                         }
                     });
-            System.out.println("*** uName: " + user.getDisplayName() + " url: " + user.getPhotoUrl());
         }
     }
 

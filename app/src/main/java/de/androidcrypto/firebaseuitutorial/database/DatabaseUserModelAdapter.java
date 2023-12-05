@@ -46,7 +46,8 @@ public class DatabaseUserModelAdapter extends FirebaseRecyclerAdapter<
     protected void
     onBindViewHolder(@NonNull UserModelViewholder holder,
                      int position, @NonNull UserModel model) {
-        System.out.println("*** onBindViewHolder position: " + position);
+        System.out.println("*** onBindViewHolder position: " + position + " own: " + ownUserId);
+        System.out.println("userModel: " + model.getUserName());
         if (!model.getUserId().equals(ownUserId)) {
             userList.add(model);
             holder.userNameEmail.setText(model.getUserName() + " (" + model.getUserMail() + ")");
