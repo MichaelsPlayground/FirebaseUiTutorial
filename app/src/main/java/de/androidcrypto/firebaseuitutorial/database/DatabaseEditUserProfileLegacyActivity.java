@@ -47,13 +47,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class DatabaseEditUserProfileLegacyActivity extends AppCompatActivity {
 
-    /*
-    This class uses Glide to download and show the image
-    https://egemenhamutcu.medium.com/displaying-images-from-firebase-storage-using-glide-for-kotlin-projects-3e4950f6c103
-    https://itecnote.com/tecnote/java-using-firebase-storage-image-with-glide/
-    https://firebaseopensource.com/projects/firebase/firebaseui-android/storage/readme
-     */
-
     /**
      * This class is NOT using firestoreUi for the upload purposes
      */

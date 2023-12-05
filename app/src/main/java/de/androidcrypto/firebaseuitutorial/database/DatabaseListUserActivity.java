@@ -29,8 +29,6 @@ import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 
 public class DatabaseListUserActivity extends AppCompatActivity {
-    // https://www.geeksforgeeks.org/how-to-populate-recyclerview-with-firebase-data-using-firebaseui-in-android-studio/
-
     private static final String TAG = DatabaseListUserActivity.class.getSimpleName();
 
     private com.google.android.material.textfield.TextInputEditText signedInUser;
@@ -92,8 +90,6 @@ public class DatabaseListUserActivity extends AppCompatActivity {
         //adapter.startListening();
     }
 
-    // Function to tell the app to stop getting
-    // data from database on stopping of the activity
     @Override protected void onStop()
     {
         super.onStop();
@@ -167,6 +163,4 @@ public class DatabaseListUserActivity extends AppCompatActivity {
 
         return super.onCreateOptionsMenu(menu);
     }
-
-
 }

@@ -1,6 +1,5 @@
 package de.androidcrypto.firebaseuitutorial.database;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
@@ -20,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.androidcrypto.firebaseuitutorial.GlideApp;
-import de.androidcrypto.firebaseuitutorial.ItemClickListener;
 import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.utils.AndroidUtils;
@@ -92,7 +90,6 @@ public class DatabaseUserModelAdapter extends FirebaseRecyclerAdapter<
         }
     }
 
-    // Function to tell the class about the Card view in which the data will be shown
     @NonNull
     @Override
     public UserModelViewholder
@@ -121,6 +118,5 @@ public class DatabaseUserModelAdapter extends FirebaseRecyclerAdapter<
             img_on = itemView.findViewById(R.id.img_on);
             img_off = itemView.findViewById(R.id.img_off);
         }
-
     }
 }

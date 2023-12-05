@@ -23,16 +23,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 
 import java.util.Objects;
-
-import de.androidcrypto.firebaseuitutorial.ItemClickListener;
 import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.RecentMessageModel;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 
-public class DatabaseListUserRecentMessagesActivity extends AppCompatActivity implements ItemClickListener {
-    // https://www.geeksforgeeks.org/how-to-populate-recyclerview-with-firebase-data-using-firebaseui-in-android-studio/
-
+public class DatabaseListUserRecentMessagesActivity extends AppCompatActivity {
     private static final String TAG = DatabaseListUserRecentMessagesActivity.class.getSimpleName();
 
     private com.google.android.material.textfield.TextInputEditText signedInUser;
@@ -61,7 +57,6 @@ public class DatabaseListUserRecentMessagesActivity extends AppCompatActivity im
         layoutManager.setReverseLayout(true);
         layoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(layoutManager);
-
     }
 
     private void listDatabaseUserRecentMessages() {
@@ -116,26 +111,6 @@ public class DatabaseListUserRecentMessagesActivity extends AppCompatActivity im
         super.onStop();
         adapter.stopListening();
     }
-
-    // called when clicking on recyclerview
-    @Override
-    public void onClick(View view, int position, String userId) {
-        Log.i(TAG, "recyclerview clicked on position: " + position + " userId: " + userId);
-
-        /*
-        String uidSelected = uidList.get(position);
-        String emailSelected = emailList.get(position);
-        String displayNameSelected = displayNameList.get(position);
-
-        Intent intent = new Intent(ListUserRecyclerviewActivity.this, ChatActivity.class);
-        intent.putExtra("UID", uidSelected);
-        intent.putExtra("EMAIL", emailSelected);
-        intent.putExtra("DISPLAYNAME", displayNameSelected);
-        startActivity(intent);
-        finish();
-        */
-    }
-
 
     private void reload() {
         Objects.requireNonNull(FirebaseUtils.getCurrentUser()).reload().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -204,6 +179,4 @@ public class DatabaseListUserRecentMessagesActivity extends AppCompatActivity im
 
         return super.onCreateOptionsMenu(menu);
     }
-
-
 }

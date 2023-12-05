@@ -17,18 +17,12 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 
 import de.androidcrypto.firebaseuitutorial.GlideApp;
-import de.androidcrypto.firebaseuitutorial.ItemClickListener;
 import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.RecentMessageModel;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
-// FirebaseRecyclerAdapter is a class provided by
-// FirebaseUI. it provides functions to bind, adapt and show
-// database contents in a Recycler View
 public class DatabaseRecentMessageModelAdapter extends FirebaseRecyclerAdapter<
         RecentMessageModel, DatabaseRecentMessageModelAdapter.RecentMessageModelViewholder> {
-
-    private static ItemClickListener clickListener;
     private Context context;
 
     public DatabaseRecentMessageModelAdapter(
@@ -36,8 +30,6 @@ public class DatabaseRecentMessageModelAdapter extends FirebaseRecyclerAdapter<
         super(options);
         this.context = context;
     }
-
-    // Function to bind the view in Card view with data in
 
     @Override
     protected void
@@ -57,8 +49,6 @@ public class DatabaseRecentMessageModelAdapter extends FirebaseRecyclerAdapter<
         holder.itemView.setOnClickListener(v -> {
             //navigate to chat activity
 
-            System.out.println("*** you clicked on userId: " + model.getUserId() + " ***");
-
             Intent intent = new Intent(context, DatabaseChatActivity.class);
             intent.putExtra("UID", model.getUserId());
             intent.putExtra("EMAIL", model.getUserEmail());
@@ -70,11 +60,6 @@ public class DatabaseRecentMessageModelAdapter extends FirebaseRecyclerAdapter<
             context.startActivity(intent);
             ((Activity) context).finish();
         });
-    }
-
-
-    public void setClickListener(ItemClickListener itemClickListener) {
-        clickListener = itemClickListener;
     }
 
     // Function to tell the class about the Card view in which the data will be shown
@@ -89,10 +74,8 @@ public class DatabaseRecentMessageModelAdapter extends FirebaseRecyclerAdapter<
         return new RecentMessageModelViewholder(view);
     }
 
-    // Sub Class to create references of the views in Card
-    // view (here "person.xml")
     static class RecentMessageModelViewholder
-            extends RecyclerView.ViewHolder implements View.OnClickListener {
+            extends RecyclerView.ViewHolder {
         private ImageView userProfileImage;
         private TextView message, userNameEmail, messageTime;
 
@@ -102,14 +85,6 @@ public class DatabaseRecentMessageModelAdapter extends FirebaseRecyclerAdapter<
             userNameEmail = itemView.findViewById(R.id.tvUserNameEmail);
             message = itemView.findViewById(R.id.tvMessage);
             messageTime = itemView.findViewById(R.id.tvMessageTime);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            if (clickListener != null) {
-                //clickListener.onClick(view, getBindingAdapterPosition(), userId.getText().toString());
-            }
         }
     }
 }
