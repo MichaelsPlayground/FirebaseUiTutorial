@@ -47,7 +47,6 @@ public class FirestoreUserModelAdapter extends FirestoreRecyclerAdapter<
         System.out.println("*** onBindViewHolder position: " + position);
         if (!model.getUserId().equals(ownUserId)) {
             userList.add(model);
-
             holder.userNameEmail.setText(AndroidUtils.shortenString(model.getUserName() + " (" + model.getUserMail() + ")", 20));
             // last online time
             long lastOnlineTime = model.getUserLastOnlineTime();
@@ -79,7 +78,6 @@ public class FirestoreUserModelAdapter extends FirestoreRecyclerAdapter<
 
             holder.itemView.setOnClickListener(v -> {
                 //navigate to chat activity
-                System.out.println("*** you clicked on userId: " + model.getUserId() + " photoUrl: " + model.getUserPhotoUrl() + " ***");
                 Intent intent = new Intent(context, FirestoreChatActivity.class);
                 UserModel otherUserModel = new UserModel(model.getUserId(), model.getUserName(), model.getUserMail(), model.getUserPhotoUrl());
                 AndroidUtils.passUserModelAsIntent(intent, otherUserModel);
@@ -103,8 +101,7 @@ public class FirestoreUserModelAdapter extends FirestoreRecyclerAdapter<
         return new UserModelViewholder(view);
     }
 
-    static class UserModelViewholder
-            extends RecyclerView.ViewHolder {
+    static class UserModelViewholder extends RecyclerView.ViewHolder {
         private TextView userNameEmail, userLastOnlineTime, userId;
         private ImageView userProfileImage;
         private ImageView img_on;
@@ -119,6 +116,5 @@ public class FirestoreUserModelAdapter extends FirestoreRecyclerAdapter<
             img_on = itemView.findViewById(R.id.img_on);
             img_off = itemView.findViewById(R.id.img_off);
         }
-
     }
 }

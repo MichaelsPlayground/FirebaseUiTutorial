@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
             new FirebaseAuthUIActivityResultContract(),
             (result) -> {
+
                 // Handle the FirebaseAuthUIAuthenticationResult
                 //FirebaseUser user = firebaseAuth.getCurrentUser();
                 FirebaseUser user = FirebaseUtils.getCurrentUser();
@@ -84,6 +85,15 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "User Signed In", Toast.LENGTH_SHORT).show();
                     signedInUser.setText(user.getEmail() + "\nDisplayName: " + user.getDisplayName());
                     activeButtonsWhileUserIsSignedIn(true);
+
+                    // detect that the user is a new user (recently signed up)
+                    IdpResponse idpResponse = result.getIdpResponse();
+                    if ((idpResponse != null) && (idpResponse.isNewUser())) {
+                        // setup user is Realtime Database and Firestore Database
+                        System.out.println("*** a new user is detected ***");
+                        FirebaseUtils.copyAuthDatabaseToDatabaseUser();
+                        FirebaseUtils.copyAuthDatabaseToFirestoreUser();
+                    }
                     status("online", TimeUtils.getActualUtcZonedDateTime());
                 } else {
                     Log.e(TAG, "Error in handling the FirebaseAuthUIAuthenticationResult");

@@ -193,7 +193,8 @@ public class FirebaseUtils {
     public static void copyAuthDatabaseToDatabaseUser() {
         FirebaseUser user = getCurrentUser();
         String userId = user.getUid();
-        if (TextUtils.isEmpty(userId)) {
+        System.out.println("*** copyAuthDatabaseToDatabaseUser for userId: " + userId);
+        if (!TextUtils.isEmpty(userId)) {
             UserModel userModel = new UserModel(
                     userId, user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString(), "", 0, USER_ONLINE, TimeUtils.getActualUtcZonedDateTime());
             FirebaseUtils.getDatabaseUserReference(userId).setValue(userModel);
@@ -295,7 +296,7 @@ public class FirebaseUtils {
         }
     }
 
-    public static String getFirestoreOtherUserIdFromChatroom(List<String> userIds){
+    public static String getFirebaseOtherUserIdFromChatroom(List<String> userIds){
         if (userIds.get(0).equals(FirebaseUtils.getCurrentUserId())) {
             return userIds.get(1);
         } else {

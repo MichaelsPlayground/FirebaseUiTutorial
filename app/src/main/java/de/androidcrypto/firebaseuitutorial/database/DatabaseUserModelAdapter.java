@@ -26,13 +26,9 @@ import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.utils.AndroidUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
-// FirebaseRecyclerAdapter is a class provided by
-// FirebaseUI. it provides functions to bind, adapt and show
-// database contents in a Recycler View
 public class DatabaseUserModelAdapter extends FirebaseRecyclerAdapter<
         UserModel, DatabaseUserModelAdapter.UserModelViewholder> {
 
-    private static ItemClickListener clickListener;
     public List<UserModel> userList = new ArrayList<>();
     private boolean isChat;
     private String ownUserId;
@@ -46,8 +42,6 @@ public class DatabaseUserModelAdapter extends FirebaseRecyclerAdapter<
         this.context = context;
     }
 
-    // Function to bind the view in Card view (here "user.xml") with data in
-    // model class (here "UserModel.class")
     @Override
     protected void
     onBindViewHolder(@NonNull UserModelViewholder holder,
@@ -87,31 +81,16 @@ public class DatabaseUserModelAdapter extends FirebaseRecyclerAdapter<
 
             holder.itemView.setOnClickListener(v -> {
                 //navigate to chat activity
-            /*
-            Intent intent = new Intent(context, ChatActivity.class);
-            AndroidUtil.passUserModelAsIntent(intent,otherUserModel);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);*/
-                System.out.println("*** you clicked on userId: " + model.getUserId() + " ***");
                 Intent intent = new Intent(context, DatabaseChatActivity.class);
-                intent.putExtra("UID", model.getUserId());
-                intent.putExtra("EMAIL", model.getUserMail());
-                intent.putExtra("DISPLAYNAME", model.getUserName());
-                intent.putExtra("AUTH_EMAIL", "test@test.com");
-                intent.putExtra("AUTH_DISPLAYNAME", "authDisplayName");
-                intent.putExtra("PROFILE_IMAGE", model.getUserPhotoUrl());
+                UserModel otherUserModel = new UserModel(model.getUserId(), model.getUserName(), model.getUserMail(), model.getUserPhotoUrl());
+                AndroidUtils.passUserModelAsIntent(intent, otherUserModel);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
-                ((Activity)context).finish();
             });
         } else {
             holder.itemView.setVisibility(View.GONE);
             holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
         }
-    }
-
-    public void setClickListener(ItemClickListener itemClickListener) {
-        clickListener = itemClickListener;
     }
 
     // Function to tell the class about the Card view in which the data will be shown
@@ -128,8 +107,7 @@ public class DatabaseUserModelAdapter extends FirebaseRecyclerAdapter<
 
     // Sub Class to create references of the views in Card
     // view (here "person.xml")
-    static class UserModelViewholder
-            extends RecyclerView.ViewHolder implements View.OnClickListener {
+    static class UserModelViewholder extends RecyclerView.ViewHolder {
         private TextView userNameEmail, userLastOnlineTime, userId;
         private ImageView userProfileImage;
         private ImageView img_on;
@@ -143,13 +121,7 @@ public class DatabaseUserModelAdapter extends FirebaseRecyclerAdapter<
             userId = itemView.findViewById(R.id.userId); // dummy
             img_on = itemView.findViewById(R.id.img_on);
             img_off = itemView.findViewById(R.id.img_off);
-            itemView.setOnClickListener(this);
         }
 
-        @Override
-        public void onClick(View view) {
-            if (clickListener != null)
-                clickListener.onClick(view, getBindingAdapterPosition(), userId.getText().toString());
-        }
     }
 }

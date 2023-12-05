@@ -59,7 +59,7 @@ public class FirestoreChatroomRecyclerAdapter extends FirestoreRecyclerAdapter<C
         holder.itemView.setOnClickListener(v -> {
             //navigate to chat activity
             Intent intent = new Intent(context, FirestoreChatActivity.class);
-            String otherUserId = FirebaseUtils.getFirestoreOtherUserIdFromChatroom(model.getUserIds());
+            String otherUserId = FirebaseUtils.getFirebaseOtherUserIdFromChatroom(model.getUserIds());
             UserModel otherUserModel;
             if (lastMessageSentByMe) {
                 otherUserModel = new UserModel(otherUserId, model.getReceiverName(), model.getReceiverEmail(), model.getReceiverPhotoUrl());

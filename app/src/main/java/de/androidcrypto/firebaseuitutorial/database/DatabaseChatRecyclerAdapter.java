@@ -45,7 +45,6 @@ public class DatabaseChatRecyclerAdapter extends FirebaseRecyclerAdapter<Message
     @NonNull
     @Override
     public ModelViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        //View view = LayoutInflater.from(context).inflate(R.layout.chat_message_recycler_row,parent,false);
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_message_recycler_row,parent,false);
         return new ModelViewHolder(view);
     }

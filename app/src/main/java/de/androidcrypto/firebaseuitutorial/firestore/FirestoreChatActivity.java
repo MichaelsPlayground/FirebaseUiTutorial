@@ -132,7 +132,11 @@ public class FirestoreChatActivity extends AppCompatActivity implements Firebase
         //authUserEmail = intent.getStringExtra("AUTH_EMAIL");
         authDisplayName = mFirebaseAuth.getCurrentUser().getDisplayName().toString();
         authUserEmail = mFirebaseAuth.getCurrentUser().getEmail().toString();
-        authProfileImage = mFirebaseAuth.getCurrentUser().getPhotoUrl().toString();
+        try {
+            authProfileImage = mFirebaseAuth.getCurrentUser().getPhotoUrl().toString();
+        } catch (NullPointerException e) {
+            // there is no photoUrl at this time
+        }
 
         // TODO messagesDatabase.keepSynced(true);
 

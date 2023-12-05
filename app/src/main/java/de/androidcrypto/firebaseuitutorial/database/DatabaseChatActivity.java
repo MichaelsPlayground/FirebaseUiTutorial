@@ -19,21 +19,17 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import de.androidcrypto.firebaseuitutorial.GlideApp;
 import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.ChatroomModel;
@@ -58,9 +54,8 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
     private static String authDisplayName = "";
     private static String authProfileImage = "";
     private static String receiveUserId = "", receiveUserEmail = "", receiveUserDisplayName = "", receiveProfileImage = "";
-    private static String roomId = "";
-
-    private DatabaseReference mDatabaseReference;
+    private UserModel otherUserModel;
+    private static String chatroomId = "";
     private DatabaseReference messagesDatabase;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseRecyclerAdapter firebaseRecyclerAdapter;
@@ -105,29 +100,23 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
         //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         loadSignedInUserData(mFirebaseAuth.getCurrentUser().getUid());
 
-        // read data received from ListUserOnDatabase
-        Intent intent = getIntent();
-        receiveUserId = intent.getStringExtra("UID");
-        if (receiveUserId != null) {
-            Log.i(TAG, "selectedUid: " + receiveUserId);
+        otherUserModel = AndroidUtils.getUserModelFromIntent(getIntent());
+        if (otherUserModel != null) {
+            receiveUserId = otherUserModel.getUserId();
+            receiveUserDisplayName = otherUserModel.getUserName();
+            receiveUserEmail = otherUserModel.getUserMail();
+            receiveProfileImage = otherUserModel.getUserPhotoUrl();
+            Log.d(TAG, "incoming intent otherPhotoUrl: " + receiveProfileImage);
+            if (!TextUtils.isEmpty(receiveProfileImage)) {
+                GlideApp.with(this)
+                        .load(receiveProfileImage)
+                        .into(profileImage);
+            } else {
+                Log.d(TAG, "cannot set receiver profile image");
+                profileImage.setImageResource(R.drawable.person_icon);
+            }
         } else {
-            receiveUserId = "";
-        }
-        receiveUserEmail = intent.getStringExtra("EMAIL");
-        if (receiveUserEmail != null) {
-            Log.i(TAG, "selectedEmail: " + receiveUserEmail);
-        }
-        receiveUserDisplayName = intent.getStringExtra("DISPLAYNAME");
-        if (receiveUserDisplayName != null) {
-            Log.i(TAG, "selectedDisplayName: " + receiveUserDisplayName);
-        } else {
-            receiveUserDisplayName = receiveUserEmail;
-        }
-        receiveProfileImage = intent.getStringExtra("PROFILE_IMAGE");
-        if (receiveProfileImage != null) {
-            Log.i(TAG, "selectedProfileImage: " + receiveProfileImage);
-        } else {
-            receiveProfileImage = "";
+            Toast.makeText(this, "could not get the  data from other user, aborted", Toast.LENGTH_SHORT).show();
         }
 
         String receiveUserString = "Email: " + receiveUserEmail;
@@ -147,9 +136,13 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
 
         Log.i(TAG, "receiveUser: " + receiveUserString);
         // get own data
-        authUserEmail = intent.getStringExtra("AUTH_EMAIL");
-        authDisplayName = intent.getStringExtra("AUTH_DISPLAYNAME");
-        authProfileImage = mFirebaseAuth.getCurrentUser().getPhotoUrl().toString();
+        authDisplayName = mFirebaseAuth.getCurrentUser().getDisplayName().toString();
+        authUserEmail = mFirebaseAuth.getCurrentUser().getEmail().toString();
+        try {
+            authProfileImage = mFirebaseAuth.getCurrentUser().getPhotoUrl().toString();
+        } catch (NullPointerException e) {
+            // there is no photoUrl at this time
+        }
 
         // Initialize Firebase Auth
         // mFirebaseAuth = FirebaseAuth.getInstance();
@@ -162,7 +155,6 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
         // see loadSignedInUserData as we use a new instance there
 
         // Create a instance of the database and get its reference
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         messagesDatabase = FirebaseUtils.getDatabaseChatsReference();
         messagesDatabase.keepSynced(true);
 
@@ -186,9 +178,9 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
 
                 //MessageModel messageModel = new MessageModel(messageString, actualTime, timestamp, authUserId, receiveUserId);
                 MessageModel messageModel = new MessageModel(messageString, actualTime, actualTimeString, authUserId, receiveUserId);
-                messagesDatabase.child(roomId).push().setValue(messageModel);
+                messagesDatabase.child(chatroomId).push().setValue(messageModel);
                 // without push there is no new chatId key
-                // mDatabaseReference.child("messages").child(roomId).setValue(messageModel);
+                // mDatabaseReference.child("messages").child(chatroomId).setValue(messageModel);
                 Toast.makeText(getApplicationContext(),
                         "message written to database: " + messageString,
                         Toast.LENGTH_SHORT).show();
@@ -196,7 +188,7 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
 
                 // store an entry in chatrooms
                 // String chatroomId, List<String> userIds, long lastMessageTime, String lastMessageSenderId
-                ChatroomModel chatroomModel = new ChatroomModel(roomId, Arrays.asList(authUserId, receiveUserId), actualTime, authUserId);
+                ChatroomModel chatroomModel = new ChatroomModel(chatroomId, Arrays.asList(authUserId, receiveUserId), actualTime, authUserId);
                 chatroomModel.setLastMessage(messageString);
                 chatroomModel.setSenderName(authDisplayName);
                 chatroomModel.setSenderEmail(authUserEmail);
@@ -208,31 +200,12 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
                 FirebaseUtils.getDatabaseUserChatroomsReference(receiveUserId, authUserId).updateChildren(chatroomModelMap);
                 FirebaseUtils.getDatabaseUserChatroomsReference(authUserId, receiveUserId).updateChildren(chatroomModelMap);
 
-
-                //FirebaseUtils.getDatabaseUserChatroomsReference(receiveUserId, authUserId).push().setValue(chatroomModel);
-                //FirebaseUtils.getDatabaseUserChatroomsReference(authUserId, receiveUserId).push().setValue(chatroomModel);
-/*
-                HashMap<String, Object> hashMap = new HashMap<>();
-                hashMap.put("senderId", authUserId);
-                hashMap.put("senderEmail", authUserEmail);
-                hashMap.put("lastMesssage", messageString);
-                hashMap.put("actualTime", actualTime);
-                FirebaseUtils.getDatabaseUserChatroomsReference(receiveUserId, authUserId).updateChildren(hashMap);
-*/
-                /*
-                Gson gson = new Gson();
-                String json = gson.toJson(chatroomModel);
-                Map<String, Object> map = gson.fromJson(json, new TypeToken<Map<String, Object>>() {}.getType());
-                FirebaseUtils.getDatabaseUserChatroomsReference(receiveUserId, authUserId).updateChildren(map);
-                Log.d(TAG, "chatroomModel written");
-*/
                 // store the message in recentMessages database of the receiver
                 // RecentMessageModel(String chatroomId, String chatMessage, String userId, String userName, String userEmail, String userProfileImage, long chatLastTime)
-                RecentMessageModel recentMessageModel = new RecentMessageModel(roomId, messageString, authUserId, authDisplayName, authUserEmail, authProfileImage, actualTime);
+                RecentMessageModel recentMessageModel = new RecentMessageModel(chatroomId, messageString, authUserId, authDisplayName, authUserEmail, authProfileImage, actualTime);
                 FirebaseUtils.getDatabaseUserRecentMessagesReference(receiveUserId)
                         .push().setValue(recentMessageModel);
                 Log.d(TAG, "recent message reference written");
-
             }
         });
 
@@ -264,12 +237,6 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
                 reload();
                 enableUiOnSignIn(true);
                 setupChatRecyclerView(currentUser.getUid(), receiveUserId);
-                /*
-                setDatabaseForRoom(currentUser.getUid(), receiveUserId);
-                firebaseRecyclerAdapter.startListening();
-                attachRecyclerViewAdapter();
-
-                 */
             } else {
                 Log.i(TAG, "you need to select a receiveUser first");
             }
@@ -280,7 +247,6 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
             firebaseRecyclerAdapter.stopListening();
         }
         // startListening begins when a user is logged in
-        //firebaseRecyclerAdapter.startListening();
         FirebaseAuth.getInstance().addAuthStateListener(this);
     }
 
@@ -299,21 +265,16 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
             //getAuthUserCredentials();
         } else {
             Toast.makeText(this, "you need to sign in before chatting", Toast.LENGTH_SHORT).show();
-            //auth.signInAnonymously().addOnCompleteListener(new SignInResultNotifier(this));
         }
     }
 
     void setupChatRecyclerView(String ownUid, String receiverUid) {
-        roomId = FirebaseUtils.getChatroomId(ownUid, receiverUid);
-        messagesDatabase = FirebaseUtils.getDatabaseChatsReference(roomId);
+        chatroomId = FirebaseUtils.getChatroomId(ownUid, receiverUid);
+        messagesDatabase = FirebaseUtils.getDatabaseChatsReference(chatroomId);
         Query query = messagesDatabase
-                .child(roomId)
+                .child(chatroomId)
                 .orderByChild("messageTime");
 
-        /*
-        com.google.firebase.firestore.Query query = FirebaseUtils.getDatabaseChatroomReference(chatroomId)
-                .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING);
-*/
         FirebaseRecyclerOptions<MessageModel> options = new FirebaseRecyclerOptions.Builder<MessageModel>()
                 .setQuery(query, MessageModel.class)
                 .build();
@@ -334,27 +295,6 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
             }
         });
     }
-/*
-    private void attachRecyclerViewAdapter() {
-        final RecyclerView.Adapter adapter = firebaseRecyclerAdapter;
-        if (adapter != null) {
-            Log.i(TAG, "attachRecyclerViewAdapter");
-            // Scroll to bottom on new messages
-            adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-                @Override
-                public void onItemRangeInserted(int positionStart, int itemCount) {
-                    //mBinding.messagesList.smoothScrollToPosition(adapter.getItemCount());
-                    messagesList.smoothScrollToPosition(adapter.getItemCount());
-                }
-            });
-
-            //mBinding.messagesList.setAdapter(adapter);
-            messagesList.setAdapter(adapter);
-        } else {
-            Log.i(TAG, "attachRecyclerViewAdapter NOT set, firebaseRecyclerAdapter is null");
-        }
-    }
-*/
     private boolean isSignedIn() {
         return FirebaseAuth.getInstance().getCurrentUser() != null;
     }
@@ -362,8 +302,6 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
     private void loadSignedInUserData(String mAuthUserId) {
         if (!mAuthUserId.equals("")) {
             DatabaseReference userDatabaseReference = FirebaseUtils.getDatabaseUserReference(mAuthUserId);
-            //DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-            //mDatabase.child("users").child(mAuthUserId).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             userDatabaseReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -395,12 +333,12 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
 
     // generates the room id and prepares for the query
     private void setDatabaseForRoom(String ownUid, String receiverUid) {
-        // get the roomId by comparing 2 UID strings
-        roomId = getRoomId(ownUid, receiverUid);
+        // get the chatroomId by comparing 2 UID strings
+        chatroomId = getRoomId(ownUid, receiverUid);
         /*
         String conversationString = "chat between " + ownUid + " (" + authDisplayName + ")"
                 + " and " + receiveUserId + " (" + receiveUserDisplayName + ")"
-                + " in room " + roomId;
+                + " in room " + chatroomId;
          */
         String  conversationString = "DB chat with " + receiveUserDisplayName;
         //header.setText(conversationString);
@@ -410,7 +348,7 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
         // On the main screen of your app, you may want to show the 50 most recent chat messages.
         // With Firebase you would use the following query:
         Query query = messagesDatabase
-                .child(roomId);
+                .child(chatroomId);
         //.limitToLast(10); // show the last 10 messages
         //.limitToLast(50); // show the last 50 messages
         // The FirebaseRecyclerAdapter binds a Query to a RecyclerView. When data is added, removed,
@@ -427,30 +365,6 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
         firebaseRecyclerAdapter = new DatabaseChatRecyclerAdapter(options, this);
         //firebaseRecyclerAdapter = new ChatRecyclerAdapter(options, this);
         messagesList.setAdapter(firebaseRecyclerAdapter);
-
-
-        /*
-
-        // Next create the FirebaseRecyclerAdapter object. You should already have a ViewHolder subclass
-        // for displaying each item. In this case we will use a custom ChatHolder class:
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<MessageModel, MessageHolder>(options) {
-            @Override
-            public MessageHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                // Create a new instance of the ViewHolder, in this case we are using a custom
-                // layout called R.layout.message for each item
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.message, parent, false);
-                return new MessageHolder(view);
-            }
-
-            @Override
-            protected void onBindViewHolder(MessageHolder holder, int position, MessageModel model) {
-                // Bind the Chat object to the ChatHolder
-                holder.bind(model);
-            }
-        };
-
-         */
     }
 
     private void reload() {
@@ -503,5 +417,4 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
             edtMessageLayout.setEnabled(userIsSignedIn);
         }
     }
-
 }

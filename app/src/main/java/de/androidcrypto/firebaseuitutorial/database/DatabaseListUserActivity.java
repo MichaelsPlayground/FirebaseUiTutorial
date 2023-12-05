@@ -23,13 +23,12 @@ import com.google.firebase.database.DatabaseReference;
 
 import java.util.Objects;
 
-import de.androidcrypto.firebaseuitutorial.ItemClickListener;
 import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 
-public class DatabaseListUserActivity extends AppCompatActivity implements ItemClickListener {
+public class DatabaseListUserActivity extends AppCompatActivity {
     // https://www.geeksforgeeks.org/how-to-populate-recyclerview-with-firebase-data-using-firebaseui-in-android-studio/
 
     private static final String TAG = DatabaseListUserActivity.class.getSimpleName();
@@ -70,7 +69,6 @@ public class DatabaseListUserActivity extends AppCompatActivity implements ItemC
         // the Adapter class itself
         System.out.println("*** before adapter = new UserModelAdapter");
         adapter = new DatabaseUserModelAdapter(options, true, FirebaseUtils.getCurrentUserId(), this);
-        adapter.setClickListener(this);
         // Connecting Adapter class with the Recycler view*/
         recyclerView.setAdapter(adapter);
 
@@ -101,26 +99,6 @@ public class DatabaseListUserActivity extends AppCompatActivity implements ItemC
         super.onStop();
         adapter.stopListening();
     }
-
-    // called when clicking on recyclerview
-    @Override
-    public void onClick(View view, int position, String userId) {
-        Log.i(TAG, "recyclerview clicked on position: " + position + " userId: " + userId);
-
-        /*
-        String uidSelected = uidList.get(position);
-        String emailSelected = emailList.get(position);
-        String displayNameSelected = displayNameList.get(position);
-
-        Intent intent = new Intent(ListUserRecyclerviewActivity.this, ChatActivity.class);
-        intent.putExtra("UID", uidSelected);
-        intent.putExtra("EMAIL", emailSelected);
-        intent.putExtra("DISPLAYNAME", displayNameSelected);
-        startActivity(intent);
-        finish();
-        */
-    }
-
 
     private void reload() {
         Objects.requireNonNull(FirebaseUtils.getCurrentUser()).reload().addOnCompleteListener(new OnCompleteListener<Void>() {

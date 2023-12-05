@@ -13,11 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 
 import de.androidcrypto.firebaseuitutorial.GlideApp;
 import de.androidcrypto.firebaseuitutorial.R;
-import de.androidcrypto.firebaseuitutorial.firestore.FirestoreChatActivity;
 import de.androidcrypto.firebaseuitutorial.models.ChatroomModel;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.utils.AndroidUtils;
@@ -61,7 +59,7 @@ public class DatabaseChatroomRecyclerAdapter extends FirebaseRecyclerAdapter<Cha
         holder.itemView.setOnClickListener(v -> {
             //navigate to chat activity
             Intent intent = new Intent(context, DatabaseChatActivity.class);
-            String otherUserId = FirebaseUtils.getFirestoreOtherUserIdFromChatroom(model.getUserIds()); // todo work on this
+            String otherUserId = FirebaseUtils.getFirebaseOtherUserIdFromChatroom(model.getUserIds());
             UserModel otherUserModel;
             if (lastMessageSentByMe) {
                 otherUserModel = new UserModel(otherUserId, model.getReceiverName(), model.getReceiverEmail(), model.getReceiverPhotoUrl());

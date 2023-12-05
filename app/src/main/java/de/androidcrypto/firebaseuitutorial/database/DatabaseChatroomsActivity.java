@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 
 import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
@@ -55,22 +56,27 @@ public class DatabaseChatroomsActivity extends AppCompatActivity {
 
     void setupRecyclerView(){
         chatroomsDatabase = FirebaseUtils.getDatabaseUserChatroomsReference(FirebaseUtils.getCurrentUserId());
-        FirebaseRecyclerOptions<ChatroomModel> options = new FirebaseRecyclerOptions.Builder<ChatroomModel>()
-                .setQuery(chatroomsDatabase, ChatroomModel.class)
-                .build();
-        /*
+        Query orderedQuery = chatroomsDatabase
+                .orderByChild("lastMessageTime");
 
-        Query query = FirebaseUtils.getFirestoreAllChatroomCollectionReference()
-                .whereArrayContains("userIds",FirebaseUtils.getCurrentUserId())
-                .orderBy("lastMessageTime",Query.Direction.DESCENDING);
-        FirestoreRecyclerOptions<ChatroomModel> options = new FirestoreRecyclerOptions.Builder<ChatroomModel>()
-                .setQuery(query,ChatroomModel.class).build();
-*/
+        FirebaseRecyclerOptions<ChatroomModel> options = new FirebaseRecyclerOptions.Builder<ChatroomModel>()
+                .setQuery(orderedQuery, ChatroomModel.class)
+                .build();
+
         databaseChatroomRecyclerAdapter = new DatabaseChatroomRecyclerAdapter(options, DatabaseChatroomsActivity.this);
-        recyclerView.setLayoutManager(new LinearLayoutManager(DatabaseChatroomsActivity.this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(databaseChatroomRecyclerAdapter);
         databaseChatroomRecyclerAdapter.startListening();
-        System.out.println("*** setupRecyclerView done");
+        databaseChatroomRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                recyclerView.smoothScrollToPosition(0); // scroll to top document
+            }
+        });
     }
 
     @Override
