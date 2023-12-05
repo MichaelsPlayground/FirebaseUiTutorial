@@ -1,12 +1,5 @@
 package de.androidcrypto.firebaseuitutorial;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,13 +10,16 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,12 +28,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -45,11 +36,11 @@ import java.util.List;
 
 import de.androidcrypto.firebaseuitutorial.auth.AuthEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseChatroomsActivity;
+import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileLegacyActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserLvActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserRecentMessagesActivity;
-import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreChatroomsActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileLegacyActivity;
@@ -58,7 +49,6 @@ import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserRecentMess
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
-//public class MainActivity extends AppCompatActivity implements ActivityResultCallback<FirebaseAuthUIAuthenticationResult> {
 public class MainActivity extends AppCompatActivity {
 
     /**
@@ -200,7 +190,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d(TAG, "sign out the current user");
                 // set user onlineStatus in Firestore users to false
-                //setFirestoreUserOnlineStatus(mFirebaseAuth.getCurrentUser().getUid(), false);
                 status("offline", TimeUtils.getActualUtcZonedDateTime());
                 firebaseAuth.signOut();
                 signedInUser.setText(null);
@@ -221,7 +210,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "verificate the current Email account");
-                // todo enable the button when signed in only
 
                 // see https://firebase.google.com/docs/auth/android/email-link-auth
                 FirebaseUtils.getCurrentUser().sendEmailVerification()
@@ -236,8 +224,6 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         });
-
-
             }
         });
 
@@ -368,8 +354,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d(TAG, "presenceCheckDatabase");
                 // https://firebase.google.com/docs/database/android/offline-capabilities#section-presence
-
-                // todo check that you are logged in when running this !!
 
                 String userId = FirebaseUtils.getCurrentUserId();
                 // Since I can connect from multiple devices, we store each connection instance separately

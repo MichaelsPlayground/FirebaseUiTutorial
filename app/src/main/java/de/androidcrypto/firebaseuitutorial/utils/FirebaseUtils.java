@@ -64,8 +64,6 @@ public class FirebaseUtils {
     public static final String STORAGE_PROFILE_IMAGE_FILE_EXTENSION = ".jpg";
 
 
-    private static DatabaseReference databaseReference;
-
     /**
      * This class collects all references and collections on Firebase products
      */
@@ -123,10 +121,6 @@ public class FirebaseUtils {
         return getDatabaseReference().child(USERS_FOLDER_NAME);
     }
 
-    public static Query getDatabaseUsersSortedLastOnlineDateReference() {
-        return getDatabaseUsersReference().orderByChild(DATABASE_LAST_ONLINE_TIME);
-    }
-
     public static DatabaseReference getDatabaseUserReference(String userId) {
         return getDatabaseReference().child(USERS_FOLDER_NAME).child(userId);
     }
@@ -153,10 +147,6 @@ public class FirebaseUtils {
 
     public static DatabaseReference getDatabaseUserChatroomsReference(String userId) {
         return getDatabaseReference().child(CHATROOMS_FOLDER_NAME).child(userId);
-    }
-
-    public static DatabaseReference getDatabaseAllChatsCollectionReference(){
-        return getDatabaseReference().child(MESSAGES_FOLDER_NAME);
     }
 
     // https://firebase.google.com/docs/database/android/offline-capabilities#section-presence
@@ -226,10 +216,6 @@ public class FirebaseUtils {
         return FirebaseFirestore.getInstance().collection(USERS_FOLDER_NAME);
     }
 
-    public static CollectionReference getFirestoreChatsReference() {
-        return getFirestoreReference().collection(MESSAGES_FOLDER_NAME);
-    }
-
     public static CollectionReference getFirestoreUserRecentMessagesReference(String userId) {
         return getFirestoreReference()
                 .collection(FirebaseUtils.RECENT_MESSAGES_FOLDER_NAME)
@@ -239,10 +225,6 @@ public class FirebaseUtils {
 
     public static CollectionReference getFirestoreAllChatroomCollectionReference(){
         return FirebaseFirestore.getInstance().collection(CHATROOMS_FOLDER_NAME);
-    }
-
-    public static CollectionReference getFirestoreUserNotificationMessagesCollectionReference() {
-        return getFirestoreReference().collection(NOTIFICATION_MESSAGES_FOLDER_NAME);
     }
 
     public static com.google.firebase.firestore.Query getFirestoreChatsQuery(String chatroomId) {
@@ -255,9 +237,6 @@ public class FirebaseUtils {
 
     public static DocumentReference getFirestoreChatroomReference(String chatroomId){
         return FirebaseFirestore.getInstance().collection(CHATROOMS_FOLDER_NAME).document(chatroomId);
-    }
-    public static CollectionReference getFirestoreChatroomMessageReference(String chatroomId){
-        return getFirestoreChatroomReference(chatroomId).collection(MESSAGES_FOLDER_NAME);
     }
 
     public static CollectionReference getFirestoreChatroomCollectionReference(String chatroomId) {
@@ -297,14 +276,6 @@ public class FirebaseUtils {
         }
     }
 
-    public static DocumentReference getFirestoreOtherUserFromChatroom(List<String> userIds){
-        if (userIds.get(0).equals(FirebaseUtils.getCurrentUserId())) {
-            return getFirestoreAllUserCollectionReference().document(userIds.get(1));
-        } else {
-            return getFirestoreAllUserCollectionReference().document(userIds.get(0));
-        }
-    }
-
     public static String getFirebaseOtherUserIdFromChatroom(List<String> userIds){
         if (userIds.get(0).equals(FirebaseUtils.getCurrentUserId())) {
             return userIds.get(1);
@@ -324,11 +295,6 @@ public class FirebaseUtils {
 
     public static StorageReference getStorageChildReference(String child) {
         return FirebaseStorage.getInstance().getReference().child(child);
-    }
-
-    public static StorageReference getStorageOtherProfilePicStorageRef(String otherUserId){
-        return FirebaseStorage.getInstance().getReference().child(STORAGE_PROFILE_IMAGES_FOLDER_NAME)
-                .child(otherUserId);
     }
 
     /**

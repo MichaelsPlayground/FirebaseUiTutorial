@@ -26,7 +26,6 @@ import java.util.List;
 
 public class SelectImageUri extends AppCompatActivity {
 
-
     private Activity activity;
     private Context context;
     private final boolean doCropping;
