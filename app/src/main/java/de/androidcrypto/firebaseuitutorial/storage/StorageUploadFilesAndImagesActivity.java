@@ -110,6 +110,7 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
          */
 
         uploadFile.setOnClickListener((v -> {
+            copyDownloadUrlToClipboard.setEnabled(false);
             // select a file in download folder and upload it to firebase cloud storage
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -123,6 +124,7 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
         }));
 
         uploadImage.setOnClickListener((v -> {
+            copyDownloadUrlToClipboard.setEnabled(false);
             // select an image in download folder and upload it to firebase cloud storage
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -187,6 +189,7 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
                                             addFileInformationToDatabaseUserCollection(fileStorageReferenceLocal, fileInformation.getFileName(), fileInformation);
                                             addFileInformationToFirestoreUserCollection(fileStorageReferenceLocal, fileInformation.getFileName(), fileInformation);
                                             tvDownloadUrl.setText(uri.toString());
+                                            copyDownloadUrlToClipboard.setEnabled(true);
                                             AndroidUtils.showSnackbarGreenShort(uploadFile, "upload SUCCESS");
                                         }
                                     });
