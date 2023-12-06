@@ -166,8 +166,9 @@ Note: maybe you have noticed that there is no ListView choice, but FirebaseUi do
 
 The functionality is identical to the Realtime Firebase's implementation.
 
-### 
+### list user chatrooms in RecyclerView
 
+The functionality is identical to the Realtime Firebase's implementation.
 
 ### additional data
 
@@ -263,6 +264,21 @@ Caused by: io.grpc.StatusException: FAILED_PRECONDITION: The query requires an i
 ```
 
 ## Firebase Storage
+
+*Cloud Storage for Firebase is built on fast and secure Google Cloud infrastructure for app developers who need to 
+store and serve user-generated content, such as photos or videos.
+
+Cloud Storage for Firebase is a powerful, simple, and cost-effective object storage service built for Google scale. 
+The Firebase SDKs for Cloud Storage add Google security to file uploads and downloads for your Firebase apps, 
+regardless of network quality.*
+
+### Upload of files and images to Storage
+
+
+
+### Download of files and images from Storage
+
+
 
 Step-by-step tutorial for Storage:
 
