@@ -1,5 +1,7 @@
 package de.androidcrypto.firebaseuitutorial.storage;
 
+import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -9,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -57,7 +61,7 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
     private com.google.android.material.textfield.TextInputEditText signedInUser;
     private TextView tvDownloadUrl;
     private RadioButton rbUploadFile, rbUploadImage;
-    private Button uploadFile, uploadImage;
+    private Button uploadFile, uploadImage, copyDownloadUrlToClipboard;
     private LinearProgressIndicator uploadProgressIndicator;
     private Uri selectedFileUri;
     private String fileStorageReference; // is filled when sending the Intent(Intent.ACTION_OPEN_DOCUMENT), data from FirebaseUtil e.g. STORAGE_FILES_FOLDER_NAME ('files')
@@ -75,6 +79,7 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
         rbUploadImage = findViewById(R.id.rbStorageUploadImage);
         uploadFile = findViewById(R.id.btnStorageUploadUnencryptedFile);
         uploadImage = findViewById(R.id.btnStorageUploadUnencryptedImage);
+        copyDownloadUrlToClipboard = findViewById(R.id.btnStorageUploadCopyDownloadUrl);
         uploadProgressIndicator = findViewById(R.id.lpiStorageUploadProgress);
         tvDownloadUrl = findViewById(R.id.tvStorageUploadDownloadUrl);
 
@@ -129,6 +134,16 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
             fileStorageReference = FirebaseUtils.STORAGE_IMAGES_FOLDER_NAME;
             fileUploadUnencryptedChooserActivityResultLauncher.launch(intent);
         }));
+
+        copyDownloadUrlToClipboard.setOnClickListener((v -> {
+            // Gets a handle to the clipboard service.
+            ClipboardManager clipboard = (ClipboardManager)
+                    getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("simple text", tvDownloadUrl.getText());
+            // Set the clipboard's primary clip.
+            clipboard.setPrimaryClip(clip);
+            AndroidUtils.showToast(v.getContext(), "downloadUrl is copied to clipboard");
+                }));
     }
 
     ActivityResultLauncher<Intent> fileUploadUnencryptedChooserActivityResultLauncher = registerForActivityResult(
