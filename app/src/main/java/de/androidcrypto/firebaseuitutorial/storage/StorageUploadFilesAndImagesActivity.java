@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -54,6 +55,7 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
 
     private static final String TAG = StorageUploadFilesAndImagesActivity.class.getSimpleName();
     private com.google.android.material.textfield.TextInputEditText signedInUser;
+    private TextView tvDownloadUrl;
     private RadioButton rbUploadFile, rbUploadImage;
     private Button uploadFile, uploadImage;
     private LinearProgressIndicator uploadProgressIndicator;
@@ -74,6 +76,7 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
         uploadFile = findViewById(R.id.btnStorageUploadUnencryptedFile);
         uploadImage = findViewById(R.id.btnStorageUploadUnencryptedImage);
         uploadProgressIndicator = findViewById(R.id.lpiStorageUploadProgress);
+        tvDownloadUrl = findViewById(R.id.tvStorageUploadDownloadUrl);
 
         /**
          * file type chooser
@@ -168,6 +171,7 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
                                             fileInformation.setTimestamp(actualTimeString);
                                             addFileInformationToDatabaseUserCollection(fileStorageReferenceLocal, fileInformation.getFileName(), fileInformation);
                                             addFileInformationToFirestoreUserCollection(fileStorageReferenceLocal, fileInformation.getFileName(), fileInformation);
+                                            tvDownloadUrl.setText(uri.toString());
                                             AndroidUtils.showSnackbarGreenShort(uploadFile, "upload SUCCESS");
                                         }
                                     });
