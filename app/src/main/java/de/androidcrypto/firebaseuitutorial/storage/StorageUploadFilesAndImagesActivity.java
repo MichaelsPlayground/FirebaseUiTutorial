@@ -193,11 +193,11 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
                                             String actualTimeString = TimeUtils.getZoneDatedStringMediumLocale(actualTime);
                                             fileInformation.setActualTime(actualTime);
                                             fileInformation.setTimestamp(actualTimeString);
-                                            addFileInformationToDatabaseUserCollection(fileStorageReferenceLocal, fileInformation.getFileName(), fileInformation);
-                                            addFileInformationToFirestoreUserCollection(fileStorageReferenceLocal, fileInformation.getFileName(), fileInformation);
+                                            saveFileInformationToDatabaseUserCollection(fileStorageReferenceLocal, fileInformation.getFileName(), fileInformation);
+                                            saveFileInformationToFirestoreUserCollection(fileStorageReferenceLocal, fileInformation.getFileName(), fileInformation);
                                             tvDownloadUrl.setText(uri.toString());
                                             copyDownloadUrlToClipboard.setEnabled(true);
-                                            AndroidUtils.showSnackbarGreenShort(uploadFile, "upload SUCCESS");
+                                            AndroidUtils.showSnackbarGreenShort(uploadFile, "Upload SUCCESS");
                                         }
                                     });
                                 }
@@ -252,7 +252,7 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
         return new FileInformation(mimeType, fileName, fileSize);
     }
 
-    private void addFileInformationToDatabaseUserCollection(String subfolder, String filename, FileInformation fileInformation) {
+    private void saveFileInformationToDatabaseUserCollection(String subfolder, String filename, FileInformation fileInformation) {
         /* todo add code
         FirebaseUtils.currentUserFilesCollectionReference(subfolder, filename)
                 .set(fileInformation)
@@ -272,7 +272,7 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
          */
     }
 
-    private void addFileInformationToFirestoreUserCollection(String subfolder, String filename, FileInformation fileInformation) {
+    private void saveFileInformationToFirestoreUserCollection(String subfolder, String filename, FileInformation fileInformation) {
         /* todo add code
         FirebaseUtils.currentUserFilesCollectionReference(subfolder, filename)
                 .set(fileInformation)

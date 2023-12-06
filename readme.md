@@ -266,17 +266,62 @@ Caused by: io.grpc.StatusException: FAILED_PRECONDITION: The query requires an i
 ## Firebase Storage
 
 *Cloud Storage for Firebase is built on fast and secure Google Cloud infrastructure for app developers who need to 
-store and serve user-generated content, such as photos or videos.
+store and serve user-generated content, such as photos or videos.*
 
-Cloud Storage for Firebase is a powerful, simple, and cost-effective object storage service built for Google scale. 
+*Cloud Storage for Firebase is a powerful, simple, and cost-effective object storage service built for Google scale. 
 The Firebase SDKs for Cloud Storage add Google security to file uploads and downloads for your Firebase apps, 
 regardless of network quality.*
 
 ### Upload of files and images to Storage
 
+The activity is using Android's system file chooser to select a file or image - the difference is in the intent 
+media type. The upload process is equals for both and, depending on the file type chooser, the uploaded file is 
+stored in a subfolder "files" or "images". The root folder is the user ID of the signed-in user.
 
+An implementation note: I'm using the built-in file chooser because this way does not require an permission 
+granting by the user.
+
+After a successful upload the activity provides a **public downloadURL** of the file. You can copy the URL to the 
+clipboard for later usage. If you share the URL (e.g. by sending the URL by email or chat) to someone other he can 
+download the file using a regular browser without any password.
+
+Please keep in mind that anybody who has access to this URL has a (reading) access to the file. If the URL is 
+abused you have to delete the file.
+
+See the note on storing upload file information on Realtime Database or Firestore Database below.
 
 ### Download of files and images from Storage
+
+Depending on the file type chooser the activity shows the content of the subfolder "files" or "images". Please keep 
+in mind that the only information about the file at this moment is the file name only (e.g. no file size is available). 
+For additional information see the note on storing upload file information on Realtime Database or Firestore Database 
+below.
+
+After selecting a file the Android's system file chooser is called to selec a folder and filename for the saved file.
+
+An implementation note: I'm using the built-in file chooser because this way does not require an permission
+granting by the user.
+
+### Note on storing upload file information on Realtime Database or Firestore Database
+
+The Storage API is providing a "listAll" method to retrieve all files stored in a folder but this is a file name list 
+only (e.g. no file size is provided at this moment). Of course it is possible to retrieve file meta data for each 
+file name in a second step, but this is a time and bandwidth consuming action, especially when having a lot of files 
+in the folder.
+
+If you should need these information you may consider of storing the information about the uploaded file in the 
+Realtime Database or Firestore Database. List the saved filed on the database and get the download URL from the 
+database record. To test this functionality I'm providing two sample methods:
+
+## Save the file information to Realtime Database
+
+After uploading a file or image to Firebase Storage this button is enabled. The method retrieves the file meta data of 
+the uploaded file and stores it in the Realtime Database.
+
+## Save the file information to Firestore Database
+
+After uploading a file or image to Firebase Storage this button is enabled. The method retrieves the file meta data of
+the uploaded file and stores it in the Firestore Database.
 
 
 
