@@ -1,12 +1,9 @@
 package de.androidcrypto.firebaseuitutorial.storage;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -25,7 +22,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,9 +32,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.ListResult;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,28 +42,24 @@ import java.util.Objects;
 
 import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
-import de.androidcrypto.firebaseuitutorial.models.FileInformation;
 import de.androidcrypto.firebaseuitutorial.models.StorageFileModel;
 import de.androidcrypto.firebaseuitutorial.utils.AndroidUtils;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
-import de.androidcrypto.firebaseuitutorial.utils.Okhttp3ProgressDownloaderNoDecrypt;
-import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
+import de.androidcrypto.firebaseuitutorial.utils.Okhttp3ProgressDownloader;
 
 public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
 
     /**
-     * This class is NOT using FirestoreUi for the upload purposes
+     * This class is NOT using FirestoreUi for the download purposes
      */
 
     private static final String TAG = StorageDownloadFilesAndImagesActivity.class.getSimpleName();
     private com.google.android.material.textfield.TextInputEditText signedInUser;
     private RadioButton rbDownloadFile, rbDownloadImage;
-    private Button downloadFileOrImage, downloadFile, downloadImage;
+    private Button downloadFileOrImage;
     private LinearProgressIndicator downloadProgressIndicator;
     private RecyclerView storageRecyclerView;
-    private Uri selectedFileUri;
     private String downloadSelector, downloadSelectedDownloadUrl;
-    private String fileStorageReference; // is filled when sending the Intent(Intent.ACTION_OPEN_DOCUMENT), data from FirebaseUtil e.g. STORAGE_FILES_FOLDER_NAME ('files')
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,8 +73,6 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
         rbDownloadFile = findViewById(R.id.rbStorageDownloadFile);
         rbDownloadImage = findViewById(R.id.rbStorageDownloadImage);
         downloadFileOrImage = findViewById(R.id.btnStorageDownloadUnencryptedFileOrImage);
-        downloadFile = findViewById(R.id.btnStorageDownloadUnencryptedFile);
-        downloadImage = findViewById(R.id.btnStorageDownloadUnencryptedImage);
         downloadProgressIndicator = findViewById(R.id.lpiStorageDownloadProgress);
         storageRecyclerView = findViewById(R.id.rvStorageDownload);
 
@@ -105,7 +93,6 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
                 downloadSectionVisibilityOff();
                 downloadSelector = FirebaseUtils.STORAGE_FILES_FOLDER_NAME;
                 downloadFileOrImage.setText("download a file");
-                //downloadFile.setVisibility(View.VISIBLE);
             }
         };
         rbDownloadFile.setOnClickListener(rbDownloadFileListener);
@@ -116,7 +103,6 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
                 downloadSectionVisibilityOff();
                 downloadSelector = FirebaseUtils.STORAGE_IMAGES_FOLDER_NAME;
                 downloadFileOrImage.setText("download an image");
-                //downloadImage.setVisibility(View.VISIBLE);
             }
         };
         rbDownloadImage.setOnClickListener(rbDownloadImageListener);
@@ -126,35 +112,9 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
          */
 
         downloadFileOrImage.setOnClickListener((v -> {
-            //downloadSelector = FirebaseUtils.STORAGE_FILES_FOLDER_NAME;
             downloadListFilesBtnClick();
-
         }));
 
-        downloadFile.setOnClickListener((v -> {
-            downloadSelector = FirebaseUtils.STORAGE_FILES_FOLDER_NAME;
-            downloadListFilesBtnClick();
-
-        }));
-
-        downloadImage.setOnClickListener((v -> {
-            downloadSelector = FirebaseUtils.STORAGE_IMAGES_FOLDER_NAME;
-            downloadListFilesBtnClick();
-
-            /*
-            // select an image in download folder and upload it to firebase cloud storage
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("image/*");
-            // Optionally, specify a URI for the file that should appear in the
-            // system file picker when it loads.
-            //boolean pickerInitialUri = false;
-            //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
-            fileStorageReference = FirebaseUtils.STORAGE_IMAGES_FOLDER_NAME;
-            fileUploadUnencryptedChooserActivityResultLauncher.launch(intent);
-
-             */
-        }));
     }
 
     private void downloadListFilesBtnClick() {
@@ -162,8 +122,6 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
         // first we list the available files in this folder on Firebase Cloud Storage for selection by click
 
         StorageReference ref;
-        AndroidUtils.showToast(StorageDownloadFilesAndImagesActivity.this, "downloadSelector: " + downloadSelector);
-
         if (downloadSelector.equals(FirebaseUtils.STORAGE_FILES_FOLDER_NAME)) {
             ref = FirebaseUtils.getStorageCurrentUserFilesReference();
         } else if(downloadSelector.equals(FirebaseUtils.STORAGE_IMAGES_FOLDER_NAME)) {
@@ -171,12 +129,11 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
         } else {
             // some data are wrong
             AndroidUtils.showToast(StorageDownloadFilesAndImagesActivity.this, "something got wrong, aborted");
+            AndroidUtils.showSnackbarRedLong(downloadFileOrImage, "something got wrong, aborted");
             return;
         }
 
         ref.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
-            //String actualUserId = FirebaseAuth.getInstance().getUid();
-            //FirebaseStorage.getInstance().getReference().child(actualUserId).child("files").listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
             @Override
             public void onSuccess(ListResult listResult) {
                 ArrayList<StorageFileModel> arrayList = new ArrayList<>();
@@ -191,78 +148,43 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
                     ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            System.out.println("*** uri: " + uri + " ***");
                             sfm.setUri(uri);
                             arrayList.add(sfm);
-                            System.out.println("arrayList added");
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
                             // Handle any errors
                             AndroidUtils.showToast(StorageDownloadFilesAndImagesActivity.this, "Can not retrieve a DownloadUrl, aborted");
+                            AndroidUtils.showSnackbarRedLong(downloadFileOrImage,"Can not retrieve a DownloadUrl, aborted");
                             return;
                         }
                     });
-
                 }
 
                 StorageListFilesAdapter adapterSR = new StorageListFilesAdapter(StorageDownloadFilesAndImagesActivity.this, arrayListSR);
                 storageRecyclerView.setLayoutManager(new LinearLayoutManager(StorageDownloadFilesAndImagesActivity.this));
                 storageRecyclerView.setAdapter(adapterSR);
                 storageRecyclerView.setVisibility(View.VISIBLE);
-/*
-                // this is using class SwipeToDeleteCallback
-                // see: https://www.digitalocean.com/community/tutorials/android-recyclerview-swipe-to-delete-undo
-                SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(getContext()) {
-                    @Override
-                    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-
-
-                        //final int position = viewHolder.getAdapterPosition(); // getAdapterPosition is deprecated
-                        final int position = viewHolder.getBindingAdapterPosition();
-                        final StorageReference item = adapterSR.getArrayList().get(position);
-                        //final String item = mAdapter.getData().get(position);
-
-                        adapterSR.removeItem(position);
-                        // todo remove from Storage and Firestore
-
-
-                        System.out.println("actual contents of the arraylist");
-                    }
-                };
-
-                ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
-                itemTouchhelper.attachToRecyclerView(storageRecyclerView);
-
- */
 
                 adapterSR.setOnItemClickListener(new StorageListFilesAdapter.OnItemClickListener() {
                     @Override
                     public void onClick(StorageReference storageReference) {
-                        System.out.println("*** clicked on name: " + storageReference.getName());
-
                         // get the download url from task
                         storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
-                                // Got the download URL for 'users/me/profile.png'
-                                System.out.println("*** uri: " + uri + " ***");
-
                                 // set progressIndicator to 0
                                 downloadProgressIndicator.setProgress(0);
-                                //DownloadManager.Request request = new DownloadManager.Request(uri);
                                 String title = null;
                                 try {
                                     title = URLUtil.guessFileName(new URL(uri.toString()).toString(), null, null);
                                     downloadSelectedDownloadUrl = new URL(uri.toString()).toString();
                                 } catch (MalformedURLException e) {
-                                    //throw new RuntimeException(e);
                                     AndroidUtils.showToast(StorageDownloadFilesAndImagesActivity.this, "Malformed DownloadUrl, aborted");
                                     return;
                                 }
                                 // now select the folder and filename on device, we are using the file chooser of Android
-                                System.out.println("*** before intent ***");
                                 Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
                                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                                 if (downloadSelector.equals(FirebaseUtils.STORAGE_IMAGES_FOLDER_NAME)) {
@@ -270,7 +192,6 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
                                 } else {
                                     intent.setType("*/*");
                                 }
-                                //intent.setType("image/*/*"); // for image
 
                                 // Optionally, specify a URI for the file that should appear in the
                                 // system file picker when it loads.
@@ -278,13 +199,14 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
                                 //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
                                 String storeFilename = title;
                                 intent.putExtra(Intent.EXTRA_TITLE, storeFilename);
-                                fileDownloadSaverActivityResultLauncherXX.launch(intent);
+                                fileDownloadSaverActivityResultLauncher.launch(intent);
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception exception) {
                                 // Handle any errors
                                 AndroidUtils.showToast(StorageDownloadFilesAndImagesActivity.this, "Error on retrieving the DownloadUrl, aborted");
+                                AndroidUtils.showSnackbarRedLong(downloadFileOrImage,"Error on retrieving the DownloadUrl, aborted");
                                 return;
                             }
                         });
@@ -293,13 +215,12 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
             }});
     }
 
-    ActivityResultLauncher<Intent> fileDownloadSaverActivityResultLauncherXX = registerForActivityResult(
+    ActivityResultLauncher<Intent> fileDownloadSaverActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        System.out.println("fileDownloadSaverActivityResultLauncher");
                         // There are no request codes
                         Intent resultData = result.getData();
                         // The result data contains a URI for the document or directory that
@@ -308,165 +229,25 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
                         if (resultData != null) {
                             selectedUri = resultData.getData();
                             // Perform operations on the document using its URI.
-                            Toast.makeText(StorageDownloadFilesAndImagesActivity.this, "You selected this file for download: " + selectedUri.toString(), Toast.LENGTH_SHORT).show();
-                            try {
+                           try {
                                 downloadProgressIndicator.setMax(Math.toIntExact(100));
-                                System.out.println("*** download of: " + downloadSelectedDownloadUrl);
-                                Okhttp3ProgressDownloaderNoDecrypt downloader = new Okhttp3ProgressDownloaderNoDecrypt(downloadSelectedDownloadUrl, downloadProgressIndicator, StorageDownloadFilesAndImagesActivity.this, selectedUri);
+                                Okhttp3ProgressDownloader downloader = new Okhttp3ProgressDownloader(downloadSelectedDownloadUrl, downloadProgressIndicator, StorageDownloadFilesAndImagesActivity.this, selectedUri);
                                 downloader.run();
-                                System.out.println("*** fileDownloadDecryptSaverActivityResultLauncherXX success");
-                                Toast.makeText(StorageDownloadFilesAndImagesActivity.this, "fileDownloadDecryptSaverActivityResultLauncherXX success", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(StorageDownloadFilesAndImagesActivity.this, "Download success", Toast.LENGTH_SHORT).show();
+                                AndroidUtils.showSnackbarGreenShort(downloadFileOrImage, "Download SUCCESS");
                             } catch (Exception e) {
-                                //throw new RuntimeException(e);
-                                System.out.println("*** fileDownloadDecryptSaverActivityResultLauncherXX FAILURE " + e.getMessage());
                                 Toast.makeText(StorageDownloadFilesAndImagesActivity.this, "Exception on download: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                AndroidUtils.showSnackbarRedLong(downloadFileOrImage,"Exception on download the file, aborted");
                             }
                         } else {
-                            System.out.println("*** resultData is NULL ***");
+                            AndroidUtils.showSnackbarRedLong(downloadFileOrImage,"No save file reference got, aborted");
                         }
                     }
                 }
             });
-
-
-    ActivityResultLauncher<Intent> fileUploadUnencryptedChooserActivityResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        // There are no request codes
-                        Intent resultData = result.getData();
-                        // The result data contains a URI for the document or directory that
-                        // the user selected.
-                        if (resultData != null) {
-                            selectedFileUri = resultData.getData();
-                            String fileStorageReferenceLocal = fileStorageReference;
-                            fileStorageReference = ""; // clear after usage
-                            FileInformation fileInformation = getFileInformationFromUri(selectedFileUri);
-                            StorageReference ref;
-                            if (fileStorageReferenceLocal.equals(FirebaseUtils.STORAGE_FILES_FOLDER_NAME)) {
-                                ref = FirebaseUtils.getStorageCurrentUserFilesReference(fileInformation.getFileName());
-                                fileInformation.setFileStorage(fileStorageReferenceLocal);
-                            } else {
-                                ref = FirebaseUtils.getStorageCurrentUserImagesReference(fileInformation.getFileName());
-                                fileInformation.setFileStorage(fileStorageReferenceLocal);
-                            }
-                            // now upload the  file / image
-                            ref.putFile(selectedFileUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    Toast.makeText(getApplicationContext(), "File uploaded with SUCCESS", Toast.LENGTH_SHORT).show();
-                                    //ref.getDownloadUrl();
-                                    // get download url
-                                    ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                        @Override
-                                        public void onSuccess(Uri uri) {
-                                            fileInformation.setDownloadUrl(uri);
-                                            long actualTime = TimeUtils.getActualUtcZonedDateTime();
-                                            String actualTimeString = TimeUtils.getZoneDatedStringMediumLocale(actualTime);
-                                            fileInformation.setActualTime(actualTime);
-                                            fileInformation.setTimestamp(actualTimeString);
-                                            addFileInformationToDatabaseUserCollection(fileStorageReferenceLocal, fileInformation.getFileName(), fileInformation);
-                                            addFileInformationToFirestoreUserCollection(fileStorageReferenceLocal, fileInformation.getFileName(), fileInformation);
-                                            AndroidUtils.showSnackbarGreenShort(downloadFile, "download SUCCESS");
-                                        }
-                                    });
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(getApplicationContext(), "File download error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                                    AndroidUtils.showSnackbarRedLong(downloadFile, "File download error: " + e.getMessage());
-                                }
-                            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-                                    downloadProgressIndicator.setMax(Math.toIntExact(snapshot.getTotalByteCount()));
-                                    downloadProgressIndicator.setProgress(Math.toIntExact(snapshot.getBytesTransferred()));
-                                }
-                            });
-                        }
-                    }
-                }
-            });
-
-    private FileInformation getFileInformationFromUri(Uri uri) {
-        /*
-         * Get the file's content URI from the incoming Intent,
-         * then query the server app to get the file's display name
-         * and size.
-         */
-        Context context = getApplicationContext();
-        if (context == null) return null;
-        Cursor returnCursor = null;
-        String mimeType = "";
-        String fileName = "";
-        long fileSize = 0;
-        try {
-            returnCursor = context.getContentResolver().query(uri, null, null, null, null);
-            mimeType = context.getContentResolver().getType(uri);
-            /*
-             * Get the column indexes of the data in the Cursor,
-             * move to the first row in the Cursor, get the data,
-             * and display it.
-             */
-            int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-            int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
-            returnCursor.moveToFirst();
-            fileName = returnCursor.getString(nameIndex);
-            fileSize = returnCursor.getLong(sizeIndex);
-        } catch (NullPointerException e) {
-            //
-        } finally {
-            returnCursor.close();
-        }
-        return new FileInformation(mimeType, fileName, fileSize);
-    }
-
-    private void addFileInformationToDatabaseUserCollection(String subfolder, String filename, FileInformation fileInformation) {
-        /* todo add code
-        FirebaseUtils.currentUserFilesCollectionReference(subfolder, filename)
-                .set(fileInformation)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        AndroidUtils.showToast(getApplicationContext(), "Filestore entry added successfully");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        AndroidUtils.showToast(getApplicationContext(), "Filestore entry adding failed");
-                    }
-                });
-
-         */
-    }
-
-    private void addFileInformationToFirestoreUserCollection(String subfolder, String filename, FileInformation fileInformation) {
-        /* todo add code
-        FirebaseUtils.currentUserFilesCollectionReference(subfolder, filename)
-                .set(fileInformation)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        AndroidUtils.showToast(getApplicationContext(), "Filestore entry added successfully");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        AndroidUtils.showToast(getApplicationContext(), "Filestore entry adding failed");
-                    }
-                });
-
-         */
-    }
 
     private void downloadSectionVisibilityOff() {
-        downloadImage.setVisibility(View.GONE);
-        downloadImage.setVisibility(View.GONE);
+        // no entries
     }
 
     @Override
@@ -488,11 +269,10 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     updateUI(FirebaseUtils.getCurrentUser());
                 } else {
-                    Log.e(TAG, "reload", task.getException());
                     Toast.makeText(getApplicationContext(),
                             "Failed to reload user",
                             Toast.LENGTH_SHORT).show();
-                    AndroidUtils.showSnackbarRedLong(downloadFile, "Failed to reload user");
+                    AndroidUtils.showSnackbarRedLong(downloadFileOrImage, "Failed to reload user");
                 }
             }
         });
@@ -511,7 +291,7 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
             sb.append("User id: ").append(user.getUid()).append("\n");
             sb.append("Email: ").append(user.getEmail()).append("\n");
             if (TextUtils.isEmpty(authDisplayName)) {
-                sb.append("Display name: ").append("no display name available").append("\n");
+                sb.append("Display name: ").append("no display name available");
             } else {
                 sb.append("Display name: ").append(authDisplayName);
             }

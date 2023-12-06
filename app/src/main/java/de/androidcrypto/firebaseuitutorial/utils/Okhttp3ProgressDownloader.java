@@ -23,14 +23,14 @@ import okio.ForwardingSource;
 import okio.Okio;
 import okio.Source;
 
-public class Okhttp3ProgressDownloaderNoDecrypt {
+public class Okhttp3ProgressDownloader {
 
     private String downloadUrl;
     private LinearProgressIndicator progressIndicator;
     private Context context;
     private Uri storageUri;
 
-    public Okhttp3ProgressDownloaderNoDecrypt(String downloadUrl, LinearProgressIndicator progressIndicator, Context context, Uri storageUri) {
+    public Okhttp3ProgressDownloader(String downloadUrl, LinearProgressIndicator progressIndicator, Context context, Uri storageUri) {
         this.downloadUrl = downloadUrl;
         this.progressIndicator = progressIndicator;
         this.context = context;
@@ -49,24 +49,21 @@ public class Okhttp3ProgressDownloaderNoDecrypt {
             @Override
             public void update(long bytesRead, long contentLength, boolean done) {
                 if (done) {
-                    System.out.println("completed");
                 } else {
                     if (firstUpdate) {
                         firstUpdate = false;
                         if (contentLength == -1) {
-                            System.out.println("content-length: unknown");
+                            //System.out.println("content-length: unknown");
                         } else {
-                            System.out.format("content-length: %d\n", contentLength);
+                            //System.out.format("content-length: %d\n", contentLength);
                         }
                     }
 
                     System.out.println(bytesRead);
 
                     if (contentLength != -1) {
-                        System.out.format("%d%% done\n", (100 * bytesRead) / contentLength);
-                        //progressIndicator.setProgress((int) ((100 * bytesRead) / contentLength));
+                        //System.out.format("%d%% done\n", (100 * bytesRead) / contentLength);
                         progressIndicator.setProgressCompat((int) ((100 * bytesRead) / contentLength), true);
-                        //progressIndicator.setProgress((int) ((100 * bytesRead) / contentLength), true);
                     }
                 }
             }

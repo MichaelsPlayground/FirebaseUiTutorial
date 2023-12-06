@@ -74,34 +74,6 @@
                 android:layout_marginBottom="8dp" />
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:background="@color/blue_300"
-                android:text="data in Storage USERS"
-                android:textAlignment="center"
-                android:textSize="16sp"
-                android:textStyle="normal"
-                android:visibility="gone"/>
-
-            <TextView
-                android:id="@+id/tvStorageUserNoData"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/share_rounded_corner_light_red_with_border_error"
-                android:padding="4dp"
-                android:text="No data is stored in Storage USERS, the data is taken from Auth Storage.\nThe Dataset is stored automatically."
-                android:textAlignment="center"
-                android:textSize="16sp"
-                android:textStyle="normal"
-                android:visibility="gone" />
-
-            <TextView
                 android:id="@+id/tvTitle2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -137,28 +109,6 @@
             </RadioGroup>
 
             <Button
-                android:id="@+id/btnStorageDownloadUnencryptedFile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginEnd="32dp"
-                android:background="@drawable/btn_rounded_corner"
-                android:enabled="true"
-                android:text="download a file"
-                android:visibility="gone"/>
-
-            <Button
-                android:id="@+id/btnStorageDownloadUnencryptedImage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginEnd="32dp"
-                android:background="@drawable/btn_rounded_corner"
-                android:enabled="true"
-                android:text="download an image"
-                android:visibility="gone" />
-
-            <Button
                 android:id="@+id/btnStorageDownloadUnencryptedFileOrImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -180,7 +130,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvStorageDownload"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="match_parent"
                 />
 
             <com.google.android.material.divider.MaterialDivider
