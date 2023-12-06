@@ -5,9 +5,13 @@ import android.net.Uri;
 
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -33,7 +37,8 @@ public class Okhttp3ProgressDownloaderNoDecrypt {
         this.storageUri = storageUri;
     }
 
-    public void run() throws Exception {
+    public void run() {
+
         Request request = new Request.Builder()
                 .url(downloadUrl)
                 .build();
@@ -41,7 +46,8 @@ public class Okhttp3ProgressDownloaderNoDecrypt {
         final ProgressListener progressListener = new ProgressListener() {
             boolean firstUpdate = true;
 
-            @Override public void update(long bytesRead, long contentLength, boolean done) {
+            @Override
+            public void update(long bytesRead, long contentLength, boolean done) {
                 if (done) {
                     System.out.println("completed");
                 } else {
@@ -61,14 +67,6 @@ public class Okhttp3ProgressDownloaderNoDecrypt {
                         //progressIndicator.setProgress((int) ((100 * bytesRead) / contentLength));
                         progressIndicator.setProgressCompat((int) ((100 * bytesRead) / contentLength), true);
                         //progressIndicator.setProgress((int) ((100 * bytesRead) / contentLength), true);
-/*
-                        Handler progressBarHandler = new Handler();
-                        progressBarHandler .post(new Runnable() {
-                            public void run() {
-                                progressIndicator.setProgress((int) ((100 * bytesRead) / contentLength), true);
-                            }
-                        });
-*/
                     }
                 }
             }
@@ -83,42 +81,66 @@ public class Okhttp3ProgressDownloaderNoDecrypt {
                 })
                 .build();
 
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+        // new code
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
 
-            //System.out.println(response.body().string());
-            /*
-            // this is using the complete data in bytes()
-            FileOutputStream fos = new FileOutputStream(storageFilename);
-            fos.write(response.body().bytes());
-            fos.close();
-*/
-            // this is using a stream
-            InputStream is = response.body().byteStream();
-            boolean success = Cryptography.copyInputStreamFromInputStream(context, is, storageUri);
-            System.out.println("decryption success: " + success);
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected code " + response);
+                }
+                // you code to handle response
+                // this is using a stream
+                InputStream is = response.body().byteStream();
+                boolean success = copyInputStreamFromInputStream(context, is, storageUri);
+            }
+        });
+    }
+
+    public boolean copyInputStreamFromInputStream(Context context, InputStream inputStream, Uri outputUri) {
+
+        try (BufferedInputStream in = new BufferedInputStream(inputStream);
+             OutputStream out = context.getContentResolver().openOutputStream(outputUri)) {
+
+            // todo check that out is not null !
+            byte[] buffer = new byte[8192];
+            int nread;
+            while ((nread = in.read(buffer)) > 0) {
+                out.write(buffer, 0, nread);
+            }
+            out.flush();
+        } catch (Exception e) {
+            return false;
         }
-
+        return true;
     }
 
     private class ProgressResponseBody extends ResponseBody {
         private final ResponseBody responseBody;
         private final ProgressListener progressListener;
         private BufferedSource bufferedSource;
+
         ProgressResponseBody(ResponseBody responseBody, ProgressListener progressListener) {
             this.responseBody = responseBody;
             this.progressListener = progressListener;
         }
 
-        @Override public MediaType contentType() {
+        @Override
+        public MediaType contentType() {
             return responseBody.contentType();
         }
 
-        @Override public long contentLength() {
+        @Override
+        public long contentLength() {
             return responseBody.contentLength();
         }
 
-        @Override public BufferedSource source() {
+        @Override
+        public BufferedSource source() {
             if (bufferedSource == null) {
                 bufferedSource = Okio.buffer(source(responseBody.source()));
             }
@@ -129,7 +151,8 @@ public class Okhttp3ProgressDownloaderNoDecrypt {
             return new ForwardingSource(source) {
                 long totalBytesRead = 0L;
 
-                @Override public long read(Buffer sink, long byteCount) throws IOException {
+                @Override
+                public long read(Buffer sink, long byteCount) throws IOException {
                     long bytesRead = super.read(sink, byteCount);
                     // read() returns the number of bytes read, or -1 if this source is exhausted.
                     totalBytesRead += bytesRead != -1 ? bytesRead : 0;

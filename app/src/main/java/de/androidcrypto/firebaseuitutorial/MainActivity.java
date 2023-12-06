@@ -1,7 +1,9 @@
 package de.androidcrypto.firebaseuitutorial;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
@@ -52,6 +56,12 @@ import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
 public class MainActivity extends AppCompatActivity {
+
+    /**
+     * section for start up methods
+     */
+
+    private static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 101;
 
     /**
      * section authentication
@@ -139,6 +149,14 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(myToolbar);
+
+
+        /**
+         * section for start up methods
+         */
+
+        askWriteStoragePermission();
+
 
         /**
          * section for Authentication
@@ -521,8 +539,24 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     * section for
+     * section for start up methods
      */
+
+    private void askWriteStoragePermission() {
+        String[] permissions = {android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                permissions[0]) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                permissions[1]) == PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "Write permission granted",Toast.LENGTH_SHORT)
+                    .show();
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    permissions,
+                    REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
+        }
+    }
 
 
     /**

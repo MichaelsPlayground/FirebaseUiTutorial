@@ -307,17 +307,15 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
                                 //String storageFilename = new File(getContext().getCacheDir(), cacheFilename).getAbsolutePath();
                                 //System.out.println("*** storageFilename: " + storageFilename);
                                 downloadProgressIndicator.setMax(Math.toIntExact(100));
-
-                                //String downloadUrl = "https://firebasestorage.googleapis.com/v0/b/easychat-ce2c5.appspot.com/o/bgC77aBfeYZzX5deM6PqCUe0iMr1%2Ffiles%2Fmtc.bin.enc?alt=media&token=a10a55af-109d-4fa5-a5fe-ceab69004436";
-                                //String downloadUrl = "https://firebasestorage.googleapis.com/v0/b/easychat-ce2c5.appspot.com/o/bgC77aBfeYZzX5deM6PqCUe0iMr1%2Ffiles%2Ffile03.txt.enc?alt=media&token=a0ff7051-0f76-4aba-ad51-f1b321a01b30";
-                                //String downloadUrl = "https://firebasestorage.googleapis.com/v0/b/easychat-ce2c5.appspot.com/o/bgC77aBfeYZzX5deM6PqCUe0iMr1%2Ffiles%2FMt_Cook_LC0247.jpg.enc?alt=media&token=a904a1f8-4a4b-4553-a307-1949b987d148";
-                                //Okhttp3ProgressDownloaderDecrypt downloader = new Okhttp3ProgressDownloaderDecrypt(downloadUrl, progressIndicator, getContext(), selectedUri, passphrase, iterations);
+                                System.out.println("*** download of: " + downloadSelectedDownloadUrl);
                                 Okhttp3ProgressDownloaderNoDecrypt downloader = new Okhttp3ProgressDownloaderNoDecrypt(downloadSelectedDownloadUrl, downloadProgressIndicator, StorageDownloadFilesAndImagesActivity.this, selectedUri);
                                 downloader.run();
-                                Toast.makeText(StorageDownloadFilesAndImagesActivity.this, "fileDownloadDecryptSaverActivityResultLauncher success", Toast.LENGTH_SHORT).show();
+                                System.out.println("*** fileDownloadDecryptSaverActivityResultLauncherXX success");
+                                Toast.makeText(StorageDownloadFilesAndImagesActivity.this, "fileDownloadDecryptSaverActivityResultLauncherXX success", Toast.LENGTH_SHORT).show();
                                 //Okhttp3ProgressCallback.main(storageFilename);
                             } catch (Exception e) {
                                 //throw new RuntimeException(e);
+                                System.out.println("*** fileDownloadDecryptSaverActivityResultLauncherXX FAILURE " + e.getMessage());
                                 Toast.makeText(StorageDownloadFilesAndImagesActivity.this, "Exception on download: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         } else {
