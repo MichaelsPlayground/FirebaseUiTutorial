@@ -320,6 +320,8 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
                                 //throw new RuntimeException(e);
                                 Toast.makeText(StorageDownloadFilesAndImagesActivity.this, "Exception on download: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
+                        } else {
+                            System.out.println("*** resultData is NULL ***");
                         }
                     }
                 }
