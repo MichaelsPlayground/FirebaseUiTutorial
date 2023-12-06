@@ -323,6 +323,16 @@ the uploaded file and stores it in the Realtime Database.
 After uploading a file or image to Firebase Storage this button is enabled. The method retrieves the file meta data of
 the uploaded file and stores it in the Firestore Database.
 
+## Upload resized images to Storage
+
+This method is using the Android's system file chooser to select an image. The file is resized to a dimension of 
+maximum 500 pixels width and height. The resized images are the source for an image file lister showing the images 
+and not the file name.
+
+## List resized images in Recyclerview
+
+This a little image file chooser or gallery. I'm using the resized images for this purpose because the activity has to 
+download all images for showing them in RecyclerView.
 
 
 Step-by-step tutorial for Storage:
