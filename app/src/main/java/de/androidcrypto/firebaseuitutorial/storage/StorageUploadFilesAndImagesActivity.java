@@ -26,6 +26,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,8 +63,10 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
     private com.google.android.material.textfield.TextInputEditText signedInUser;
     private TextView tvDownloadUrl;
     private RadioButton rbUploadFile, rbUploadImage;
-    private Button uploadFile, uploadImage, copyDownloadUrlToClipboard;
+    private Button uploadFile, uploadImage;
+    private ImageButton copyDownloadUrlToClipboard;
     private LinearProgressIndicator uploadProgressIndicator;
+    private LinearLayout llDownloadUrl;
     private Uri selectedFileUri;
     private String fileStorageReference; // is filled when sending the Intent(Intent.ACTION_OPEN_DOCUMENT), data from FirebaseUtil e.g. STORAGE_FILES_FOLDER_NAME ('files')
 
@@ -82,6 +86,7 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
         copyDownloadUrlToClipboard = findViewById(R.id.btnStorageUploadCopyDownloadUrl);
         uploadProgressIndicator = findViewById(R.id.lpiStorageUploadProgress);
         tvDownloadUrl = findViewById(R.id.tvStorageUploadDownloadUrl);
+        llDownloadUrl = findViewById(R.id.llStorageUploadDownloadUrl);
 
         /**
          * file type chooser
@@ -110,6 +115,7 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
          */
 
         uploadFile.setOnClickListener((v -> {
+            llDownloadUrl.setVisibility(View.GONE);
             copyDownloadUrlToClipboard.setEnabled(false);
             // select a file in download folder and upload it to firebase cloud storage
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -159,6 +165,7 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
                         // The result data contains a URI for the document or directory that
                         // the user selected.
                         if (resultData != null) {
+                            llDownloadUrl.setVisibility(View.VISIBLE);
                             selectedFileUri = resultData.getData();
                             String fileStorageReferenceLocal = fileStorageReference;
                             fileStorageReference = ""; // clear after usage
@@ -360,7 +367,6 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
                 return false;
             }
         });
-
         return super.onCreateOptionsMenu(menu);
     }
 

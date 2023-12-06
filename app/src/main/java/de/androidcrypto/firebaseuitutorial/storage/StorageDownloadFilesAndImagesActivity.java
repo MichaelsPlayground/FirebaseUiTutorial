@@ -52,6 +52,7 @@ import de.androidcrypto.firebaseuitutorial.models.FileInformation;
 import de.androidcrypto.firebaseuitutorial.models.StorageFileModel;
 import de.androidcrypto.firebaseuitutorial.utils.AndroidUtils;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
+import de.androidcrypto.firebaseuitutorial.utils.Okhttp3ProgressDownloaderNoDecrypt;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
 public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
@@ -230,14 +231,14 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
                 adapterSR.setOnItemClickListener(new StorageListFilesAdapter.OnItemClickListener() {
                     @Override
                     public void onClick(StorageReference storageReference) {
-                        //System.out.println("*** clicked on name: " + storageReference.getName());
+                        System.out.println("*** clicked on name: " + storageReference.getName());
 
                         // get the download url from task
                         storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
                                 // Got the download URL for 'users/me/profile.png'
-                                //System.out.println("*** uri: " + uri + " ***");
+                                System.out.println("*** uri: " + uri + " ***");
 
                                 // set progressIndicator to 0
                                 downloadProgressIndicator.setProgress(0);
@@ -252,6 +253,7 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
                                     return;
                                 }
                                 // now select the folder and filename on device, we are using the file chooser of Android
+                                System.out.println("*** before intent ***");
                                 Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
                                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                                 intent.setType("*/*");
@@ -263,8 +265,9 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
                                 //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
                                 String storeFilename = title;
                                 //String storeFilename = "file3a.txt";
+                                //intent.putExtra(Intent.EXTRA_TITLE, storeFilename);
                                 intent.putExtra(Intent.EXTRA_TITLE, storeFilename);
-                                intent.putExtra(Intent.EXTRA_TITLE, storeFilename);
+                                fileDownloadSaverActivityResultLauncherXX.launch(intent);
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -278,6 +281,49 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
                 });
             }});
     }
+
+    ActivityResultLauncher<Intent> fileDownloadSaverActivityResultLauncherXX = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        System.out.println("fileDownloadSaverActivityResultLauncher");
+                        // There are no request codes
+                        Intent resultData = result.getData();
+                        // The result data contains a URI for the document or directory that
+                        // the user selected.
+                        Uri selectedUri = null;
+                        if (resultData != null) {
+                            selectedUri = resultData.getData();
+                            // Perform operations on the document using its URI.
+                            Toast.makeText(StorageDownloadFilesAndImagesActivity.this, "You selected this file for download: " + selectedUri.toString(), Toast.LENGTH_SHORT).show();
+
+                            //String cacheFilename = fileInformation.getFileName() + ".enc";
+                            //String encryptedFilename = new File(getContext().getCacheDir(), encryptedFilename;
+                            try {
+                                //Okhttp3Progress.main();
+                                //String cacheFilename = "mt_cook.jpg";
+                                //String storageFilename = new File(getContext().getCacheDir(), cacheFilename).getAbsolutePath();
+                                //System.out.println("*** storageFilename: " + storageFilename);
+                                downloadProgressIndicator.setMax(Math.toIntExact(100));
+
+                                //String downloadUrl = "https://firebasestorage.googleapis.com/v0/b/easychat-ce2c5.appspot.com/o/bgC77aBfeYZzX5deM6PqCUe0iMr1%2Ffiles%2Fmtc.bin.enc?alt=media&token=a10a55af-109d-4fa5-a5fe-ceab69004436";
+                                //String downloadUrl = "https://firebasestorage.googleapis.com/v0/b/easychat-ce2c5.appspot.com/o/bgC77aBfeYZzX5deM6PqCUe0iMr1%2Ffiles%2Ffile03.txt.enc?alt=media&token=a0ff7051-0f76-4aba-ad51-f1b321a01b30";
+                                //String downloadUrl = "https://firebasestorage.googleapis.com/v0/b/easychat-ce2c5.appspot.com/o/bgC77aBfeYZzX5deM6PqCUe0iMr1%2Ffiles%2FMt_Cook_LC0247.jpg.enc?alt=media&token=a904a1f8-4a4b-4553-a307-1949b987d148";
+                                //Okhttp3ProgressDownloaderDecrypt downloader = new Okhttp3ProgressDownloaderDecrypt(downloadUrl, progressIndicator, getContext(), selectedUri, passphrase, iterations);
+                                Okhttp3ProgressDownloaderNoDecrypt downloader = new Okhttp3ProgressDownloaderNoDecrypt(downloadSelectedDownloadUrl, downloadProgressIndicator, StorageDownloadFilesAndImagesActivity.this, selectedUri);
+                                downloader.run();
+                                Toast.makeText(StorageDownloadFilesAndImagesActivity.this, "fileDownloadDecryptSaverActivityResultLauncher success", Toast.LENGTH_SHORT).show();
+                                //Okhttp3ProgressCallback.main(storageFilename);
+                            } catch (Exception e) {
+                                //throw new RuntimeException(e);
+                                Toast.makeText(StorageDownloadFilesAndImagesActivity.this, "Exception on download: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                }
+            });
 
 
     ActivityResultLauncher<Intent> fileUploadUnencryptedChooserActivityResultLauncher = registerForActivityResult(
