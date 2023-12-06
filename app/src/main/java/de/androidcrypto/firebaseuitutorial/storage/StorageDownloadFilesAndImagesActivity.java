@@ -64,7 +64,7 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
     private static final String TAG = StorageDownloadFilesAndImagesActivity.class.getSimpleName();
     private com.google.android.material.textfield.TextInputEditText signedInUser;
     private RadioButton rbDownloadFile, rbDownloadImage;
-    private Button downloadFile, downloadImage;
+    private Button downloadFileOrImage, downloadFile, downloadImage;
     private LinearProgressIndicator downloadProgressIndicator;
     private RecyclerView storageRecyclerView;
     private Uri selectedFileUri;
@@ -82,6 +82,7 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
         signedInUser = findViewById(R.id.etStorageUserSignedInUser);
         rbDownloadFile = findViewById(R.id.rbStorageDownloadFile);
         rbDownloadImage = findViewById(R.id.rbStorageDownloadImage);
+        downloadFileOrImage = findViewById(R.id.btnStorageDownloadUnencryptedFileOrImage);
         downloadFile = findViewById(R.id.btnStorageDownloadUnencryptedFile);
         downloadImage = findViewById(R.id.btnStorageDownloadUnencryptedImage);
         downloadProgressIndicator = findViewById(R.id.lpiStorageDownloadProgress);
@@ -103,7 +104,8 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 downloadSectionVisibilityOff();
                 downloadSelector = FirebaseUtils.STORAGE_FILES_FOLDER_NAME;
-                downloadFile.setVisibility(View.VISIBLE);
+                downloadFileOrImage.setText("download a file");
+                //downloadFile.setVisibility(View.VISIBLE);
             }
         };
         rbDownloadFile.setOnClickListener(rbDownloadFileListener);
@@ -113,7 +115,8 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 downloadSectionVisibilityOff();
                 downloadSelector = FirebaseUtils.STORAGE_IMAGES_FOLDER_NAME;
-                downloadImage.setVisibility(View.VISIBLE);
+                downloadFileOrImage.setText("download an image");
+                //downloadImage.setVisibility(View.VISIBLE);
             }
         };
         rbDownloadImage.setOnClickListener(rbDownloadImageListener);
@@ -121,6 +124,12 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
         /**
          * download section
          */
+
+        downloadFileOrImage.setOnClickListener((v -> {
+            //downloadSelector = FirebaseUtils.STORAGE_FILES_FOLDER_NAME;
+            downloadListFilesBtnClick();
+
+        }));
 
         downloadFile.setOnClickListener((v -> {
             downloadSelector = FirebaseUtils.STORAGE_FILES_FOLDER_NAME;
@@ -256,7 +265,11 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
                                 System.out.println("*** before intent ***");
                                 Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
                                 intent.addCategory(Intent.CATEGORY_OPENABLE);
-                                intent.setType("*/*");
+                                if (downloadSelector.equals(FirebaseUtils.STORAGE_IMAGES_FOLDER_NAME)) {
+                                    intent.setType("image/*/*"); // for image
+                                } else {
+                                    intent.setType("*/*");
+                                }
                                 //intent.setType("image/*/*"); // for image
 
                                 // Optionally, specify a URI for the file that should appear in the
@@ -264,8 +277,6 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
                                 //boolean pickerInitialUri = false;
                                 //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
                                 String storeFilename = title;
-                                //String storeFilename = "file3a.txt";
-                                //intent.putExtra(Intent.EXTRA_TITLE, storeFilename);
                                 intent.putExtra(Intent.EXTRA_TITLE, storeFilename);
                                 fileDownloadSaverActivityResultLauncherXX.launch(intent);
                             }
@@ -298,21 +309,13 @@ public class StorageDownloadFilesAndImagesActivity extends AppCompatActivity {
                             selectedUri = resultData.getData();
                             // Perform operations on the document using its URI.
                             Toast.makeText(StorageDownloadFilesAndImagesActivity.this, "You selected this file for download: " + selectedUri.toString(), Toast.LENGTH_SHORT).show();
-
-                            //String cacheFilename = fileInformation.getFileName() + ".enc";
-                            //String encryptedFilename = new File(getContext().getCacheDir(), encryptedFilename;
                             try {
-                                //Okhttp3Progress.main();
-                                //String cacheFilename = "mt_cook.jpg";
-                                //String storageFilename = new File(getContext().getCacheDir(), cacheFilename).getAbsolutePath();
-                                //System.out.println("*** storageFilename: " + storageFilename);
                                 downloadProgressIndicator.setMax(Math.toIntExact(100));
                                 System.out.println("*** download of: " + downloadSelectedDownloadUrl);
                                 Okhttp3ProgressDownloaderNoDecrypt downloader = new Okhttp3ProgressDownloaderNoDecrypt(downloadSelectedDownloadUrl, downloadProgressIndicator, StorageDownloadFilesAndImagesActivity.this, selectedUri);
                                 downloader.run();
                                 System.out.println("*** fileDownloadDecryptSaverActivityResultLauncherXX success");
                                 Toast.makeText(StorageDownloadFilesAndImagesActivity.this, "fileDownloadDecryptSaverActivityResultLauncherXX success", Toast.LENGTH_SHORT).show();
-                                //Okhttp3ProgressCallback.main(storageFilename);
                             } catch (Exception e) {
                                 //throw new RuntimeException(e);
                                 System.out.println("*** fileDownloadDecryptSaverActivityResultLauncherXX FAILURE " + e.getMessage());

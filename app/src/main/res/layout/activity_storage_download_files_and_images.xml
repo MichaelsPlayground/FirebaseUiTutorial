@@ -144,7 +144,8 @@
                 android:layout_marginEnd="32dp"
                 android:background="@drawable/btn_rounded_corner"
                 android:enabled="true"
-                android:text="download a file" />
+                android:text="download a file"
+                android:visibility="gone"/>
 
             <Button
                 android:id="@+id/btnStorageDownloadUnencryptedImage"
@@ -156,6 +157,17 @@
                 android:enabled="true"
                 android:text="download an image"
                 android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnStorageDownloadUnencryptedFileOrImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="32dp"
+                android:background="@drawable/btn_rounded_corner"
+                android:enabled="true"
+                android:text="download a file or image"
+                android:visibility="visible" />
 
             <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/lpiStorageDownloadProgress"
