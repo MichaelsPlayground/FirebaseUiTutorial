@@ -51,6 +51,7 @@ import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileLeg
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserRecentMessagesActivity;
 import de.androidcrypto.firebaseuitutorial.storage.StorageDownloadFilesAndImagesActivity;
+import de.androidcrypto.firebaseuitutorial.storage.StorageListReferencesOnDatabaseActivity;
 import de.androidcrypto.firebaseuitutorial.storage.StorageUploadFilesAndImagesActivity;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
@@ -126,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private Button uploadStorageFilesAndImages, downloadStorageFilesAndImages;
+    private Button listStorageReferencesOnDatabase, listStorageReferencesOnFirestore;
 
     /**
      * section
@@ -492,6 +494,26 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        listStorageReferencesOnDatabase = findViewById(R.id.btnMainStorageListReferencesOnDatabase);
+        listStorageReferencesOnDatabase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "list Firebase Storage references on Database");
+                Intent intent = new Intent(MainActivity.this, StorageListReferencesOnDatabaseActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+        listStorageReferencesOnFirestore = findViewById(R.id.btnMainStorageListReferencesOnFirestore);
+        listStorageReferencesOnFirestore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+
         /**
          * section for
          */
@@ -631,7 +653,11 @@ public class MainActivity extends AppCompatActivity {
         listFirestoreUser.setEnabled(isSignedIn);
         listFirestoreUserRecentMessages.setEnabled(isSignedIn);
         listFirestoreUserChatrooms.setEnabled(isSignedIn);
-
+        // storage
+        uploadStorageFilesAndImages.setEnabled(isSignedIn);
+        downloadStorageFilesAndImages.setEnabled(isSignedIn);
+        listStorageReferencesOnDatabase.setEnabled(isSignedIn);
+        listStorageReferencesOnFirestore.setEnabled(isSignedIn);
     }
 
 }

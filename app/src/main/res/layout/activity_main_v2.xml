@@ -366,24 +366,24 @@
                 android:text="download of files and images from Storage" />
 
             <Button
-                android:id="@+id/btnMainStorageListReferencesOnDatabase"
+                android:id="@+id/btnMainImages"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:enabled="false"
-                android:text="list Storage References on Database" />
+                android:text="up- and download image to Storage" />
 
             <Button
-                android:id="@+id/btnMainStorageListReferencesOnFirestore"
+                android:id="@+id/btnMainUploadImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:enabled="false"
-                android:text="list Storage References on Firestore" />
+                android:text="upload an image to Storage" />
 
             <Button
                 android:id="@+id/btnMainUploadImageCropped"

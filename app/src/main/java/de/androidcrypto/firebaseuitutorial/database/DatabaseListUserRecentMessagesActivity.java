@@ -64,8 +64,8 @@ public class DatabaseListUserRecentMessagesActivity extends AppCompatActivity {
         // This is a class provided by the FirebaseUI to make a
         // query in the database to fetch appropriate data
         Query orderedQuery = recentMessagesDatabase
-                .orderByChild("chatLastTime")
-                .limitToLast(5);
+                .orderByChild("chatLastTime");
+                //.limitToLast(5);
         FirebaseRecyclerOptions<RecentMessageModel> options
                 = new FirebaseRecyclerOptions.Builder<RecentMessageModel>()
                 .setQuery(orderedQuery, RecentMessageModel.class)

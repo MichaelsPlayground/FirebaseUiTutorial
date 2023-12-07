@@ -43,7 +43,7 @@ public class StorageListFilesAdapter extends RecyclerView.Adapter<StorageListFil
         if (itemReference.equals(FirebaseUtils.getStorageCurrentUserStorageImagesReference())) {
             holder.imageView.setImageResource(R.drawable.outline_image_24);
         } else {
-            holder.imageView.setImageResource(R.drawable.outline_file_copy_24);
+            holder.imageView.setImageResource(R.drawable.outline_file_present_24);
         }
         holder.itemView.setOnClickListener(view -> onItemClickListener.onClick(arrayList.get(position)));
     }
