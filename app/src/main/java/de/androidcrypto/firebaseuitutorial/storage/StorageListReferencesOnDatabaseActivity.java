@@ -144,8 +144,18 @@ public class StorageListReferencesOnDatabaseActivity extends AppCompatActivity {
     }
 
     private void listStorageFileReferencesOnDatabase() {
-        // todo use downloadSelector
-        listStorageFileReferencesDatabase = FirebaseUtils.getDatabaseCurrentUserCredentialsFilesReference();
+        if (downloadSelector.equals(FirebaseUtils.STORAGE_FILES_FOLDER_NAME)) {
+            listStorageFileReferencesDatabase = FirebaseUtils.getDatabaseCurrentUserCredentialsFilesReference();
+        } else if(downloadSelector.equals(FirebaseUtils.STORAGE_IMAGES_FOLDER_NAME)) {
+            listStorageFileReferencesDatabase = FirebaseUtils.getDatabaseCurrentUserCredentialsImagesReference();
+        } else if(downloadSelector.equals(FirebaseUtils.STORAGE_IMAGES_RESIZED_FOLDER_NAME)) {
+            listStorageFileReferencesDatabase = FirebaseUtils.getDatabaseCurrentUserCredentialsImagesResizedReference();
+        } else {
+            // some data are wrong
+            AndroidUtils.showToast(StorageListReferencesOnDatabaseActivity.this, "something got wrong, aborted");
+            AndroidUtils.showSnackbarRedLong(listFilesOrImages, "something got wrong, aborted");
+            return;
+        }
         // This is a class provided by the FirebaseUI to make a
         // query in the database to fetch appropriate data
         Query orderedQuery = listStorageFileReferencesDatabase

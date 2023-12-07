@@ -34,9 +34,9 @@ public class StorageListFileReferencesModelAdapter extends FirebaseRecyclerAdapt
     protected void
     onBindViewHolder(@NonNull FileInformationModelViewholder holder,
                      int position, @NonNull FileInformation model) {
-        holder.message.setText(model.getMimeType());
-        holder.userNameEmail.setText(model.getFileName());
-        holder.messageTime.setText("Size: " + model.getFileSize() + " bytes");
+        holder.fileMimeType.setText("Mime type: " + model.getMimeType());
+        holder.fileName.setText("Name: " + model.getFileName());
+        holder.fileSize.setText("Size: " + model.getFileSize() + " bytes");
         String mimeType = model.getMimeType();
         if (mimeType.startsWith("image")) {
             holder.fileTypeImage.setImageResource(R.drawable.outline_image_24);
@@ -80,14 +80,14 @@ public class StorageListFileReferencesModelAdapter extends FirebaseRecyclerAdapt
     static class FileInformationModelViewholder
             extends RecyclerView.ViewHolder {
         private ImageView fileTypeImage;
-        private TextView message, userNameEmail, messageTime;
+        private TextView fileName, fileSize, fileMimeType;
 
         public FileInformationModelViewholder(@NonNull View itemView) {
             super(itemView);
             fileTypeImage = itemView.findViewById(R.id.ciFileTypeImage);
-            userNameEmail = itemView.findViewById(R.id.tvFileName);
-            message = itemView.findViewById(R.id.tvFileMimeType);
-            messageTime = itemView.findViewById(R.id.tvFileSize);
+            fileName = itemView.findViewById(R.id.tvFileName);
+            fileMimeType = itemView.findViewById(R.id.tvFileMimeType);
+            fileSize = itemView.findViewById(R.id.tvFileSize);
         }
     }
 }

@@ -167,6 +167,14 @@ public class FirebaseUtils {
         return getDatabaseUsersCredentialsSubfolderReference(getCurrentUserId(), STORAGE_FILES_FOLDER_NAME);
     }
 
+    public static DatabaseReference getDatabaseCurrentUserCredentialsImagesReference() {
+        return getDatabaseUsersCredentialsSubfolderReference(getCurrentUserId(), STORAGE_IMAGES_FOLDER_NAME);
+    }
+
+    public static DatabaseReference getDatabaseCurrentUserCredentialsImagesResizedReference() {
+        return getDatabaseUsersCredentialsSubfolderReference(getCurrentUserId(), STORAGE_IMAGES_RESIZED_FOLDER_NAME);
+    }
+
     public static DatabaseReference getDatabaseUsersCredentialsFilesReference(String userId) {
         return getDatabaseUsersCredentialsSubfolderReference(userId, STORAGE_FILES_FOLDER_NAME);
     }
