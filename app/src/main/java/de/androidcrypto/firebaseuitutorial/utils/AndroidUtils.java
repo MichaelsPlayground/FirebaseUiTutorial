@@ -32,6 +32,16 @@ public class AndroidUtils {
         }
     }
 
+    public static String fileNameForDatabaseChild(String fileName) {
+        // Firebase Database paths must not contain '.', '#', '$', '[', or ']'
+        fileName = fileName.replaceAll("\\.", "_");
+        fileName = fileName.replaceAll("#", "_");
+        fileName = fileName.replaceAll("\\$", "_");
+        fileName = fileName.replaceAll("\\[", "_");
+        fileName = fileName.replaceAll("\\]", "_");
+        return fileName;
+    }
+
     public static void passUserModelAsIntent(Intent intent, UserModel model){
         intent.putExtra(INTENT_USER_ID, model.getUserId());
         intent.putExtra(INTENT_USER_NAME, model.getUserName());

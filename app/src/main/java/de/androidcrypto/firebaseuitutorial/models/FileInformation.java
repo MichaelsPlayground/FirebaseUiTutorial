@@ -7,7 +7,7 @@ public class FileInformation {
     private final String fileName;
     private final long fileSize;
     private String fileStorage;
-    private Uri downloadUrl;
+    private String downloadUrlString;
     private long actualTime;
     private String timestamp;
     public FileInformation(String mimeType, String fileName, Long fileSize) {
@@ -35,12 +35,12 @@ public class FileInformation {
         this.fileStorage = fileStorage;
     }
 
-    public Uri getDownloadUrl() {
-        return downloadUrl;
+    public String getDownloadUrlString() {
+        return downloadUrlString;
     }
 
-    public void setDownloadUrl(Uri downloadUrl) {
-        this.downloadUrl = downloadUrl;
+    public void setDownloadUrlString(String downloadUrlString) {
+        this.downloadUrlString = downloadUrlString;
     }
 
     public long getActualTime() {

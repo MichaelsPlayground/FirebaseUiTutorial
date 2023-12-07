@@ -38,6 +38,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -188,13 +189,13 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
                                     ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                         @Override
                                         public void onSuccess(Uri uri) {
-                                            fileInformation.setDownloadUrl(uri);
+                                            fileInformation.setDownloadUrlString(uri.toString());
                                             long actualTime = TimeUtils.getActualUtcZonedDateTime();
                                             String actualTimeString = TimeUtils.getZoneDatedStringMediumLocale(actualTime);
                                             fileInformation.setActualTime(actualTime);
                                             fileInformation.setTimestamp(actualTimeString);
-                                            saveFileInformationToDatabaseUserCollection(fileStorageReferenceLocal, fileInformation.getFileName(), fileInformation);
-                                            saveFileInformationToFirestoreUserCollection(fileStorageReferenceLocal, fileInformation.getFileName(), fileInformation);
+                                            saveFileInformationToDatabaseUserCredentials(fileStorageReferenceLocal, fileInformation.getFileName(), fileInformation);
+                                            saveFileInformationToFirestoreUserCredentials(fileStorageReferenceLocal, fileInformation.getFileName(), fileInformation);
                                             tvDownloadUrl.setText(uri.toString());
                                             copyDownloadUrlToClipboard.setEnabled(true);
                                             AndroidUtils.showSnackbarGreenShort(uploadFile, "Upload SUCCESS");
@@ -252,44 +253,38 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
         return new FileInformation(mimeType, fileName, fileSize);
     }
 
-    private void saveFileInformationToDatabaseUserCollection(String subfolder, String filename, FileInformation fileInformation) {
-        /* todo add code
-        FirebaseUtils.currentUserFilesCollectionReference(subfolder, filename)
-                .set(fileInformation)
+    private void saveFileInformationToDatabaseUserCredentials(String subfolder, String filename, FileInformation fileInformation) {
+        FirebaseUtils.getDatabaseUsersCredentialsSubfolderReference(FirebaseUtils.getCurrentUserId(), subfolder)
+                .child(AndroidUtils.fileNameForDatabaseChild(filename)).setValue(FirebaseUtils.convertModelToMap(fileInformation))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        AndroidUtils.showToast(getApplicationContext(), "Filestore entry added successfully");
+                        AndroidUtils.showToast(getApplicationContext(), "Filestore entry added successfully to Realtime Database");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        AndroidUtils.showToast(getApplicationContext(), "Filestore entry adding failed");
+                        AndroidUtils.showToast(getApplicationContext(), "Filestore entry adding to Realtime Database failed");
                     }
                 });
-
-         */
     }
 
-    private void saveFileInformationToFirestoreUserCollection(String subfolder, String filename, FileInformation fileInformation) {
-        /* todo add code
-        FirebaseUtils.currentUserFilesCollectionReference(subfolder, filename)
-                .set(fileInformation)
+    private void saveFileInformationToFirestoreUserCredentials(String subfolder, String filename, FileInformation fileInformation) {
+        FirebaseUtils.getFirestoreUsersCredentialsSubfolderReference(FirebaseUtils.getCurrentUserId(), subfolder)
+                .document(AndroidUtils.fileNameForDatabaseChild(filename)).set(FirebaseUtils.convertModelToMap(fileInformation))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        AndroidUtils.showToast(getApplicationContext(), "Filestore entry added successfully");
+                        AndroidUtils.showToast(getApplicationContext(), "Filestore entry added successfully to Firestore Database");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        AndroidUtils.showToast(getApplicationContext(), "Filestore entry adding failed");
+                        AndroidUtils.showToast(getApplicationContext(), "Filestore entry adding to Realtime Database failed");
                     }
                 });
-
-         */
     }
 
     private void uploadSectionVisibilityOff() {

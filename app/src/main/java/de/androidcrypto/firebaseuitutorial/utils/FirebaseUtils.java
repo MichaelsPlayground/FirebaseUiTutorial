@@ -15,7 +15,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -42,7 +41,7 @@ public class FirebaseUtils {
     public static final String USERS_FOLDER_NAME = "users";
     public static final String MESSAGES_FOLDER_NAME = "messages";
     private static final String RECENT_MESSAGES_FOLDER_NAME = "recentMessages";
-
+    public static final String USERS_CREDENTIALS_FOLDER_NAME = "credentials";
     public static final String USERS_NOTIFICATION_FOLDER_NAME = "usersNotifications";
     private static final String NOTIFICATION_MESSAGES_FOLDER_NAME = "notificationMessages";
     public static final String CHATROOMS_FOLDER_NAME = "chatrooms";
@@ -61,6 +60,7 @@ public class FirebaseUtils {
     // storage
     public static final String STORAGE_FILES_FOLDER_NAME = "files";
     public static final String STORAGE_IMAGES_FOLDER_NAME = "images";
+    public static final String STORAGE_IMAGES_RESIZED_FOLDER_NAME = "imagesResized";
     public static final String STORAGE_PROFILE_IMAGES_FOLDER_NAME = "profile_images";
     public static final String STORAGE_PROFILE_IMAGE_FILE_EXTENSION = ".jpg";
 
@@ -163,6 +163,26 @@ public class FirebaseUtils {
         return getDatabaseReference().child(INFO_CONNECTED);
     }
 
+    public static DatabaseReference getDatabaseUsersCredentialsFilesReference(String userId) {
+        return getDatabaseUsersCredentialsSubfolderReference(userId, STORAGE_FILES_FOLDER_NAME);
+    }
+
+    public static DatabaseReference getDatabaseUsersCredentialsImagesReference(String userId) {
+        return getDatabaseUsersCredentialsSubfolderReference(userId, STORAGE_IMAGES_FOLDER_NAME);
+    }
+
+    public static DatabaseReference getDatabaseUsersCredentialsResizedImagesReference(String userId) {
+        return getDatabaseUsersCredentialsSubfolderReference(userId, STORAGE_IMAGES_RESIZED_FOLDER_NAME);
+    }
+
+    public static DatabaseReference getDatabaseUsersCredentialsSubfolderReference(String userId, String subFolder) {
+        return getDatabaseUsersCredentialsReference(userId).child(subFolder);
+    }
+
+    public static DatabaseReference getDatabaseUsersCredentialsReference(String userId) {
+        return getDatabaseReference().child(USERS_CREDENTIALS_FOLDER_NAME).child(userId);
+    }
+
     public static void setPersistenceStatus(boolean status) {
         FirebaseDatabase.getInstance().setPersistenceEnabled(status);
     }
@@ -245,6 +265,15 @@ public class FirebaseUtils {
                 .collection(FirebaseUtils.MESSAGES_FOLDER_NAME)
                 .document(chatroomId)
                 .collection(CHATROOM_COLLECTION_FOLDER_NAME);
+    }
+
+
+
+    public static CollectionReference getFirestoreUsersCredentialsSubfolderReference(String userId, String subFolder) {
+        return getFirestoreReference()
+                .collection(USERS_CREDENTIALS_FOLDER_NAME)
+                .document(userId)
+                .collection(subFolder);
     }
 
 
