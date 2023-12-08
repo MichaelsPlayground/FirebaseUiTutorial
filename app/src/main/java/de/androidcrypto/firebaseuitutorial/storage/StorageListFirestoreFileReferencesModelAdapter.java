@@ -40,12 +40,10 @@ public class StorageListFirestoreFileReferencesModelAdapter extends FirestoreRec
         String mimeType = model.getMimeType();
         if (mimeType.startsWith("image")) {
             holder.fileTypeImage.setImageResource(R.drawable.outline_image_24);
-            System.out.println("*** model.getFileStorage:" + model.getFileStorage());
             if (model.getFileStorage().equals(FirebaseUtils.STORAGE_IMAGES_RESIZED_FOLDER_NAME)) {
                 if (!TextUtils.isEmpty(model.getDownloadUrlString())) {
                     // Download directly from StorageReference using Glide
                     // (See MyAppGlideModule for Loader registration)
-                    System.out.println("*** model.getDownloadUrlString:" + model.getDownloadUrlString());
                     GlideApp.with(context)
                             .load(model.getDownloadUrlString())
                             .into(holder.fileTypeImage);
@@ -54,7 +52,6 @@ public class StorageListFirestoreFileReferencesModelAdapter extends FirestoreRec
         } else {
             holder.fileTypeImage.setImageResource(R.drawable.outline_file_present_24);
         }
-
 
         //holder.itemView.setVisibility(View.VISIBLE);
 

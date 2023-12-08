@@ -51,6 +51,7 @@ import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileLeg
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserRecentMessagesActivity;
 import de.androidcrypto.firebaseuitutorial.storage.StorageDownloadFilesAndImagesActivity;
+import de.androidcrypto.firebaseuitutorial.storage.StorageListImagesActivity;
 import de.androidcrypto.firebaseuitutorial.storage.StorageListReferencesOnDatabaseActivity;
 import de.androidcrypto.firebaseuitutorial.storage.StorageListReferencesOnFirestoreActivity;
 import de.androidcrypto.firebaseuitutorial.storage.StorageUploadFilesAndImagesActivity;
@@ -129,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button uploadStorageFilesAndImages, downloadStorageFilesAndImages;
     private Button listStorageReferencesOnDatabase, listStorageReferencesOnFirestore;
+    private Button listStorageImagesListview;
 
     /**
      * section
@@ -516,6 +518,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        listStorageImagesListview = findViewById(R.id.btnMainStorageListImages);
+        listStorageImagesListview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "list Firebase Storage images in ListView");
+                Intent intent = new Intent(MainActivity.this, StorageListImagesActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         /**
          * section for
@@ -661,6 +673,7 @@ public class MainActivity extends AppCompatActivity {
         downloadStorageFilesAndImages.setEnabled(isSignedIn);
         listStorageReferencesOnDatabase.setEnabled(isSignedIn);
         listStorageReferencesOnFirestore.setEnabled(isSignedIn);
+        listStorageImagesListview.setEnabled(isSignedIn);
     }
 
 }

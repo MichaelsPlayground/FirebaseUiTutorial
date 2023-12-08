@@ -386,64 +386,14 @@
                 android:text="list Storage References on Firestore" />
 
             <Button
-                android:id="@+id/btnMainUploadImageCropped"
+                android:id="@+id/btnMainStorageListImages"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:enabled="false"
-                android:text="crop image and upload to Storage" />
-
-            <Button
-                android:id="@+id/btnMainUploadImageResized"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:enabled="false"
-                android:text="upload an resized image to Storage" />
-
-            <Button
-                android:id="@+id/btnMainUploadImageCroppedNotUi"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:enabled="false"
-                android:text="crop image and upload to Storage (not UI)" />
-
-            <Button
-                android:id="@+id/btnMainListImages"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:enabled="false"
-                android:text="list images on Storage" />
-
-            <Button
-                android:id="@+id/btnMainListResizedImages"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:enabled="false"
-                android:text="list resized images on Storage in Recyclerview" />
-
-            <Button
-                android:id="@+id/btnMainDownloadImage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:enabled="false"
-                android:text="download an image from Storage" />
+                android:text="list resized images on Storage in RecyclerView" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"

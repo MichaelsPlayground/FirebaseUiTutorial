@@ -107,6 +107,9 @@
         <activity
             android:name=".storage.StorageListReferencesOnFirestoreActivity"
             android:exported="false" />
+        <activity
+            android:name=".storage.StorageListImagesActivity"
+            android:exported="false" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
