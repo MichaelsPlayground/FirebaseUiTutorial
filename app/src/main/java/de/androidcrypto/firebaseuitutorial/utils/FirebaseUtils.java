@@ -280,13 +280,28 @@ public class FirebaseUtils {
     }
 
 
+    public static CollectionReference getFirestoreCurrentUserCredentialsFilesReference() {
+        return getFirestoreUsersCredentialsSubfolderReference(getCurrentUserId(), STORAGE_FILES_FOLDER_NAME);
+    }
+
+    public static CollectionReference getFirestoreCurrentUserCredentialsImagesReference() {
+        return getFirestoreUsersCredentialsSubfolderReference(getCurrentUserId(), STORAGE_IMAGES_FOLDER_NAME);
+    }
+
+    public static CollectionReference getFirestoreCurrentUserCredentialsImagesResizedReference() {
+        return getFirestoreUsersCredentialsSubfolderReference(getCurrentUserId(), STORAGE_IMAGES_RESIZED_FOLDER_NAME);
+    }
 
     public static CollectionReference getFirestoreUsersCredentialsSubfolderReference(String userId, String subFolder) {
-        return getFirestoreReference()
-                .collection(USERS_CREDENTIALS_FOLDER_NAME)
-                .document(userId)
+        return getFirestoreUsersCredentialsReference(userId)
                 .collection(subFolder);
     }
+
+    public static DocumentReference getFirestoreUsersCredentialsReference(String userId) {
+        return getFirestoreReference().collection(USERS_CREDENTIALS_FOLDER_NAME).document(userId);
+    }
+
+
 
 
     // copies the current user credentials to Firestore user

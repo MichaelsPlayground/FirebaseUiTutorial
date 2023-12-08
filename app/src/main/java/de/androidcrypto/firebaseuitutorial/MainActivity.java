@@ -52,6 +52,7 @@ import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserRecentMessagesActivity;
 import de.androidcrypto.firebaseuitutorial.storage.StorageDownloadFilesAndImagesActivity;
 import de.androidcrypto.firebaseuitutorial.storage.StorageListReferencesOnDatabaseActivity;
+import de.androidcrypto.firebaseuitutorial.storage.StorageListReferencesOnFirestoreActivity;
 import de.androidcrypto.firebaseuitutorial.storage.StorageUploadFilesAndImagesActivity;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
@@ -509,7 +510,9 @@ public class MainActivity extends AppCompatActivity {
         listStorageReferencesOnFirestore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Log.d(TAG, "list Firebase Storage references on Firestore");
+                Intent intent = new Intent(MainActivity.this, StorageListReferencesOnFirestoreActivity.class);
+                startActivity(intent);
             }
         });
 

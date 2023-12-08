@@ -13,19 +13,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 import de.androidcrypto.firebaseuitutorial.GlideApp;
 import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.FileInformation;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
-import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
-public class StorageListFileReferencesModelAdapter extends FirebaseRecyclerAdapter<
-        FileInformation, StorageListFileReferencesModelAdapter.FileInformationModelViewholder> {
+public class StorageListFirestoreFileReferencesModelAdapter extends FirestoreRecyclerAdapter<
+        FileInformation, StorageListFirestoreFileReferencesModelAdapter.FileInformationModelViewholder> {
     private Context context;
 
-    public StorageListFileReferencesModelAdapter(
-            @NonNull FirebaseRecyclerOptions<FileInformation> options, Context context) {
+    public StorageListFirestoreFileReferencesModelAdapter(
+            @NonNull FirestoreRecyclerOptions<FileInformation> options, Context context) {
         super(options);
         this.context = context;
     }

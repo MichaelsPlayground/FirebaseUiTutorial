@@ -62,4 +62,16 @@ public class FileInformation {
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
+    }
 }

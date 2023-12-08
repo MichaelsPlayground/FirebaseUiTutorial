@@ -16,9 +16,11 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Log;
@@ -43,6 +45,8 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Objects;
 
 import de.androidcrypto.firebaseuitutorial.GlideApp;
@@ -180,6 +184,8 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
                                 fileInformation.setFileStorage(fileStorageReferenceLocal);
                             }
                             // now upload the  file / image
+                            long actualTime = TimeUtils.getActualUtcZonedDateTime();
+                            String actualTimeString = TimeUtils.getZoneDatedStringMediumLocale(actualTime);
                             ref.putFile(selectedFileUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -190,8 +196,6 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(Uri uri) {
                                             fileInformation.setDownloadUrlString(uri.toString());
-                                            long actualTime = TimeUtils.getActualUtcZonedDateTime();
-                                            String actualTimeString = TimeUtils.getZoneDatedStringMediumLocale(actualTime);
                                             fileInformation.setActualTime(actualTime);
                                             fileInformation.setTimestamp(actualTimeString);
                                             saveFileInformationToDatabaseUserCredentials(fileStorageReferenceLocal, fileInformation.getFileName(), fileInformation);
@@ -215,6 +219,73 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
                                     uploadProgressIndicator.setProgress(Math.toIntExact(snapshot.getBytesTransferred()));
                                 }
                             });
+
+                            // if it is an image upload a resized version
+                            if (fileStorageReferenceLocal.equals(FirebaseUtils.STORAGE_IMAGES_FOLDER_NAME)) {
+                                Bitmap fullBitmap;
+                                int scaleDivider = 4;
+                                StorageReference refResized;
+                                try {
+                                    fullBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedFileUri);
+                                    // 2.b or get a fixed size, e.g. width max 300 px
+                                    if (fullBitmap.getWidth() > 300) {
+                                        scaleDivider = fullBitmap.getWidth() / 300;
+                                    }
+                                    // 2. Get the downsized image content as a byte[]
+                                    int scaleWidth = fullBitmap.getWidth() / scaleDivider;
+                                    int scaleHeight = fullBitmap.getHeight() / scaleDivider;
+                                    byte[] downsizedImageBytes =
+                                            getDownsizedImageBytes(fullBitmap, scaleWidth, scaleHeight);
+                                    FileInformation fileInformationResized = getFileInformationFromUri(selectedFileUri);
+                                    fileInformationResized.setFileStorage(FirebaseUtils.STORAGE_IMAGES_RESIZED_FOLDER_NAME);
+                                    fileInformationResized.setFileSize(downsizedImageBytes.length);
+                                    fileInformationResized.setActualTime(actualTime);
+                                    fileInformationResized.setTimestamp(actualTimeString);
+                                    // now upload the  resized image
+                                    refResized = FirebaseUtils.getStorageCurrentUserImagesResizedReference(fileInformation.getFileName());
+                                    refResized.putBytes(downsizedImageBytes).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                            Toast.makeText(getApplicationContext(), "Resized image uploaded with SUCCESS", Toast.LENGTH_SHORT).show();
+                                            //ref.getDownloadUrl();
+                                            // get download url
+                                            refResized.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                @Override
+                                                public void onSuccess(Uri uri) {
+                                                    fileInformationResized.setDownloadUrlString(uri.toString());
+                                                    long actualTime = TimeUtils.getActualUtcZonedDateTime();
+                                                    String actualTimeString = TimeUtils.getZoneDatedStringMediumLocale(actualTime);
+                                                    fileInformationResized.setActualTime(actualTime);
+                                                    fileInformationResized.setTimestamp(actualTimeString);
+                                                    saveFileInformationToDatabaseUserCredentials(FirebaseUtils.STORAGE_IMAGES_RESIZED_FOLDER_NAME, fileInformationResized.getFileName(), fileInformationResized);
+                                                    saveFileInformationToFirestoreUserCredentials(FirebaseUtils.STORAGE_IMAGES_RESIZED_FOLDER_NAME, fileInformationResized.getFileName(), fileInformationResized);
+                                                    //tvDownloadUrl.setText(uri.toString());
+                                                    //copyDownloadUrlToClipboard.setEnabled(true);
+                                                    AndroidUtils.showSnackbarGreenShort(uploadFile, "Resized Image Upload SUCCESS");
+                                                }
+                                            });
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(getApplicationContext(), "File upload error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                            AndroidUtils.showSnackbarRedLong(uploadFile, "File upload error: " + e.getMessage());
+                                        }
+                                    }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                                            uploadProgressIndicator.setMax(Math.toIntExact(snapshot.getTotalByteCount()));
+                                            uploadProgressIndicator.setProgress(Math.toIntExact(snapshot.getBytesTransferred()));
+                                        }
+                                    });
+
+                                } catch (IOException e) {
+                                    // todo work on this
+                                    throw new RuntimeException(e);
+                                }
+
+                            }
+
                         }
                     }
                 }
@@ -251,6 +322,15 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
             returnCursor.close();
         }
         return new FileInformation(mimeType, fileName, fileSize);
+    }
+
+    private byte[] getDownsizedImageBytes(Bitmap fullBitmap, int scaleWidth, int scaleHeight) throws IOException {
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(fullBitmap, scaleWidth, scaleHeight, true);
+        // 2. Instantiate the downsized image content as a byte[]
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] downsizedImageBytes = baos.toByteArray();
+        return downsizedImageBytes;
     }
 
     private void saveFileInformationToDatabaseUserCredentials(String subfolder, String filename, FileInformation fileInformation) {

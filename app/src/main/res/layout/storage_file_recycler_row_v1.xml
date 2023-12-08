@@ -10,10 +10,10 @@
     android:background="@drawable/edit_text_rounded_corner"
     android:elevation="2dp">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/ciFileTypeImage"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
         android:layout_centerInParent="true"
         android:layout_gravity="center"
         android:layout_margin="10dp"

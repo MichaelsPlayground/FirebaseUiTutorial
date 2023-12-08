@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/grey_300"
     android:orientation="vertical"
-    tools:context=".storage.StorageDownloadFilesAndImagesActivity">
+    tools:context=".storage.StorageListReferencesOnFirestoreActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/sub_toolbar"
@@ -32,10 +32,18 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:text="Download of files and images from Firebase Storage"
+                android:text="List Storage References on Firestore"
                 android:textAlignment="center"
                 android:textSize="20sp"
                 android:textStyle="bold" />
+
+            <ProgressBar
+                android:id="@+id/pbStorageListReferencesFirestoreFiles"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:visibility="invisible" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/etStorageUserSignedInUserLayout"
@@ -78,13 +86,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="4dp"
-                android:text="choose the file type for download"
+                android:text="choose the file type for listing"
                 android:textAlignment="center"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
             <RadioGroup
-                android:id="@+id/rgStorageDownload"
+                android:id="@+id/rgStorageListReferencesFirestore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -92,35 +100,42 @@
                 android:orientation="horizontal">
 
                 <RadioButton
-                    android:id="@+id/rbStorageDownloadFile"
+                    android:id="@+id/rbStorageListReferencesFirestoreFiles"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:checked="true"
-                    android:text="file" />
+                    android:text="files" />
 
                 <RadioButton
-                    android:id="@+id/rbStorageDownloadImage"
+                    android:id="@+id/rbStorageListReferencesFirestoreImages"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="image" />
+                    android:text="images" />
+
+                <RadioButton
+                    android:id="@+id/rbStorageListReferencesFirestoreResizedImages"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="resized images" />
 
             </RadioGroup>
 
             <Button
-                android:id="@+id/btnStorageDownloadUnencryptedFileOrImage"
+                android:id="@+id/btnStorageListReferencesFirestoreFilesOrImages"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginEnd="32dp"
                 android:background="@drawable/btn_rounded_corner"
                 android:enabled="true"
-                android:text="download a file or image"
+                android:text="list files or images"
                 android:visibility="visible" />
 
             <com.google.android.material.progressindicator.LinearProgressIndicator
-                android:id="@+id/lpiStorageDownloadProgress"
+                android:id="@+id/lpiStorageListReferencesFirestoreProgress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -128,7 +143,7 @@
                 android:layout_marginEnd="16dp"/>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvStorageDownload"
+                android:id="@+id/rvStorageListReferencesFirestore"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 />
