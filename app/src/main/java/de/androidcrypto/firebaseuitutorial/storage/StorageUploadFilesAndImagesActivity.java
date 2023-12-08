@@ -1,7 +1,5 @@
 package de.androidcrypto.firebaseuitutorial.storage;
 
-import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
-
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -19,7 +17,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
@@ -40,7 +37,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -49,11 +45,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Objects;
 
-import de.androidcrypto.firebaseuitutorial.GlideApp;
 import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
-import de.androidcrypto.firebaseuitutorial.auth.AuthEditUserProfileActivity;
-import de.androidcrypto.firebaseuitutorial.models.FileInformation;
+import de.androidcrypto.firebaseuitutorial.models.FileInformationModel;
 import de.androidcrypto.firebaseuitutorial.utils.AndroidUtils;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
@@ -174,14 +168,14 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
                             selectedFileUri = resultData.getData();
                             String fileStorageReferenceLocal = fileStorageReference;
                             fileStorageReference = ""; // clear after usage
-                            FileInformation fileInformation = getFileInformationFromUri(selectedFileUri);
+                            FileInformationModel fileInformationModel = getFileInformationFromUri(selectedFileUri);
                             StorageReference ref;
                             if (fileStorageReferenceLocal.equals(FirebaseUtils.STORAGE_FILES_FOLDER_NAME)) {
-                                ref = FirebaseUtils.getStorageCurrentUserFilesReference(fileInformation.getFileName());
-                                fileInformation.setFileStorage(fileStorageReferenceLocal);
+                                ref = FirebaseUtils.getStorageCurrentUserFilesReference(fileInformationModel.getFileName());
+                                fileInformationModel.setFileStorage(fileStorageReferenceLocal);
                             } else {
-                                ref = FirebaseUtils.getStorageCurrentUserImagesReference(fileInformation.getFileName());
-                                fileInformation.setFileStorage(fileStorageReferenceLocal);
+                                ref = FirebaseUtils.getStorageCurrentUserImagesReference(fileInformationModel.getFileName());
+                                fileInformationModel.setFileStorage(fileStorageReferenceLocal);
                             }
                             // now upload the  file / image
                             long actualTime = TimeUtils.getActualUtcZonedDateTime();
@@ -195,11 +189,11 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
                                     ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                         @Override
                                         public void onSuccess(Uri uri) {
-                                            fileInformation.setDownloadUrlString(uri.toString());
-                                            fileInformation.setActualTime(actualTime);
-                                            fileInformation.setTimestamp(actualTimeString);
-                                            saveFileInformationToDatabaseUserCredentials(fileStorageReferenceLocal, fileInformation.getFileName(), fileInformation);
-                                            saveFileInformationToFirestoreUserCredentials(fileStorageReferenceLocal, fileInformation.getFileName(), fileInformation);
+                                            fileInformationModel.setDownloadUrlString(uri.toString());
+                                            fileInformationModel.setActualTime(actualTime);
+                                            fileInformationModel.setTimestamp(actualTimeString);
+                                            saveFileInformationToDatabaseUserCredentials(fileStorageReferenceLocal, fileInformationModel.getFileName(), fileInformationModel);
+                                            saveFileInformationToFirestoreUserCredentials(fileStorageReferenceLocal, fileInformationModel.getFileName(), fileInformationModel);
                                             tvDownloadUrl.setText(uri.toString());
                                             copyDownloadUrlToClipboard.setEnabled(true);
                                             AndroidUtils.showSnackbarGreenShort(uploadFile, "Upload SUCCESS");
@@ -236,13 +230,13 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
                                     int scaleHeight = fullBitmap.getHeight() / scaleDivider;
                                     byte[] downsizedImageBytes =
                                             getDownsizedImageBytes(fullBitmap, scaleWidth, scaleHeight);
-                                    FileInformation fileInformationResized = getFileInformationFromUri(selectedFileUri);
-                                    fileInformationResized.setFileStorage(FirebaseUtils.STORAGE_IMAGES_RESIZED_FOLDER_NAME);
-                                    fileInformationResized.setFileSize(downsizedImageBytes.length);
-                                    fileInformationResized.setActualTime(actualTime);
-                                    fileInformationResized.setTimestamp(actualTimeString);
+                                    FileInformationModel fileInformationModelResized = getFileInformationFromUri(selectedFileUri);
+                                    fileInformationModelResized.setFileStorage(FirebaseUtils.STORAGE_IMAGES_RESIZED_FOLDER_NAME);
+                                    fileInformationModelResized.setFileSize(downsizedImageBytes.length);
+                                    fileInformationModelResized.setActualTime(actualTime);
+                                    fileInformationModelResized.setTimestamp(actualTimeString);
                                     // now upload the  resized image
-                                    refResized = FirebaseUtils.getStorageCurrentUserImagesResizedReference(fileInformation.getFileName());
+                                    refResized = FirebaseUtils.getStorageCurrentUserImagesResizedReference(fileInformationModel.getFileName());
                                     refResized.putBytes(downsizedImageBytes).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                         @Override
                                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -252,13 +246,13 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
                                             refResized.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                 @Override
                                                 public void onSuccess(Uri uri) {
-                                                    fileInformationResized.setDownloadUrlString(uri.toString());
+                                                    fileInformationModelResized.setDownloadUrlString(uri.toString());
                                                     long actualTime = TimeUtils.getActualUtcZonedDateTime();
                                                     String actualTimeString = TimeUtils.getZoneDatedStringMediumLocale(actualTime);
-                                                    fileInformationResized.setActualTime(actualTime);
-                                                    fileInformationResized.setTimestamp(actualTimeString);
-                                                    saveFileInformationToDatabaseUserCredentials(FirebaseUtils.STORAGE_IMAGES_RESIZED_FOLDER_NAME, fileInformationResized.getFileName(), fileInformationResized);
-                                                    saveFileInformationToFirestoreUserCredentials(FirebaseUtils.STORAGE_IMAGES_RESIZED_FOLDER_NAME, fileInformationResized.getFileName(), fileInformationResized);
+                                                    fileInformationModelResized.setActualTime(actualTime);
+                                                    fileInformationModelResized.setTimestamp(actualTimeString);
+                                                    saveFileInformationToDatabaseUserCredentials(FirebaseUtils.STORAGE_IMAGES_RESIZED_FOLDER_NAME, fileInformationModelResized.getFileName(), fileInformationModelResized);
+                                                    saveFileInformationToFirestoreUserCredentials(FirebaseUtils.STORAGE_IMAGES_RESIZED_FOLDER_NAME, fileInformationModelResized.getFileName(), fileInformationModelResized);
                                                     //tvDownloadUrl.setText(uri.toString());
                                                     //copyDownloadUrlToClipboard.setEnabled(true);
                                                     AndroidUtils.showSnackbarGreenShort(uploadFile, "Resized Image Upload SUCCESS");
@@ -291,7 +285,7 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
                 }
             });
 
-    private FileInformation getFileInformationFromUri(Uri uri) {
+    private FileInformationModel getFileInformationFromUri(Uri uri) {
         /*
          * Get the file's content URI from the incoming Intent,
          * then query the server app to get the file's display name
@@ -321,7 +315,7 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
         } finally {
             returnCursor.close();
         }
-        return new FileInformation(mimeType, fileName, fileSize);
+        return new FileInformationModel(mimeType, fileName, fileSize);
     }
 
     private byte[] getDownsizedImageBytes(Bitmap fullBitmap, int scaleWidth, int scaleHeight) throws IOException {
@@ -333,9 +327,9 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
         return downsizedImageBytes;
     }
 
-    private void saveFileInformationToDatabaseUserCredentials(String subfolder, String filename, FileInformation fileInformation) {
+    private void saveFileInformationToDatabaseUserCredentials(String subfolder, String filename, FileInformationModel fileInformationModel) {
         FirebaseUtils.getDatabaseUsersCredentialsSubfolderReference(FirebaseUtils.getCurrentUserId(), subfolder)
-                .child(AndroidUtils.fileNameForDatabaseChild(filename)).setValue(FirebaseUtils.convertModelToMap(fileInformation))
+                .child(AndroidUtils.fileNameForDatabaseChild(filename)).setValue(FirebaseUtils.convertModelToMap(fileInformationModel))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
@@ -350,9 +344,9 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
                 });
     }
 
-    private void saveFileInformationToFirestoreUserCredentials(String subfolder, String filename, FileInformation fileInformation) {
+    private void saveFileInformationToFirestoreUserCredentials(String subfolder, String filename, FileInformationModel fileInformationModel) {
         FirebaseUtils.getFirestoreUsersCredentialsSubfolderReference(FirebaseUtils.getCurrentUserId(), subfolder)
-                .document(AndroidUtils.fileNameForDatabaseChild(filename)).set(FirebaseUtils.convertModelToMap(fileInformation))
+                .document(AndroidUtils.fileNameForDatabaseChild(filename)).set(FirebaseUtils.convertModelToMap(fileInformationModel))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {

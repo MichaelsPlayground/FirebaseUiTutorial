@@ -20,8 +20,8 @@ ref.child("credentials")
       .child(userId)
          .child("files")
             .child(fileName)
-               .setValue(fileInformation)
-Note: fileInformation is saved as Map               
+               .setValue(fileInformationModel)
+Note: fileInformationModel is saved as Map               
 ```
 
 ### Images entry used on Firebase Storage
@@ -31,8 +31,8 @@ ref.child("credentials")
       .child(userId)
          .child("images")
             .child(fileName)
-               .setValue(fileInformation)
-Note: fileInformation is saved as Map               
+               .setValue(fileInformationModel)
+Note: fileInformationModel is saved as Map               
 ```
 
 ### Resized Images entry used on Firebase Storage
@@ -42,8 +42,8 @@ ref.child("credentials")
       .child(userId)
          .child("imagesResized")
             .child(fileName)
-               .setValue(fileInformation)
-Note: fileInformation is saved as Map               
+               .setValue(fileInformationModel)
+Note: fileInformationModel is saved as Map               
 ```
 
 ## Messages
@@ -71,8 +71,8 @@ ref.child("credentials")
       .child(userId)
          .child("files")
             .child(fileName)
-               .setValue(fileInformation)
-Note: fileInformation is saved as Map               
+               .setValue(fileInformationModel)
+Note: fileInformationModel is saved as Map               
 ```
 
 ### Images entry used on Firebase Storage
@@ -82,8 +82,8 @@ ref.child("credentials")
       .child(userId)
          .child("images")
             .child(fileName)
-               .setValue(fileInformation)
-Note: fileInformation is saved as Map               
+               .setValue(fileInformationModel)
+Note: fileInformationModel is saved as Map               
 ```
 
 ### Resized Images entry used on Firebase Storage
@@ -93,8 +93,8 @@ ref.child("credentials")
       .child(userId)
          .child("imagesResized")
             .child(fileName)
-               .setValue(fileInformation)
-Note: fileInformation is saved as Map               
+               .setValue(fileInformationModel)
+Note: fileInformationModel is saved as Map               
 ```
 
 ## Messages

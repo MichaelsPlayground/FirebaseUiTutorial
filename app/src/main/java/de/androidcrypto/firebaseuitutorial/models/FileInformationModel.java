@@ -1,8 +1,6 @@
 package de.androidcrypto.firebaseuitutorial.models;
 
-import android.net.Uri;
-
-public class FileInformation {
+public class FileInformationModel {
     private String mimeType;
     private String fileName;
     private long fileSize;
@@ -11,10 +9,10 @@ public class FileInformation {
     private long actualTime;
     private String timestamp;
 
-    public FileInformation() {
+    public FileInformationModel() {
     }
 
-    public FileInformation(String mimeType, String fileName, Long fileSize) {
+    public FileInformationModel(String mimeType, String fileName, Long fileSize) {
         this.mimeType = mimeType;
         this.fileName = fileName;
         this.fileSize = fileSize;

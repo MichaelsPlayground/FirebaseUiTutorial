@@ -16,16 +16,16 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 
 import de.androidcrypto.firebaseuitutorial.GlideApp;
 import de.androidcrypto.firebaseuitutorial.R;
-import de.androidcrypto.firebaseuitutorial.models.FileInformation;
+import de.androidcrypto.firebaseuitutorial.models.FileInformationModel;
+import de.androidcrypto.firebaseuitutorial.utils.AndroidUtils;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
-import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
-public class StorageListFileReferencesModelAdapter extends FirebaseRecyclerAdapter<
-        FileInformation, StorageListFileReferencesModelAdapter.FileInformationModelViewholder> {
+public class StorageListDatabaseFileReferencesModelAdapter extends FirebaseRecyclerAdapter<
+        FileInformationModel, StorageListDatabaseFileReferencesModelAdapter.FileInformationModelViewholder> {
     private Context context;
 
-    public StorageListFileReferencesModelAdapter(
-            @NonNull FirebaseRecyclerOptions<FileInformation> options, Context context) {
+    public StorageListDatabaseFileReferencesModelAdapter(
+            @NonNull FirebaseRecyclerOptions<FileInformationModel> options, Context context) {
         super(options);
         this.context = context;
     }
@@ -33,7 +33,7 @@ public class StorageListFileReferencesModelAdapter extends FirebaseRecyclerAdapt
     @Override
     protected void
     onBindViewHolder(@NonNull FileInformationModelViewholder holder,
-                     int position, @NonNull FileInformation model) {
+                     int position, @NonNull FileInformationModel model) {
         holder.fileMimeType.setText("Mime type: " + model.getMimeType());
         holder.fileName.setText("Name: " + model.getFileName());
         holder.fileSize.setText("Size: " + model.getFileSize() + " bytes");
@@ -59,20 +59,8 @@ public class StorageListFileReferencesModelAdapter extends FirebaseRecyclerAdapt
         //holder.itemView.setVisibility(View.VISIBLE);
 
         holder.itemView.setOnClickListener(v -> {
-            //navigate to chat activity
-/*
-            Intent intent = new Intent(context, DatabaseChatActivity.class);
-            intent.putExtra("UID", model.getUserId());
-            intent.putExtra("EMAIL", model.getUserEmail());
-            intent.putExtra("DISPLAYNAME", model.getUserName());
-            intent.putExtra("AUTH_EMAIL", "test@test.com");
-            intent.putExtra("AUTH_DISPLAYNAME", "authDisplayName");
-            intent.putExtra("PROFILE_IMAGE", model.getUserProfileImage());
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
-            ((Activity) context).finish();
-
- */
+            // this functionality is not implemented
+            AndroidUtils.showToast(context, "This method is not implemented - do whatever you want to do with the clicked element: " + model.getFileName());
         });
     }
 

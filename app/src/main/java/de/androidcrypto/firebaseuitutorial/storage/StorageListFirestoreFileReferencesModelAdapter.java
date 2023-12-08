@@ -11,22 +11,21 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 import de.androidcrypto.firebaseuitutorial.GlideApp;
 import de.androidcrypto.firebaseuitutorial.R;
-import de.androidcrypto.firebaseuitutorial.models.FileInformation;
+import de.androidcrypto.firebaseuitutorial.models.FileInformationModel;
+import de.androidcrypto.firebaseuitutorial.utils.AndroidUtils;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 
 public class StorageListFirestoreFileReferencesModelAdapter extends FirestoreRecyclerAdapter<
-        FileInformation, StorageListFirestoreFileReferencesModelAdapter.FileInformationModelViewholder> {
+        FileInformationModel, StorageListFirestoreFileReferencesModelAdapter.FileInformationModelViewholder> {
     private Context context;
 
     public StorageListFirestoreFileReferencesModelAdapter(
-            @NonNull FirestoreRecyclerOptions<FileInformation> options, Context context) {
+            @NonNull FirestoreRecyclerOptions<FileInformationModel> options, Context context) {
         super(options);
         this.context = context;
     }
@@ -34,7 +33,7 @@ public class StorageListFirestoreFileReferencesModelAdapter extends FirestoreRec
     @Override
     protected void
     onBindViewHolder(@NonNull FileInformationModelViewholder holder,
-                     int position, @NonNull FileInformation model) {
+                     int position, @NonNull FileInformationModel model) {
         holder.fileMimeType.setText("Mime type: " + model.getMimeType());
         holder.fileName.setText("Name: " + model.getFileName());
         holder.fileSize.setText("Size: " + model.getFileSize() + " bytes");
@@ -60,20 +59,8 @@ public class StorageListFirestoreFileReferencesModelAdapter extends FirestoreRec
         //holder.itemView.setVisibility(View.VISIBLE);
 
         holder.itemView.setOnClickListener(v -> {
-            //navigate to chat activity
-/*
-            Intent intent = new Intent(context, DatabaseChatActivity.class);
-            intent.putExtra("UID", model.getUserId());
-            intent.putExtra("EMAIL", model.getUserEmail());
-            intent.putExtra("DISPLAYNAME", model.getUserName());
-            intent.putExtra("AUTH_EMAIL", "test@test.com");
-            intent.putExtra("AUTH_DISPLAYNAME", "authDisplayName");
-            intent.putExtra("PROFILE_IMAGE", model.getUserProfileImage());
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
-            ((Activity) context).finish();
-
- */
+            // this functionality is not implemented
+            AndroidUtils.showToast(context, "This method is not implemented - do whatever you want to do with the clicked element: " + model.getFileName());
         });
     }
 
