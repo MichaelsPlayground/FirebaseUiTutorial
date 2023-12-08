@@ -42,6 +42,7 @@ import de.androidcrypto.firebaseuitutorial.auth.AuthEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseChatroomsActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileLegacyActivity;
+import de.androidcrypto.firebaseuitutorial.database.DatabaseExportCompleteChatActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserLvActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserRecentMessagesActivity;
@@ -114,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
     private Button listDatabaseUserRecentMessages;
     private Button listDatabaseUserChatrooms;
     private Button presenceCheckDatabase;
+    private Button exportDatabaseCompleteChat;
     private DatabaseReference actualUserDatabaseReference;
 
     /**
@@ -370,6 +372,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d(TAG, "list Database user chatrooms RecyclerView");
                 Intent intent = new Intent(MainActivity.this, DatabaseChatroomsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        exportDatabaseCompleteChat = findViewById(R.id.btnMainDatabaseExportCompleteChat);
+        exportDatabaseCompleteChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "export complete database chat");
+                Intent intent = new Intent(MainActivity.this, DatabaseExportCompleteChatActivity.class);
                 startActivity(intent);
             }
         });
