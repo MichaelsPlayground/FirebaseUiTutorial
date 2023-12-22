@@ -41,14 +41,13 @@ import java.util.List;
 import de.androidcrypto.firebaseuitutorial.auth.AuthEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseChatroomsActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActivity;
-import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileLegacyActivity;
+import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileCanHubActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseExportCompleteChatActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserLvActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserRecentMessagesActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreChatroomsActivity;
-import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileActivity;
-import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileLegacyActivity;
+import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileCanHubActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserRecentMessagesActivity;
 import de.androidcrypto.firebaseuitutorial.storage.StorageDownloadFilesAndImagesActivity;
@@ -111,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
      * section Firebase Realtime Database
      */
 
-    private Button editDatabaseUserProfile, editDatabaseUserProfileLegacy, listDatabaseUser, listDatabaseUserLv;
+    private Button editDatabaseUserProfileCanHub, listDatabaseUser, listDatabaseUserLv;
     private Button listDatabaseUserRecentMessages;
     private Button listDatabaseUserChatrooms;
     private Button presenceCheckDatabase;
@@ -122,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
      * section Cloud Firestore Database
      */
 
-    private Button editFirestoreUserProfile, editFirestoreUserProfileLegacy, listFirestoreUser;
+    private Button editFirestoreUserProfilecanHub, listFirestoreUser;
     private Button listFirestoreUserRecentMessages;
     private Button listFirestoreUserChatrooms;
 
@@ -316,22 +315,12 @@ public class MainActivity extends AppCompatActivity {
          * section for Firebase Realtime Database
          */
 
-        editDatabaseUserProfile = findViewById(R.id.btnMainDatabaseEditUserProfile);
-        editDatabaseUserProfile.setOnClickListener(new View.OnClickListener() {
+        editDatabaseUserProfileCanHub = findViewById(R.id.btnMainDatabaseEditUserProfileCanHub);
+        editDatabaseUserProfileCanHub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "edit Database User Profile");
-                Intent intent = new Intent(MainActivity.this, DatabaseEditUserProfileActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        editDatabaseUserProfileLegacy = findViewById(R.id.btnMainDatabaseEditUserProfileLegacy);
-        editDatabaseUserProfileLegacy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "edit Database User Profile");
-                Intent intent = new Intent(MainActivity.this, DatabaseEditUserProfileLegacyActivity.class);
+                Intent intent = new Intent(MainActivity.this, DatabaseEditUserProfileCanHubActivity.class);
                 startActivity(intent);
             }
         });
@@ -435,22 +424,12 @@ public class MainActivity extends AppCompatActivity {
          * section for Cloud Firestore Database
          */
 
-        editFirestoreUserProfile = findViewById(R.id.btnMainFirestoreEditUserProfile);
-        editFirestoreUserProfile.setOnClickListener(new View.OnClickListener() {
+        editFirestoreUserProfilecanHub = findViewById(R.id.btnMainFirestoreEditUserProfileCanHub);
+        editFirestoreUserProfilecanHub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "edit Firestore User Profile");
-                Intent intent = new Intent(MainActivity.this, FirestoreEditUserProfileActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        editFirestoreUserProfileLegacy = findViewById(R.id.btnMainFirestoreEditUserProfileLegacy);
-        editFirestoreUserProfileLegacy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "edit Firestore User Profile Legacy");
-                Intent intent = new Intent(MainActivity.this, FirestoreEditUserProfileLegacyActivity.class);
+                Intent intent = new Intent(MainActivity.this, FirestoreEditUserProfileCanHubActivity.class);
                 startActivity(intent);
             }
         });
@@ -668,15 +647,13 @@ public class MainActivity extends AppCompatActivity {
         verification.setEnabled(isSignedIn);
         accountDeletion.setEnabled(isSignedIn);
         // realtime database
-        editDatabaseUserProfile.setEnabled(isSignedIn);
-        editDatabaseUserProfileLegacy.setEnabled(isSignedIn);
+        editDatabaseUserProfileCanHub.setEnabled(isSignedIn);
         listDatabaseUser.setEnabled(isSignedIn);
         listDatabaseUserLv.setEnabled(isSignedIn);
         listDatabaseUserRecentMessages.setEnabled(isSignedIn);
         listDatabaseUserChatrooms.setEnabled(isSignedIn);
         // firestore database
-        editFirestoreUserProfile.setEnabled(isSignedIn);
-        editFirestoreUserProfileLegacy.setEnabled(isSignedIn);
+        editFirestoreUserProfilecanHub.setEnabled(isSignedIn);
         listFirestoreUser.setEnabled(isSignedIn);
         listFirestoreUserRecentMessages.setEnabled(isSignedIn);
         listFirestoreUserChatrooms.setEnabled(isSignedIn);

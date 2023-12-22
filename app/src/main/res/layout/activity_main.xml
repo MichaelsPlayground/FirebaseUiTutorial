@@ -169,34 +169,15 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <LinearLayout
+            <Button
+                android:id="@+id/btnMainDatabaseEditUserProfileCanHub"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btnMainDatabaseEditUserProfile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1"
-                    android:enabled="true"
-                    android:text="edit user profile" />
-
-                <Button
-                    android:id="@+id/btnMainDatabaseEditUserProfileLegacy"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:text="edit user profile (legacy)" />
-
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:enabled="true"
+                android:text="edit user profile (CanHub cropper)" />
 
             <Button
                 android:id="@+id/btnMainDatabaseListUserLv"
@@ -277,34 +258,15 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <LinearLayout
+            <Button
+                android:id="@+id/btnMainFirestoreEditUserProfileCanHub"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btnMainFirestoreEditUserProfile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:text="edit user profile" />
-
-                <Button
-                    android:id="@+id/btnMainFirestoreEditUserProfileLegacy"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:text="edit user profile (legacy)" />
-
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:enabled="true"
+                android:text="edit user profile (CanHub cropper)" />
 
             <Button
                 android:id="@+id/btnMainFirestoreListUser"

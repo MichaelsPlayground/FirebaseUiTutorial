@@ -49,16 +49,8 @@ dependencies {
     // FirebaseUI for Cloud Storage
     implementation 'com.firebaseui:firebase-ui-storage:8.0.2'
 
-    // show user profile image in a circle
-    //implementation 'com.mikhaellopez:circularimageview:4.2.0'
     // crop the user profile image
-    api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
-    //implementation 'com.github.ArthurHub:Android-Image-Cropper:2.8.0'
-    //implementation 'com.github.CanHub:Android-Image-Cropper:2.8.0'
-    //implementation 'com.github.CanHub:Android-Image-Cropper:4.5.0'
-    //implementation("com.vanniktech:android-image-cropper:4.3.3")
-    // crop the user profile image
-    //implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
+    implementation("com.vanniktech:android-image-cropper:4.5.0")
 
     implementation 'com.karumi:dexter:6.2.3'
 
@@ -70,9 +62,7 @@ dependencies {
     // to show images from Firebase storage
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
-
     implementation 'de.hdodenhof:circleimageview:3.1.0'
-
     implementation('com.squareup.okhttp3:okhttp:4.11.0')
 }
 // ADD THIS AT THE BOTTOM

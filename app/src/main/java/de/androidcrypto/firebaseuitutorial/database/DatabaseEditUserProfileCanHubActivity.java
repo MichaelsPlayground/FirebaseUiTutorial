@@ -1,6 +1,8 @@
-package de.androidcrypto.firebaseuitutorial.firestore;
+package de.androidcrypto.firebaseuitutorial.database;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -21,6 +23,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.canhub.cropper.CropImageContract;
+import com.canhub.cropper.CropImageContractOptions;
+import com.canhub.cropper.CropImageOptions;
+import com.canhub.cropper.CropImageView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -32,9 +38,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Objects;
 
 import de.androidcrypto.firebaseuitutorial.GlideApp;
@@ -45,9 +50,16 @@ import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class FirestoreEditUserProfileLegacyActivity extends AppCompatActivity {
+public class DatabaseEditUserProfileCanHubActivity extends AppCompatActivity {
 
-    private static final String TAG = FirestoreEditUserProfileLegacyActivity.class.getSimpleName();
+    private static final String TAG = DatabaseEditUserProfileCanHubActivity.class.getSimpleName();
+
+    /*
+    This class uses Glide to download and show the image
+    https://egemenhamutcu.medium.com/displaying-images-from-firebase-storage-using-glide-for-kotlin-projects-3e4950f6c103
+    https://itecnote.com/tecnote/java-using-firebase-storage-image-with-glide/
+    https://firebaseopensource.com/projects/firebase/firebaseui-android/storage/readme
+     */
 
     /**
      * This class is NOT using firestoreUi for the upload purposes
@@ -56,7 +68,7 @@ public class FirestoreEditUserProfileLegacyActivity extends AppCompatActivity {
     private CircleImageView profileImageView;
     private com.google.android.material.textfield.TextInputEditText signedInUser;
     private com.google.android.material.textfield.TextInputLayout userNameLayout;
-    private com.google.android.material.textfield.TextInputEditText userId, userEmail, userPhotoUrl, userPublicKey, userPublicKeyNumber, userName;
+    private com.google.android.material.textfield.TextInputEditText userId, userEmail, userPhotoUrl, userName;
     private TextView infoNoData;
 
     // get the data from auth
@@ -68,27 +80,28 @@ public class FirestoreEditUserProfileLegacyActivity extends AppCompatActivity {
     private Uri imageUriFull;
 
     private ActivityResultLauncher<PickVisualMediaRequest> pickMediaActivityResultLauncher;
+    private ActivityResultLauncher<CropImageContractOptions> cropImageActivityResultLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_firestore_edit_user_profile_legacy);
+        setContentView(R.layout.activity_database_edit_user_profile_canhub);
+        //setCropImageView(com.canhub.cropper.R.layout.crop_image_view);
+        //com.canhub.cropper.databinding.CropImageViewBinding
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.sub_toolbar);
         setSupportActionBar(myToolbar);
 
-        signedInUser = findViewById(R.id.etFirestoreUserSignedInUser);
-        progressBar = findViewById(R.id.pbFirestoreUser);
+        signedInUser = findViewById(R.id.etDatabaseUserSignedInUser);
+        progressBar = findViewById(R.id.pbDatabaseUser);
 
-        infoNoData = findViewById(R.id.tvFirestoreUserNoData);
-        signedInUser = findViewById(R.id.etFirestoreUserSignedInUser);
-        userId = findViewById(R.id.etFirestoreUserUserId);
-        userEmail = findViewById(R.id.etFirestoreUserUserEmail);
-        userNameLayout = findViewById(R.id.etFirestoreUserUserNameLayout);
-        userName = findViewById(R.id.etFirestoreUserUserName);
-        userPhotoUrl = findViewById(R.id.etFirestoreUserPhotoUrl);
-        userPublicKey = findViewById(R.id.etFirestoreUserPublicKey);
-        userPublicKeyNumber = findViewById(R.id.etFirestoreUserPublicKeyNumber);
+        infoNoData = findViewById(R.id.tvDatabaseUserNoData);
+        signedInUser = findViewById(R.id.etDatabaseUserSignedInUser);
+        userId = findViewById(R.id.etDatabaseUserUserId);
+        userEmail = findViewById(R.id.etDatabaseUserUserEmail);
+        userNameLayout = findViewById(R.id.etDatabaseUserUserNameLayout);
+        userName = findViewById(R.id.etDatabaseUserUserName);
+        userPhotoUrl = findViewById(R.id.etDatabaseUserPhotoUrl);
 
         profileImageView = findViewById(R.id.ivUserProfileImage);
 
@@ -98,7 +111,7 @@ public class FirestoreEditUserProfileLegacyActivity extends AppCompatActivity {
         // Initialize Firebase Auth
         firebaseAuth = FirebaseAuth.getInstance();
 
-        Button savaData = findViewById(R.id.btnFirestoreUserSave);
+        Button savaData = findViewById(R.id.btnDatabaseUserSave);
         savedView = savaData.getRootView();
 
         // click on profile image to load a new one
@@ -106,9 +119,31 @@ public class FirestoreEditUserProfileLegacyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "click on profileImage");
-                pickMediaActivityResultLauncher.launch(new PickVisualMediaRequest.Builder()
-                        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                        .build());
+
+                CropImageOptions cropImageOptions = new CropImageOptions();
+                cropImageOptions.imageSourceIncludeGallery = true;
+                cropImageOptions.imageSourceIncludeCamera = false;
+                cropImageOptions.cropperLabelText = "hello";
+                cropImageOptions.intentChooserTitle = "chooserTitle";
+                cropImageOptions.activityTitle = "Act title";
+
+                cropImageOptions.fixAspectRatio = true;
+                cropImageOptions.aspectRatioX = 1;
+                cropImageOptions.aspectRatioY = 1;
+                //cropImageOptions.maxCropResultHeight = 500;
+                //cropImageOptions.maxCropResultWidth = 500;
+
+                //cropImageOptions.outputRequestHeight = 500;
+                //cropImageOptions.outputRequestWidth = 500;
+
+                cropImageOptions.multiTouchEnabled = true;
+                cropImageOptions.autoZoomEnabled = true;
+
+                //cropImageOptions.guidelines = CropImageView.Guidelines.ON;
+                cropImageOptions.guidelines = CropImageView.Guidelines.ON;
+                CropImageContractOptions cropImageContractOptions = new CropImageContractOptions(imageUriFull, cropImageOptions);
+                cropImageActivityResultLauncher.launch(cropImageContractOptions);
+
             }
         });
 
@@ -125,6 +160,36 @@ public class FirestoreEditUserProfileLegacyActivity extends AppCompatActivity {
          * section for launcher
          */
 
+        cropImageActivityResultLauncher = registerForActivityResult(new CropImageContract(), result -> {
+            // Callback is invoked after the user selects a media item or closes the
+            // photo picker.
+            if (result != null) {
+
+                // Use the returned uri.
+                Uri uriContent = result.getUriContent();
+                String uriFilePath = result.getUriFilePath(getApplicationContext(), false);
+                //Bitmap cropped = BitmapFactory.decodeFile(uri.getUriFilePath(getApplicationContext(), true));
+                //iv1.setImageUriAsync(uriContent);
+
+                Bitmap cropped = getResizedBitmap(BitmapFactory.decodeFile(result.getUriFilePath(getApplicationContext(), true)),500);
+                //profileImageView.setImageBitmap(cropped);
+                //imageView2.setImageBitmap(cropped);
+                profileImageView.setImageBitmap(cropped);
+                //profileImageView.setImageURI(uriContent);
+
+                //uploadImage(uriContent);
+                uploadImageBitmap(cropped);
+
+
+                System.out.println("uriContent: " + uriContent);
+                System.out.println("uriFilePath: " + uriFilePath);
+                System.out.println("piv height: " + profileImageView.getHeight() + " width: " + profileImageView.getWidth());
+
+            } else {
+                System.out.println("*** error ***");
+            }
+        });
+
         // android 13 photo picker
         // Registers a photo picker activity launcher in single-select mode.
         // https://developer.android.com/training/data-storage/shared/photopicker
@@ -135,36 +200,79 @@ public class FirestoreEditUserProfileLegacyActivity extends AppCompatActivity {
                     if (uri != null) {
                         imageUriFull = uri;
                         // call legacy cropper
-                        resizeImage(imageUriFull);
+                        //resizeImage(imageUriFull);
                     } else {
                         Log.d(TAG, "No media selected");
                     }
                 });
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            profileImageView.setImageURI(result.getUri());
-            uploadImage(result.getUri());
-        }
-    }
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
 
-    private void resizeImage(Uri data) {
-        CropImage.activity(data)
-                .setMultiTouchEnabled(true)
-                .setAspectRatio(1, 1)
-                .setGuidelines(CropImageView.Guidelines.ON)
-                //.setMaxCropResultSize(512, 512)
-                //.setOutputCompressQuality(50)
-                .start(this);
+        float bitmapRatio = (float) width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
     }
 
     /**
      * section uploading image to storage
      */
+
+    private void uploadImageBitmap(Bitmap bitmap) {
+        showProgressBar();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+        byte[] data = baos.toByteArray();
+        StorageReference storageReference = FirebaseUtils.getStorageProfileImagesReference(firebaseAuth.getUid());
+        storageReference.putBytes(data)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        final Task<Uri> firebaseUri = taskSnapshot.getStorage().getDownloadUrl();
+                        firebaseUri.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                final String downloadUrl = uri.toString();
+                                FirebaseUtils.getDatabaseUserFieldReference(authUserId, FirebaseUtils.DATABASE_USER_PHOTO_URL_FIELD)
+                                        .setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    Log.i(TAG, "downloadUrl: " + downloadUrl);
+                                                    Toast.makeText(DatabaseEditUserProfileCanHubActivity.this, "Image saved in database successfuly", Toast.LENGTH_SHORT).show();
+                                                    userPhotoUrl.setText(downloadUrl);
+                                                    // Download directly from StorageReference using Glide
+                                                    // (See MyAppGlideModule for Loader registration)
+                                                    GlideApp.with(getApplicationContext())
+                                                            .load(downloadUrl)
+                                                            .into(profileImageView);
+                                                    saveData();
+                                                } else {
+                                                    String message = task.getException().toString();
+                                                    Toast.makeText(DatabaseEditUserProfileCanHubActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                                                }
+                                                hideProgressBar();
+                                            }
+                                        });
+                            }
+                        });
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(DatabaseEditUserProfileCanHubActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        hideProgressBar();
+                    }
+                });
+    }
 
     private void uploadImage(Uri uri) {
         showProgressBar();
@@ -184,7 +292,7 @@ public class FirestoreEditUserProfileLegacyActivity extends AppCompatActivity {
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if (task.isSuccessful()) {
                                                     Log.i(TAG, "downloadUrl: " + downloadUrl);
-                                                    Toast.makeText(FirestoreEditUserProfileLegacyActivity.this, "Image saved in database successfuly", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(DatabaseEditUserProfileCanHubActivity.this, "Image saved in database successfuly", Toast.LENGTH_SHORT).show();
                                                     userPhotoUrl.setText(downloadUrl);
                                                     // Download directly from StorageReference using Glide
                                                     // (See MyAppGlideModule for Loader registration)
@@ -194,7 +302,7 @@ public class FirestoreEditUserProfileLegacyActivity extends AppCompatActivity {
                                                     saveData();
                                                 } else {
                                                     String message = task.getException().toString();
-                                                    Toast.makeText(FirestoreEditUserProfileLegacyActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(DatabaseEditUserProfileCanHubActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
                                                 }
                                                 hideProgressBar();
                                             }
@@ -205,7 +313,7 @@ public class FirestoreEditUserProfileLegacyActivity extends AppCompatActivity {
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(FirestoreEditUserProfileLegacyActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DatabaseEditUserProfileCanHubActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         hideProgressBar();
                     }
                 });
@@ -230,8 +338,8 @@ public class FirestoreEditUserProfileLegacyActivity extends AppCompatActivity {
                 writeUserProfile(authUserId, Objects.requireNonNull(userName.getText()).toString(),
                         Objects.requireNonNull(userEmail.getText()).toString(),
                         Objects.requireNonNull(userPhotoUrl.getText()).toString(),
-                        Objects.requireNonNull(userPublicKey.getText()).toString(),
-                        Objects.requireNonNull(userPublicKeyNumber.getText()).toString(),
+                        Objects.requireNonNull(""),
+                        Objects.requireNonNull(""),
                         FirebaseUtils.USER_ONLINE,
                         TimeUtils.getActualUtcZonedDateTime()
                 );
@@ -338,7 +446,7 @@ public class FirestoreEditUserProfileLegacyActivity extends AppCompatActivity {
                     System.out.println("*** un: " + un);
                     UserModel userModel = documentSnapshot.toObject(UserModel.class);
                     Log.d(TAG, "User model: " + String.valueOf(userModel));
-                    if (userModel.getUserId() == null) {
+                    if ((userModel == null) || (userModel.getUserId() == null)) {
                         Log.i(TAG, "userModel is null, show message");
                         infoNoData.setVisibility(View.VISIBLE);
                         // get data from user
@@ -346,16 +454,14 @@ public class FirestoreEditUserProfileLegacyActivity extends AppCompatActivity {
                         userEmail.setText(authUserEmail);
                         userName.setText(FirebaseUtils.usernameFromEmail(authUserEmail));
                         userPhotoUrl.setText(authPhotoUrl);
-                        userPublicKey.setText("");
-                        userPublicKeyNumber.setText("0");
 
                         // automatically save a new dataset
                         showProgressBar();
                         writeUserProfile(authUserId, Objects.requireNonNull(userName.getText()).toString(),
                                 Objects.requireNonNull(userEmail.getText()).toString(),
                                 Objects.requireNonNull(userPhotoUrl.getText()).toString(),
-                                Objects.requireNonNull(userPublicKey.getText()).toString(),
-                                Objects.requireNonNull(userPublicKeyNumber.getText()).toString(),
+                                Objects.requireNonNull(""),
+                                Objects.requireNonNull(""),
                                 FirebaseUtils.USER_ONLINE,
                                 TimeUtils.getActualUtcZonedDateTime()
                         );
@@ -372,8 +478,6 @@ public class FirestoreEditUserProfileLegacyActivity extends AppCompatActivity {
                         userName.setText(userModel.getUserName());
                         String photoUrl = userModel.getUserPhotoUrl();
                         userPhotoUrl.setText(photoUrl);
-                        userPublicKey.setText(userModel.getUserPublicKey());
-                        userPublicKeyNumber.setText(String.valueOf(userModel.getUserPublicKeyNumber()));
                         // load image if userPhotoUrl is not empty
                         if (!TextUtils.isEmpty(photoUrl)) {
                             // Download directly from StorageReference using Glide
@@ -447,7 +551,7 @@ public class FirestoreEditUserProfileLegacyActivity extends AppCompatActivity {
         mGoToHome.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Intent intent = new Intent(FirestoreEditUserProfileLegacyActivity.this, MainActivity.class);
+                Intent intent = new Intent(DatabaseEditUserProfileCanHubActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
                 return false;

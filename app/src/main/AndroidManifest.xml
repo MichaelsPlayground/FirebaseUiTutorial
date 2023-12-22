@@ -53,15 +53,8 @@
             android:name=".auth.AuthEditUserProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".database.DatabaseEditUserProfileActivity"
+            android:name=".database.DatabaseEditUserProfileCanHubActivity"
             android:exported="false" />
-        <activity
-            android:name=".database.DatabaseEditUserProfileLegacyActivity"
-            android:exported="false" />
-        <activity
-            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:exported="false"
-            android:theme="@style/Base.Theme.AppCompat" />
         <activity
             android:name=".database.DatabaseListUserActivity"
             android:exported="false" />
@@ -84,7 +77,7 @@
             android:name=".firestore.FirestoreEditUserProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".firestore.FirestoreEditUserProfileLegacyActivity"
+            android:name=".firestore.FirestoreEditUserProfileCanHubActivity"
             android:exported="false" />
         <activity
             android:name=".firestore.FirestoreListUserActivity"
@@ -113,6 +106,10 @@
         <activity
             android:name=".storage.StorageListImagesActivity"
             android:exported="false" />
+        <activity
+            android:name="com.canhub.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"
+            />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
