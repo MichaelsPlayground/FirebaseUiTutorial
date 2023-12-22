@@ -5,10 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,10 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import de.androidcrypto.firebaseuitutorial.MainActivity;
-import de.androidcrypto.firebaseuitutorial.R;
-import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,6 +30,10 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import de.androidcrypto.firebaseuitutorial.MainActivity;
+import de.androidcrypto.firebaseuitutorial.R;
+import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 
 public class StorageListImagesActivity extends AppCompatActivity {
 
