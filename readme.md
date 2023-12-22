@@ -76,13 +76,12 @@ able to read the data of his own dataset, so we do need a dataset that is availa
 As the user ID and the user email are used to identify a user I don't allow to change them. The user name is the only one 
 editable by typing a new value and press the "save data" button.
 
-If you click on the user image (or the placeholder icon) you are been able to change the profile image. The "Photo Picker" 
-will show up to select an image from the gallery, followed by the (default) image cropper. The cropped image itself is 
-saved in **Firebase Storage** but the **DownloadUrl** is stored in the dataset. Please note: depending on your tutorial stage 
-this functionality is not available in the beginning (as we need Firebase Storage that is introduced at a later point of time).
+If you click on the user image (or the placeholder icon) you are been able to change the profile image. The app is using the
+**Android-Image-Cropper** provided by **CanHub**. This is the successor of the old and often used libraries "edmodo/cropper" and
+"ArthurHub/Android-Image-Cropper" that are outdated over the  years.
 
-You may have noticed that this solutions is using a **File Provider** access to intermediately store the selected file before 
-cropping and uploading. If you prefer the older ("legacy") solution see "edit user profile (legacy)".
+The cropped image itself is saved in **Firebase Storage** but the **DownloadUrl** is stored in the dataset. Please note: depending on your 
+tutorial stage this functionality is not available in the beginning (as we need Firebase Storage that is introduced at a later point of time).
 
 Just a note on the data: the user dataset contains some elements that are not used within this tutorial.
 
@@ -143,13 +142,12 @@ able to read the data, so we do need a dataset that is available in a database r
 As the user ID and the user email are used to identify a user I don't allow to change them. The user name is the only one
 editable by typing a new value and press the "save data" button.
 
-If you click on the user image (or the placeholder icon) you are been able to change the profile image. The "Photo Picker"
-will show up to select an image from the gallery, followed by the (default) image cropper. The cropped image itself is
-saved in **Firebase Storage** but the **DownloadUrl** is stored in the dataset. Please note: depending on your tutorial stage
-this functionality is not available in the beginning (as we need Firebase Storage that is introduced at a later point of time).
+If you click on the user image (or the placeholder icon) you are been able to change the profile image. The app is using the
+**Android-Image-Cropper** provided by **CanHub**. This is the successor of the old and often used libraries "edmodo/cropper" and
+"ArthurHub/Android-Image-Cropper" that are outdated over the  years.
 
-You may have noticed that this solutions is using a **File Provider** access to intermediately store the selected file before
-cropping and uploading. If you prefer the older ("legacy") solution see "edit user profile (legacy)".
+The cropped image itself is saved in **Firebase Storage** but the **DownloadUrl** is stored in the dataset. Please note: depending on your
+tutorial stage this functionality is not available in the beginning (as we need Firebase Storage that is introduced at a later point of time).
 
 Just a note on the data: the user dataset contains some elements that are not used within this tutorial.
 
