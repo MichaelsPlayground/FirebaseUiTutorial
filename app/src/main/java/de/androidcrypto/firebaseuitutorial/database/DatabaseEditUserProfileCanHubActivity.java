@@ -34,8 +34,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -73,7 +73,7 @@ public class DatabaseEditUserProfileCanHubActivity extends AppCompatActivity {
 
     // get the data from auth
     private static String authUserId = "", authUserEmail, authDisplayName, authPhotoUrl;
-    private DocumentReference documentReference;
+    private DatabaseReference databaseUserReference;
     private FirebaseAuth firebaseAuth;
     private ProgressBar progressBar;
     private View savedView;
@@ -435,56 +435,57 @@ public class DatabaseEditUserProfileCanHubActivity extends AppCompatActivity {
         infoNoData.setVisibility(View.GONE);
         showProgressBar();
         if (!TextUtils.isEmpty(authUserId)) {
-            documentReference = FirebaseUtils.getFirestoreUserReference(authUserId);
-            documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            databaseUserReference = FirebaseUtils.getDatabaseUserReference(authUserId);
+            databaseUserReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                 @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                public void onComplete(@NonNull Task<DataSnapshot> task) {
                     hideProgressBar();
-                    Log.i(TAG, "success on loading data from firestore database");
-                    System.out.println("*** " + documentSnapshot.toString());
-                    String un = (String) documentSnapshot.get("userName");
-                    System.out.println("*** un: " + un);
-                    UserModel userModel = documentSnapshot.toObject(UserModel.class);
-                    Log.d(TAG, "User model: " + String.valueOf(userModel));
-                    if ((userModel == null) || (userModel.getUserId() == null)) {
-                        Log.i(TAG, "userModel is null, show message");
-                        infoNoData.setVisibility(View.VISIBLE);
-                        // get data from user
-                        userId.setText(authUserId);
-                        userEmail.setText(authUserEmail);
-                        userName.setText(FirebaseUtils.usernameFromEmail(authUserEmail));
-                        userPhotoUrl.setText(authPhotoUrl);
-
-                        // automatically save a new dataset
-                        showProgressBar();
-                        writeUserProfile(authUserId, Objects.requireNonNull(userName.getText()).toString(),
-                                Objects.requireNonNull(userEmail.getText()).toString(),
-                                Objects.requireNonNull(userPhotoUrl.getText()).toString(),
-                                Objects.requireNonNull(""),
-                                Objects.requireNonNull(""),
-                                FirebaseUtils.USER_ONLINE,
-                                TimeUtils.getActualUtcZonedDateTime()
-                        );
-                        Snackbar snackbar = Snackbar
-                                .make(progressBar, "data written to database", Snackbar.LENGTH_SHORT);
-                        snackbar.show();
-                        hideProgressBar();
+                    if (!task.isSuccessful()) {
+                        Log.e(TAG, "Error getting data", task.getException());
                     } else {
-                        Log.i(TAG, "userModel email: " + userModel.getUserMail());
-                        infoNoData.setVisibility(View.GONE);
-                        // get data from user
-                        userId.setText(authUserId);
-                        userEmail.setText(userModel.getUserMail());
-                        userName.setText(userModel.getUserName());
-                        String photoUrl = userModel.getUserPhotoUrl();
-                        userPhotoUrl.setText(photoUrl);
-                        // load image if userPhotoUrl is not empty
-                        if (!TextUtils.isEmpty(photoUrl)) {
-                            // Download directly from StorageReference using Glide
-                            // (See MyAppGlideModule for Loader registration)
-                            GlideApp.with(getApplicationContext())
-                                    .load(photoUrl)
-                                    .into(profileImageView);
+                        // check for a null value means no user data were saved before
+                        UserModel userModel = task.getResult().getValue(UserModel.class);
+                        Log.d(TAG, "User model: " + String.valueOf(userModel));
+                        if (userModel.getUserId() == null) {
+                            Log.i(TAG, "userModel is null, show message");
+                            infoNoData.setVisibility(View.VISIBLE);
+                            // get data from user
+                            userId.setText(authUserId);
+                            userEmail.setText(authUserEmail);
+                            userName.setText(FirebaseUtils.usernameFromEmail(authUserEmail));
+                            userPhotoUrl.setText(authPhotoUrl);
+
+                            // automatically save a new dataset
+                            showProgressBar();
+                            writeUserProfile(authUserId, Objects.requireNonNull(userName.getText()).toString(),
+                                    Objects.requireNonNull(userEmail.getText()).toString(),
+                                    Objects.requireNonNull(userPhotoUrl.getText()).toString(),
+                                    Objects.requireNonNull(""),
+                                    Objects.requireNonNull(""),
+                                    FirebaseUtils.USER_ONLINE,
+                                    TimeUtils.getActualUtcZonedDateTime()
+                            );
+                            Snackbar snackbar = Snackbar
+                                    .make(progressBar, "data written to database", Snackbar.LENGTH_SHORT);
+                            snackbar.show();
+                            hideProgressBar();
+                        } else {
+                            Log.i(TAG, "userModel email: " + userModel.getUserMail());
+                            infoNoData.setVisibility(View.GONE);
+                            // get data from user
+                            userId.setText(authUserId);
+                            userEmail.setText(userModel.getUserMail());
+                            userName.setText(userModel.getUserName());
+                            String photoUrl = userModel.getUserPhotoUrl();
+                            userPhotoUrl.setText(photoUrl);
+                            // load image if userPhotoUrl is not empty
+                            if (!TextUtils.isEmpty(photoUrl)) {
+                                // Download directly from StorageReference using Glide
+                                // (See MyAppGlideModule for Loader registration)
+                                GlideApp.with(getApplicationContext())
+                                        .load(photoUrl)
+                                        .into(profileImageView);
+                            }
                         }
                     }
                 }
