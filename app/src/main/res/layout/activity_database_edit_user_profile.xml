@@ -88,7 +88,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:background="@color/blue_300"
-                android:text="data in database USERS"
+                android:text="data in Database USERS"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="normal" />
@@ -102,7 +102,7 @@
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/share_rounded_corner_light_red_with_border_error"
                 android:padding="4dp"
-                android:text="No data is stored in database USERS, the data is taken from Auth database.\nThe Dataset is stored automatically."
+                android:text="No data is stored in Database USERS, the data is taken from Auth Database.\nThe Dataset is stored automatically."
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="normal"
@@ -190,34 +190,6 @@
                 android:src="@drawable/profile_image"
                 app:civ_border_width="5dp"
                 app:civ_border_color="@color/colorPrimary"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btnDatabaseUserProfileImageCrop"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1"
-                    android:enabled="true"
-                    android:text="crop image" />
-
-                <Button
-                    android:id="@+id/btnDatabaseUserProfileImageUpload"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_weight="1"
-                    android:text="upload image" />
-
-            </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/etDatabaseUserPhotoUrlLayout"

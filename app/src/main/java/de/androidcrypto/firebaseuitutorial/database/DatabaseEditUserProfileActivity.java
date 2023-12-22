@@ -1,15 +1,10 @@
 package de.androidcrypto.firebaseuitutorial.database;
 
-import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.graphics.ImageDecoder;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -27,8 +22,11 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.FileProvider;
 
+import com.canhub.cropper.CropImageContract;
+import com.canhub.cropper.CropImageContractOptions;
+import com.canhub.cropper.CropImageOptions;
+import com.canhub.cropper.CropImageView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -41,11 +39,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.List;
+import java.io.ByteArrayOutputStream;
 import java.util.Objects;
 
 import de.androidcrypto.firebaseuitutorial.GlideApp;
@@ -60,6 +54,13 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
 
     private static final String TAG = DatabaseEditUserProfileActivity.class.getSimpleName();
 
+    /*
+    This class uses Glide to download and show the image
+    https://egemenhamutcu.medium.com/displaying-images-from-firebase-storage-using-glide-for-kotlin-projects-3e4950f6c103
+    https://itecnote.com/tecnote/java-using-firebase-storage-image-with-glide/
+    https://firebaseopensource.com/projects/firebase/firebaseui-android/storage/readme
+     */
+
     /**
      * This class is NOT using firestoreUi for the upload purposes
      */
@@ -67,31 +68,26 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
     private CircleImageView profileImageView;
     private com.google.android.material.textfield.TextInputEditText signedInUser;
     private com.google.android.material.textfield.TextInputLayout userNameLayout;
-    private com.google.android.material.textfield.TextInputEditText userId, userEmail, userPhotoUrl, userPublicKey, userPublicKeyNumber, userName;
+    private com.google.android.material.textfield.TextInputEditText userId, userEmail, userPhotoUrl, userName;
     private TextView infoNoData;
 
     // get the data from auth
     private static String authUserId = "", authUserEmail, authDisplayName, authPhotoUrl;
-
     private DatabaseReference databaseUserReference;
     private FirebaseAuth firebaseAuth;
     private ProgressBar progressBar;
-
-    private final String CACHE_FOLDER = "crop";
-    private String intermediateName = "1.jpg";
-    private String resultName = "2.jpg";
-    private Uri imageUriFull, imageUriCrop;
-    private final String FILE_PROVIDER_AUTHORITY = "de.androidcrypto.firebaseuitutorial";
-    private Uri intermediateProvider;
-    private Uri resultProvider;
+    private View savedView;
+    private Uri imageUriFull;
 
     private ActivityResultLauncher<PickVisualMediaRequest> pickMediaActivityResultLauncher;
-    private ActivityResultLauncher<Intent> cropActivityResultLauncher;
+    private ActivityResultLauncher<CropImageContractOptions> cropImageActivityResultLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_database_edit_user_profile);
+        //setCropImageView(com.canhub.cropper.R.layout.crop_image_view);
+        //com.canhub.cropper.databinding.CropImageViewBinding
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.sub_toolbar);
         setSupportActionBar(myToolbar);
@@ -106,8 +102,6 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
         userNameLayout = findViewById(R.id.etDatabaseUserUserNameLayout);
         userName = findViewById(R.id.etDatabaseUserUserName);
         userPhotoUrl = findViewById(R.id.etDatabaseUserPhotoUrl);
-        userPublicKey = findViewById(R.id.etDatabaseUserPublicKey);
-        userPublicKeyNumber = findViewById(R.id.etDatabaseUserPublicKeyNumber);
 
         profileImageView = findViewById(R.id.ivUserProfileImage);
 
@@ -117,93 +111,84 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
         // Initialize Firebase Auth
         firebaseAuth = FirebaseAuth.getInstance();
 
-        Button cropImage = findViewById(R.id.btnDatabaseUserProfileImageCrop);
-        Button uploadProfileImage = findViewById(R.id.btnDatabaseUserProfileImageUpload);
-
         Button savaData = findViewById(R.id.btnDatabaseUserSave);
+        savedView = savaData.getRootView();
 
         // click on profile image to load a new one
         profileImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "click on profileImage");
-                // Launch the photo picker and let the user choose only images.
-                https://developer.android.com/training/data-storage/shared/photopicker
-                pickMediaActivityResultLauncher.launch(new PickVisualMediaRequest.Builder()
-                        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                        .build());
+
+                CropImageOptions cropImageOptions = new CropImageOptions();
+                cropImageOptions.imageSourceIncludeGallery = true;
+                cropImageOptions.imageSourceIncludeCamera = false;
+                cropImageOptions.cropperLabelText = "hello";
+                cropImageOptions.intentChooserTitle = "chooserTitle";
+                cropImageOptions.activityTitle = "Act title";
+
+                cropImageOptions.fixAspectRatio = true;
+                cropImageOptions.aspectRatioX = 1;
+                cropImageOptions.aspectRatioY = 1;
+                //cropImageOptions.maxCropResultHeight = 500;
+                //cropImageOptions.maxCropResultWidth = 500;
+
+                //cropImageOptions.outputRequestHeight = 500;
+                //cropImageOptions.outputRequestWidth = 500;
+
+                cropImageOptions.multiTouchEnabled = true;
+                cropImageOptions.autoZoomEnabled = true;
+
+                //cropImageOptions.guidelines = CropImageView.Guidelines.ON;
+                cropImageOptions.guidelines = CropImageView.Guidelines.ON;
+                CropImageContractOptions cropImageContractOptions = new CropImageContractOptions(imageUriFull, cropImageOptions);
+                cropImageActivityResultLauncher.launch(cropImageContractOptions);
+
             }
         });
-
-        cropImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i(TAG, "crop image");
-                onCropImage();
-            }
-        });
-
-        uploadProfileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i(TAG, "upload image");
-                //uploadImage(imageUriFull);
-                uploadImage(imageUriCrop);
-            }
-        });
-
 
         savaData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.i(TAG, "save user data from database for user id: " + authUserId);
-                // sanity check
-                String userNameString = userName.getText().toString();
-                if (TextUtils.isEmpty(userNameString)) {
-                    userNameLayout.setError("userName cannot be empty");
-                    Toast.makeText(getApplicationContext(),
-                            "userName cannot be empty",
-                            Toast.LENGTH_SHORT).show();
-                    return;
-                } else {
-                    userNameLayout.setError("");
-                }
-                showProgressBar();
-                if (!authUserId.equals("")) {
-                    if (!Objects.requireNonNull(userId.getText()).toString().equals("")) {
-                        infoNoData.setVisibility(View.GONE);
-                        writeUserProfile(authUserId, Objects.requireNonNull(userName.getText()).toString(),
-                                Objects.requireNonNull(userEmail.getText()).toString(),
-                                Objects.requireNonNull(userPhotoUrl.getText()).toString(),
-                                Objects.requireNonNull(userPublicKey.getText()).toString(),
-                                Objects.requireNonNull(userPublicKeyNumber.getText()).toString(),
-                                FirebaseUtils.USER_ONLINE,
-                                TimeUtils.getActualUtcZonedDateTime()
-                                );
-                        Snackbar snackbar = Snackbar
-                                .make(view, "data written to database", Snackbar.LENGTH_SHORT);
-                        snackbar.show();
-                        // additionally write the data to the auth database
-                        FirebaseUtils.writeToCurrentUserAuthData(userName.getText().toString(), userPhotoUrl.getText().toString());
-                    } else {
-                        Toast.makeText(getApplicationContext(),
-                                "load user data before saving",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    // this should not happen, but...
-                    Toast.makeText(getApplicationContext(),
-                            "sign in a user before saving",
-                            Toast.LENGTH_SHORT).show();
-                }
-                hideProgressBar();
+                //savedView = view;
+                saveData();
             }
         });
-
 
         /**
          * section for launcher
          */
+
+        cropImageActivityResultLauncher = registerForActivityResult(new CropImageContract(), result -> {
+            // Callback is invoked after the user selects a media item or closes the
+            // photo picker.
+            if (result != null) {
+
+                // Use the returned uri.
+                Uri uriContent = result.getUriContent();
+                String uriFilePath = result.getUriFilePath(getApplicationContext(), false);
+                //Bitmap cropped = BitmapFactory.decodeFile(uri.getUriFilePath(getApplicationContext(), true));
+                //iv1.setImageUriAsync(uriContent);
+
+                Bitmap cropped = getResizedBitmap(BitmapFactory.decodeFile(result.getUriFilePath(getApplicationContext(), true)),500);
+                //profileImageView.setImageBitmap(cropped);
+                //imageView2.setImageBitmap(cropped);
+                profileImageView.setImageBitmap(cropped);
+                //profileImageView.setImageURI(uriContent);
+
+                //uploadImage(uriContent);
+                uploadImageBitmap(cropped);
+
+
+                System.out.println("uriContent: " + uriContent);
+                System.out.println("uriFilePath: " + uriFilePath);
+                System.out.println("piv height: " + profileImageView.getHeight() + " width: " + profileImageView.getWidth());
+
+            } else {
+                System.out.println("*** error ***");
+            }
+        });
 
         // android 13 photo picker
         // Registers a photo picker activity launcher in single-select mode.
@@ -214,85 +199,12 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
                     // photo picker.
                     if (uri != null) {
                         imageUriFull = uri;
-                        saveBitmapFileToIntermediate(imageUriFull);
-
-                        // start cropping directly
-                        onCropImage();
-
+                        // call legacy cropper
+                        //resizeImage(imageUriFull);
                     } else {
                         Log.d(TAG, "No media selected");
                     }
                 });
-
-        cropActivityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        imageUriCrop = resultProvider;
-                        Bitmap croppedImage = loadFromUri(resultProvider);
-                        profileImageView.setImageBitmap(getResizedBitmap(croppedImage, 500));
-                        String imageInfo = "Cropped Bitmap height: " + croppedImage.getHeight() + " width: " + croppedImage.getWidth() +
-                                " res: " + (croppedImage.getHeight() * croppedImage.getWidth());
-                        //tvCrop.setText(imageInfo);
-                        Log.d(TAG, "imageInfo: " + imageInfo);
-
-                        // directly upload image
-                        uploadImage(imageUriCrop);
-                    }
-                });
-
-    }
-
-    /**
-     * get an image from gallery
-     */
-
-    private void saveBitmapFileToIntermediate(Uri sourceUri) {
-        Log.d(TAG, "saveBitmapFileToIntermediate from URI: " + sourceUri);
-        try {
-            Bitmap bitmap = loadFromUri(sourceUri);
-            File imageFile = getPhotoFileUri(intermediateName);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                intermediateProvider = FileProvider.getUriForFile(DatabaseEditUserProfileActivity.this, FILE_PROVIDER_AUTHORITY + ".provider", imageFile);
-            else
-                intermediateProvider = Uri.fromFile(imageFile);
-
-            OutputStream out = new FileOutputStream(imageFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            out.close();
-            Log.d(TAG, "intermediate file written to intermediateProvider: " + intermediateName);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Bitmap loadFromUri(Uri photoUri) {
-        Bitmap image = null;
-        try {
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
-                // on newer versions of Android, use the new decodeBitmap method
-                ImageDecoder.Source source = ImageDecoder.createSource(this.getContentResolver(), photoUri);
-                image = ImageDecoder.decodeBitmap(source);
-            } else {
-                // support older versions of Android by using getBitmap
-                image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return image;
-    }
-
-    // Returns the File for a photo stored on disk given the fileName
-    public File getPhotoFileUri(String fileName) {
-        // see https://developer.android.com/reference/androidx/core/content/FileProvider
-        File mediaStorageDir = new File(getCacheDir(), CACHE_FOLDER);
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
-            Log.d(TAG, "failed to create directory");
-        }
-        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
-        Log.d(TAG, "getPhotoFileUri for fileName: " + fileName + " is: " + file.getAbsolutePath());
-        return file;
     }
 
     public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
@@ -311,77 +223,16 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
     }
 
     /**
-     * section for image cropping
-     */
-
-    private void onCropImage() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            grantUriPermission("com.android.camera", intermediateProvider, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            Intent intent = new Intent("com.android.camera.action.CROP");
-            intent.setDataAndType(intermediateProvider, "image/*");
-
-            List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, 0);
-
-            int size = 0;
-
-            if (list != null) {
-                grantUriPermission(list.get(0).activityInfo.packageName, intermediateProvider, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                size = list.size();
-            }
-
-            if (size == 0) {
-                Toast.makeText(this, "Error, wasn't taken image!", Toast.LENGTH_SHORT).show();
-            } else {
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                intent.putExtra("crop", "true");
-                //intent.putExtra("scale", true);
-                intent.putExtra("aspectX", 1);
-                intent.putExtra("aspectY", 1);
-                File photoFile = getPhotoFileUri(resultName);
-                // wrap File object into a content provider
-                // required for API >= 24
-                // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
-                resultProvider = FileProvider.getUriForFile(DatabaseEditUserProfileActivity.this, FILE_PROVIDER_AUTHORITY + ".provider", photoFile);
-                intent.putExtra("return-data", false);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, resultProvider);
-                intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-
-                Intent cropIntent = new Intent(intent);
-                // this is using the default cropper
-                ResolveInfo res = list.get(0);
-                cropIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                cropIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                grantUriPermission(res.activityInfo.packageName, resultProvider, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                cropIntent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-                cropActivityResultLauncher.launch(cropIntent);
-            }
-        } else {
-            File photoFile = getPhotoFileUri(resultName);
-            resultProvider = Uri.fromFile(photoFile);
-            Intent intentCrop = new Intent("com.android.camera.action.CROP");
-            intentCrop.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            intentCrop.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            intentCrop.setDataAndType(intermediateProvider, "image/*");
-            intentCrop.putExtra("crop", "true");
-            intentCrop.putExtra("scale", true);
-            intentCrop.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-            intentCrop.putExtra("noFaceDetection", true);
-            intentCrop.putExtra("return-data", false);
-            intentCrop.putExtra(MediaStore.EXTRA_OUTPUT, resultProvider);
-            cropActivityResultLauncher.launch(intentCrop);
-        }
-    }
-
-    /**
      * section uploading image to storage
      */
 
-    private void uploadImage(Uri uri) {
+    private void uploadImageBitmap(Bitmap bitmap) {
         showProgressBar();
-        //StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("profile_images").child(mAuth.getUid() + ".jpg");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+        byte[] data = baos.toByteArray();
         StorageReference storageReference = FirebaseUtils.getStorageProfileImagesReference(firebaseAuth.getUid());
-                storageReference.putFile(uri)
+        storageReference.putBytes(data)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -391,7 +242,6 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
                             public void onSuccess(Uri uri) {
                                 final String downloadUrl = uri.toString();
                                 FirebaseUtils.getDatabaseUserFieldReference(authUserId, FirebaseUtils.DATABASE_USER_PHOTO_URL_FIELD)
-                                //mDatabase.child("users").child(authUserId).child("userPhotoUrl")
                                         .setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
@@ -404,6 +254,7 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
                                                     GlideApp.with(getApplicationContext())
                                                             .load(downloadUrl)
                                                             .into(profileImageView);
+                                                    saveData();
                                                 } else {
                                                     String message = task.getException().toString();
                                                     Toast.makeText(DatabaseEditUserProfileActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
@@ -423,12 +274,97 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
                 });
     }
 
+    private void uploadImage(Uri uri) {
+        showProgressBar();
+        StorageReference storageReference = FirebaseUtils.getStorageProfileImagesReference(firebaseAuth.getUid());
+        storageReference.putFile(uri)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        final Task<Uri> firebaseUri = taskSnapshot.getStorage().getDownloadUrl();
+                        firebaseUri.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                final String downloadUrl = uri.toString();
+                                FirebaseUtils.getDatabaseUserFieldReference(authUserId, FirebaseUtils.DATABASE_USER_PHOTO_URL_FIELD)
+                                        .setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    Log.i(TAG, "downloadUrl: " + downloadUrl);
+                                                    Toast.makeText(DatabaseEditUserProfileActivity.this, "Image saved in database successfuly", Toast.LENGTH_SHORT).show();
+                                                    userPhotoUrl.setText(downloadUrl);
+                                                    // Download directly from StorageReference using Glide
+                                                    // (See MyAppGlideModule for Loader registration)
+                                                    GlideApp.with(getApplicationContext())
+                                                            .load(downloadUrl)
+                                                            .into(profileImageView);
+                                                    saveData();
+                                                } else {
+                                                    String message = task.getException().toString();
+                                                    Toast.makeText(DatabaseEditUserProfileActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                                                }
+                                                hideProgressBar();
+                                            }
+                                        });
+                            }
+                        });
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(DatabaseEditUserProfileActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        hideProgressBar();
+                    }
+                });
+    }
+
+    private void saveData() {
+        // sanity check
+        String userNameString = userName.getText().toString();
+        if (TextUtils.isEmpty(userNameString)) {
+            userNameLayout.setError("userName cannot be empty");
+            Toast.makeText(getApplicationContext(),
+                    "userName cannot be empty",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            userNameLayout.setError("");
+        }
+        showProgressBar();
+        if (!authUserId.equals("")) {
+            if (!Objects.requireNonNull(userId.getText()).toString().equals("")) {
+                infoNoData.setVisibility(View.GONE);
+                writeUserProfile(authUserId, Objects.requireNonNull(userName.getText()).toString(),
+                        Objects.requireNonNull(userEmail.getText()).toString(),
+                        Objects.requireNonNull(userPhotoUrl.getText()).toString(),
+                        Objects.requireNonNull(""),
+                        Objects.requireNonNull(""),
+                        FirebaseUtils.USER_ONLINE,
+                        TimeUtils.getActualUtcZonedDateTime()
+                );
+                // additionally write the data to the auth database
+                FirebaseUtils.writeToCurrentUserAuthData(userName.getText().toString(), userPhotoUrl.getText().toString());
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        "load user data before saving",
+                        Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            // this should not happen, but...
+            Toast.makeText(getApplicationContext(),
+                    "sign in a user before saving",
+                    Toast.LENGTH_SHORT).show();
+        }
+        hideProgressBar();
+    }
+
     @Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = FirebaseUtils.getCurrentUser();
-        if(currentUser != null){
+        if (currentUser != null) {
             reload();
         } else {
             signedInUser.setText("no user is signed in");
@@ -487,12 +423,6 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
             }
             signedInUser.setText(sb.toString());
 
-            if (user.isEmailVerified()) {
-//                mBinding.verifyEmailButton.setVisibility(View.GONE);
-            } else {
-//                mBinding.verifyEmailButton.setVisibility(View.VISIBLE);
-            }
-
             // automatically load the user from database
             loadUserFromDatabase();
         } else {
@@ -504,8 +434,8 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
         Log.i(TAG, "load user data from database for user id: " + authUserId);
         infoNoData.setVisibility(View.GONE);
         showProgressBar();
-        databaseUserReference = FirebaseUtils.getDatabaseUserReference(authUserId);
         if (!TextUtils.isEmpty(authUserId)) {
+            databaseUserReference = FirebaseUtils.getDatabaseUserReference(authUserId);
             databaseUserReference.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -524,16 +454,14 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
                             userEmail.setText(authUserEmail);
                             userName.setText(FirebaseUtils.usernameFromEmail(authUserEmail));
                             userPhotoUrl.setText(authPhotoUrl);
-                            userPublicKey.setText("");
-                            userPublicKeyNumber.setText("0");
 
                             // automatically save a new dataset
                             showProgressBar();
                             writeUserProfile(authUserId, Objects.requireNonNull(userName.getText()).toString(),
                                     Objects.requireNonNull(userEmail.getText()).toString(),
                                     Objects.requireNonNull(userPhotoUrl.getText()).toString(),
-                                    Objects.requireNonNull(userPublicKey.getText()).toString(),
-                                    Objects.requireNonNull(userPublicKeyNumber.getText()).toString(),
+                                    Objects.requireNonNull(""),
+                                    Objects.requireNonNull(""),
                                     FirebaseUtils.USER_ONLINE,
                                     TimeUtils.getActualUtcZonedDateTime()
                             );
@@ -550,8 +478,6 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
                             userName.setText(userModel.getUserName());
                             String photoUrl = userModel.getUserPhotoUrl();
                             userPhotoUrl.setText(photoUrl);
-                            userPublicKey.setText(userModel.getUserPublicKey());
-                            userPublicKeyNumber.setText(String.valueOf(userModel.getUserPublicKeyNumber()));
                             // load image if userPhotoUrl is not empty
                             if (!TextUtils.isEmpty(photoUrl)) {
                                 // Download directly from StorageReference using Glide
@@ -560,7 +486,6 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
                                         .load(photoUrl)
                                         .into(profileImageView);
                             }
-                            hideProgressBar();
                         }
                     }
                 }
@@ -582,7 +507,25 @@ public class DatabaseEditUserProfileActivity extends AppCompatActivity {
             publicKeyNumberInt = 0;
         }
         UserModel user = new UserModel(userId, name, email, photoUrl, publicKey, publicKeyNumberInt, userOnlineString, userLastOnlineTime);
-        databaseUserReference.setValue(user);
+        FirebaseUtils.getFirestoreUserReference(userId).set(user)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.i(TAG, "DocumentSnapshot successfully written for userId: " + userId);
+                        Snackbar snackbar = Snackbar
+                                .make(savedView, "data written to database", Snackbar.LENGTH_SHORT);
+                        snackbar.show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.i(TAG, "Error writing document for userId: " + userId, e);
+                        Snackbar snackbar = Snackbar
+                                .make(savedView, "Error on write user data to database", Snackbar.LENGTH_SHORT);
+                        snackbar.show();
+                    }
+                });
     }
 
     public void showProgressBar() {

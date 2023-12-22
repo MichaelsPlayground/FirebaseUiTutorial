@@ -41,13 +41,12 @@ import java.util.List;
 import de.androidcrypto.firebaseuitutorial.auth.AuthEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseChatroomsActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActivity;
-import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileCanHubActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseExportCompleteChatActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserLvActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserRecentMessagesActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreChatroomsActivity;
-import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileCanHubActivity;
+import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreListUserRecentMessagesActivity;
 import de.androidcrypto.firebaseuitutorial.storage.StorageDownloadFilesAndImagesActivity;
@@ -315,12 +314,12 @@ public class MainActivity extends AppCompatActivity {
          * section for Firebase Realtime Database
          */
 
-        editDatabaseUserProfileCanHub = findViewById(R.id.btnMainDatabaseEditUserProfileCanHub);
+        editDatabaseUserProfileCanHub = findViewById(R.id.btnMainDatabaseEditUserProfile);
         editDatabaseUserProfileCanHub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "edit Database User Profile");
-                Intent intent = new Intent(MainActivity.this, DatabaseEditUserProfileCanHubActivity.class);
+                Intent intent = new Intent(MainActivity.this, DatabaseEditUserProfileActivity.class);
                 startActivity(intent);
             }
         });
@@ -424,12 +423,12 @@ public class MainActivity extends AppCompatActivity {
          * section for Cloud Firestore Database
          */
 
-        editFirestoreUserProfilecanHub = findViewById(R.id.btnMainFirestoreEditUserProfileCanHub);
+        editFirestoreUserProfilecanHub = findViewById(R.id.btnMainFirestoreEditUserProfile);
         editFirestoreUserProfilecanHub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "edit Firestore User Profile");
-                Intent intent = new Intent(MainActivity.this, FirestoreEditUserProfileCanHubActivity.class);
+                Intent intent = new Intent(MainActivity.this, FirestoreEditUserProfileActivity.class);
                 startActivity(intent);
             }
         });

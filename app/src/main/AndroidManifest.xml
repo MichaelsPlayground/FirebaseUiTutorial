@@ -53,7 +53,7 @@
             android:name=".auth.AuthEditUserProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".database.DatabaseEditUserProfileCanHubActivity"
+            android:name=".database.DatabaseEditUserProfileActivity"
             android:exported="false" />
         <activity
             android:name=".database.DatabaseListUserActivity"
@@ -75,9 +75,6 @@
             android:exported="false" />
         <activity
             android:name=".firestore.FirestoreEditUserProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".firestore.FirestoreEditUserProfileCanHubActivity"
             android:exported="false" />
         <activity
             android:name=".firestore.FirestoreListUserActivity"

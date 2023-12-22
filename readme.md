@@ -408,7 +408,20 @@ Code: https://github.com/KODDevYouTube/ChatAppTutorial
 
 CircleImageView: implementation 'de.hdodenhof:circleimageview:3.1.0'
 
-Image cropper by Arthur: api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
+Image cropper: implementation('com.vanniktech:android-image-cropper:4.5.0')
+
+// to show images from Firebase storage
+
+implementation 'com.github.bumptech.glide:glide:4.16.0'
+
+annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+
+Uploads and downloads: implementation('com.squareup.okhttp3:okhttp:4.11.0')
+
+// important for timestamps
+coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+
+
 
 Firestore vs. Realtime Database: Choosing the Right Database for Your Android App: https://medium.com/@myofficework000/firestore-vs-realtime-database-choosing-the-right-database-for-your-android-app-746447f19322
 
