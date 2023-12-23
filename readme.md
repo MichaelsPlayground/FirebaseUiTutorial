@@ -7,6 +7,8 @@ I'm using **FirebaseUI for Android** as this library simplifies the working with
 
 *FirebaseUI is an open-source library for Android that allows you to quickly connect common UI elements to Firebase APIs.*
 
+A very important note when forking or importing this project in your Android Studio or Visual Studio:  
+
 ## Firebase Authentication
 
 The authentication of an user is the "heart" of the application and access rights. All read and write operations 
@@ -166,6 +168,19 @@ The functionality is identical to the Realtime Firebase's implementation.
 ### additional data
 
 Step-by-step tutorial for Firestore Database: 
+
+Original (production) rules that prevent any access:
+```plaintext
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+```
 
 Setup the Cloud Firestore Database with this rule:
 
