@@ -42,6 +42,7 @@ public class FirebaseUtils {
     public static final String MESSAGES_FOLDER_NAME = "messages";
     private static final String RECENT_MESSAGES_FOLDER_NAME = "recentMessages";
     public static final String USERS_CREDENTIALS_FOLDER_NAME = "credentials";
+    public static final String USERS_PRESENCE_FOLDER_NAME = "presence";
     public static final String USERS_NOTIFICATION_FOLDER_NAME = "usersNotifications";
     private static final String NOTIFICATION_MESSAGES_FOLDER_NAME = "notificationMessages";
     public static final String CHATROOMS_FOLDER_NAME = "chatrooms";
@@ -159,10 +160,6 @@ public class FirebaseUtils {
         return getDatabaseUserReference(userId).child(DATABASE_LAST_ONLINE);
     }
 
-    public static DatabaseReference getDatabaseInfoConnected() {
-        return getDatabaseReference().child(INFO_CONNECTED);
-    }
-
     public static DatabaseReference getDatabaseCurrentUserCredentialsFilesReference() {
         return getDatabaseUsersCredentialsSubfolderReference(getCurrentUserId(), STORAGE_FILES_FOLDER_NAME);
     }
@@ -193,6 +190,23 @@ public class FirebaseUtils {
 
     public static DatabaseReference getDatabaseUsersCredentialsReference(String userId) {
         return getDatabaseReference().child(USERS_CREDENTIALS_FOLDER_NAME).child(userId);
+    }
+
+
+    /**
+     * section for presence handling
+     */
+
+    public static DatabaseReference getDatabaseInfoConnected() {
+        return getDatabaseReference().child(INFO_CONNECTED);
+    }
+
+    public static DatabaseReference getDatabaseUsersPresenceReference() {
+        return getDatabaseReference().child(USERS_PRESENCE_FOLDER_NAME);
+    }
+
+    public static DatabaseReference getDatabaseUserPresenceReference(String userId) {
+        return getDatabaseUsersPresenceReference().child(userId);
     }
 
     public static void setPersistenceStatus(boolean status) {

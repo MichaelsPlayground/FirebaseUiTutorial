@@ -1,5 +1,7 @@
 package de.androidcrypto.firebaseuitutorial.models;
 
+import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
+
 public class UserModel {
 
     private String userName, userMail, userId, userPhotoUrl, recentMessage, about="null", deviceToken="null", userPublicKey;
@@ -69,6 +71,19 @@ public class UserModel {
         this.userPublicKey = userPublicKey;
         this.userPublicKeyNumber = userPublicKeyNumber;
         this.userOnline = userIsOnline;
+    }
+
+    // for Presence
+
+
+    public UserModel(String userName, String userMail, String userId, String userPhotoUrl, boolean userOnline, String userOnlineString, long userLastOnlineTime) {
+        this.userName = userName;
+        this.userMail = userMail;
+        this.userId = userId;
+        this.userPhotoUrl = userPhotoUrl;
+        this.userOnline = userOnline;
+        this.userOnlineString = userOnlineString;
+        this.userLastOnlineTime = userLastOnlineTime;
     }
 
     public String getUserName() {

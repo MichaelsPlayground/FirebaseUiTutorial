@@ -59,6 +59,9 @@
             android:name=".database.DatabaseListUserActivity"
             android:exported="false" />
         <activity
+            android:name=".database.DatabaseListUserPresenceActivity"
+            android:exported="false" />
+        <activity
             android:name=".database.DatabaseListUserLvActivity"
             android:exported="false" />
         <activity

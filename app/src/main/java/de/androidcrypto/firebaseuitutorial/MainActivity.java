@@ -44,6 +44,7 @@ import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActiv
 import de.androidcrypto.firebaseuitutorial.database.DatabaseExportCompleteChatActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserLvActivity;
+import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserPresenceActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserRecentMessagesActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreChatroomsActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileActivity;
@@ -381,6 +382,10 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "presenceCheckDatabase");
                 // https://firebase.google.com/docs/database/android/offline-capabilities#section-presence
 
+                Intent intent = new Intent(MainActivity.this, DatabaseListUserPresenceActivity.class);
+                startActivity(intent);
+
+/*
                 String userId = FirebaseUtils.getCurrentUserId();
                 // Since I can connect from multiple devices, we store each connection instance separately
                 // any time that connectionsRef's value is null (i.e. has no children) I am offline
@@ -415,8 +420,10 @@ public class MainActivity extends AppCompatActivity {
                         Log.e(TAG, "Listener was cancelled at .info/connected");
                     }
                 });
-
+*/
             }
+
+
         });
 
         /**
