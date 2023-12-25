@@ -115,6 +115,10 @@ message is on the top.
 
 ### database presence check
 
+A general note: this function is not available in the Firestore database. If you search for this topic you will find a some information on how to 
+workaround this by using "Firebase Cloud Functions". As Clud Functions are available in "Blaze" plan only (meaning a "pay on demand" billing plan) 
+I'm not providing any solution for this.
+
 If you click on any user you start the chat activity.
 
 Please note: As long as the user is online (means there is an active internet connection) any action that should show an "offline" user (like moving
@@ -172,6 +176,12 @@ The functionality is identical to the Realtime Firebase's implementation.
 ### list user chatrooms in RecyclerView
 
 The functionality is identical to the Realtime Firebase's implementation.
+
+### database presence check
+
+A general note: this function is **not available in the Cloud Firestore database**. If you search for this topic you will find some informations on how to
+workaround this by using "Firebase Cloud Functions". As Cloud Functions are available in "Blaze" plan only (meaning a "pay on demand" billing plan) 
+I'm not providing any solution for this, sorry.
 
 ### additional data
 
