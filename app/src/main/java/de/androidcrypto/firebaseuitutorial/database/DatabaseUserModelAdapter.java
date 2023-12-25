@@ -22,6 +22,7 @@ import de.androidcrypto.firebaseuitutorial.GlideApp;
 import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
 import de.androidcrypto.firebaseuitutorial.utils.AndroidUtils;
+import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 import de.androidcrypto.firebaseuitutorial.utils.TimeUtils;
 
 public class DatabaseUserModelAdapter extends FirebaseRecyclerAdapter<
@@ -56,7 +57,7 @@ public class DatabaseUserModelAdapter extends FirebaseRecyclerAdapter<
                 holder.userLastOnlineTime.setText("not online");
             }
             if (isChat) {
-                if (model.getUserOnlineString().equals("online")) {
+                if (model.getUserOnlineString().equals(FirebaseUtils.USER_ONLINE)) {
                     holder.img_on.setVisibility(View.VISIBLE);
                     holder.img_off.setVisibility(View.GONE);
                 } else {

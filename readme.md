@@ -115,7 +115,15 @@ message is on the top.
 
 ### database presence check
 
+If you click on any user you start the chat activity.
 
+Please note: As long as the user is online (means there is an active internet connection) any action that should show an "offline" user (like moving
+out of this activity or closing the app) is immediately communicated to other users. But when loosing the internet connection (e.g. when disabling 
+the WiFi connection) is can last up to 10 minutes before this is reported to other users.  
+
+### database presence check LV
+
+This is the same functionality but it uses a ListView for user listing.
 
 ### additional data
 

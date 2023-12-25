@@ -45,6 +45,7 @@ import de.androidcrypto.firebaseuitutorial.database.DatabaseExportCompleteChatAc
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserLvActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserPresenceActivity;
+import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserPresenceLvActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseListUserRecentMessagesActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreChatroomsActivity;
 import de.androidcrypto.firebaseuitutorial.firestore.FirestoreEditUserProfileActivity;
@@ -114,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
     private Button listDatabaseUserRecentMessages;
     private Button listDatabaseUserChatrooms;
     private Button presenceCheckDatabase;
+    private Button presenceCheckDatabaseLv;
     private Button exportDatabaseCompleteChat;
     private DatabaseReference actualUserDatabaseReference;
 
@@ -422,15 +424,28 @@ public class MainActivity extends AppCompatActivity {
                 });
 */
             }
-
-
         });
+
+        presenceCheckDatabaseLv = findViewById(R.id.btnMainDatabasePresenceLvCheck);
+        presenceCheckDatabaseLv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "presenceCheckDatabaseLv");
+                // https://firebase.google.com/docs/database/android/offline-capabilities#section-presence
+
+                Intent intent = new Intent(MainActivity.this, DatabaseListUserPresenceLvActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         /**
          * section for Cloud Firestore Database
          */
 
-        editFirestoreUserProfilecanHub = findViewById(R.id.btnMainFirestoreEditUserProfile);
+        editFirestoreUserProfilecanHub =
+
+                findViewById(R.id.btnMainFirestoreEditUserProfile);
         editFirestoreUserProfilecanHub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -440,7 +455,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        listFirestoreUser = findViewById(R.id.btnMainFirestoreListUser);
+        listFirestoreUser =
+
+                findViewById(R.id.btnMainFirestoreListUser);
         listFirestoreUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -450,7 +467,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        listFirestoreUserRecentMessages = findViewById(R.id.btnMainFirestoreListUserRecentMessages);
+        listFirestoreUserRecentMessages =
+
+                findViewById(R.id.btnMainFirestoreListUserRecentMessages);
         listFirestoreUserRecentMessages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -460,7 +479,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        listFirestoreUserChatrooms = findViewById(R.id.btnMainFirestoreListUserChatrooms);
+        listFirestoreUserChatrooms =
+
+                findViewById(R.id.btnMainFirestoreListUserChatrooms);
         listFirestoreUserChatrooms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -474,7 +495,9 @@ public class MainActivity extends AppCompatActivity {
          * section for Firebase Storage
          */
 
-        uploadStorageFilesAndImages = findViewById(R.id.btnMainStorageUploadFilesImages);
+        uploadStorageFilesAndImages =
+
+                findViewById(R.id.btnMainStorageUploadFilesImages);
         uploadStorageFilesAndImages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -484,7 +507,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        downloadStorageFilesAndImages = findViewById(R.id.btnMainStorageDownloadFilesImages);
+        downloadStorageFilesAndImages =
+
+                findViewById(R.id.btnMainStorageDownloadFilesImages);
         downloadStorageFilesAndImages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -494,7 +519,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        listStorageReferencesOnDatabase = findViewById(R.id.btnMainStorageListReferencesOnDatabase);
+        listStorageReferencesOnDatabase =
+
+                findViewById(R.id.btnMainStorageListReferencesOnDatabase);
         listStorageReferencesOnDatabase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -505,7 +532,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        listStorageReferencesOnFirestore = findViewById(R.id.btnMainStorageListReferencesOnFirestore);
+        listStorageReferencesOnFirestore =
+
+                findViewById(R.id.btnMainStorageListReferencesOnFirestore);
         listStorageReferencesOnFirestore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -515,7 +544,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        listStorageImagesListview = findViewById(R.id.btnMainStorageListImages);
+        listStorageImagesListview =
+
+                findViewById(R.id.btnMainStorageListImages);
         listStorageImagesListview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -546,7 +577,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         // don't show the keyboard on startUp
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        getWindow().
+
+                setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
     }
 
@@ -583,7 +616,7 @@ public class MainActivity extends AppCompatActivity {
                 permissions[0]) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 permissions[1]) == PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "Write permission granted",Toast.LENGTH_SHORT)
+            Toast.makeText(this, "Write permission granted", Toast.LENGTH_SHORT)
                     .show();
         } else {
             ActivityCompat.requestPermissions(this,

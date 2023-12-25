@@ -2,6 +2,7 @@ package de.androidcrypto.firebaseuitutorial.database;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,6 +45,10 @@ public class DatabaseListUserPresenceActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private DatabaseUserModelAdapter adapter; // Create Object of the Adapter class
     private ProgressBar progressBar;
+    private DatabaseReference usersPresenceReference; // all users
+    private DatabaseReference userPresenceReference; // the current signed in user reference
+    private DatabaseReference userConnectedReference;
+    private ValueEventListener userListValueEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,34 +60,55 @@ public class DatabaseListUserPresenceActivity extends AppCompatActivity {
 
         signedInUser = findViewById(R.id.etDatabaseListUserSignedInUser);
         progressBar = findViewById(R.id.pbDatabaseListUser);
-
-        // Create a instance of the database and get its reference
-        DatabaseReference usersDatabase = FirebaseUtils.getDatabaseUsersReference(); // unsorted user list
-        //DatabaseReference usersDatabase = FirebaseUtils.getDatabaseUsersPresenceReference();
-
         recyclerView = findViewById(R.id.rvDatabaseListUser);
+
         // To display the Recycler view linearlayout
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // This is a class provided by the FirebaseUI to make a
-        // query in the database to fetch appropriate data
+    }
+
+    private void listDatabaseUser() {
+        usersPresenceReference = FirebaseUtils.getDatabaseUsersPresenceReference();
+        userPresenceReference = FirebaseUtils.getDatabaseUserPresenceReference(authUserId);
+        userConnectedReference = FirebaseUtils.getDatabaseInfoConnected();
+
+        // make an entry for the connection
+        userConnectedReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean connected = Boolean.TRUE.equals(snapshot.getValue(Boolean.class));
+                if (connected) {
+                    //onlineStatus.onDisconnect().removeValue();
+                    userPresenceReference.onDisconnect().setValue(setUserModel(false));
+                    userPresenceReference.setValue(setUserModel(true));
+                } else {
+                    userPresenceReference.setValue(setUserModel(false));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
+
         FirebaseRecyclerOptions<UserModel> options
                 = new FirebaseRecyclerOptions.Builder<UserModel>()
-                .setQuery(usersDatabase, UserModel.class)
+                .setQuery(usersPresenceReference, UserModel.class)
                 .build();
-        // Connecting object of required Adapter class to
-        // the Adapter class itself
-
-        adapter = new DatabaseUserModelAdapter(options, true, FirebaseUtils.getCurrentUserId(), this);
-        // Connecting Adapter class with the Recycler view*/
+        adapter = new DatabaseUserModelAdapter(options, true, authUserId, this);
         recyclerView.setAdapter(adapter);
+        adapter.startListening();
+    }
 
-        // see https://firebase.google.com/docs/database/android/offline-capabilities?hl=en&authuser=0#section-presence
-        DatabaseReference presenceRef = FirebaseUtils.getDatabaseUserPresenceReference(FirebaseUtils.getCurrentUserId());
+    private UserModel setUserModel (boolean isUserOnline) {
+        String userOnlineString = "";
         long lastOnline = TimeUtils.getActualUtcZonedDateTime();
-        boolean isUserOnline = false;
-        String userOnlineString = "offline";
-// public UserModel(String userName, String userMail, String userId, String userPhotoUrl, boolean userOnline, String userOnlineString, long userLastOnlineTime) {
+        if (isUserOnline) {
+            userOnlineString = FirebaseUtils.USER_ONLINE;
+        } else {
+            userOnlineString = FirebaseUtils.USER_OFFLINE;
+        }
         UserModel model = new UserModel(
                 authDisplayName,
                 authUserEmail,
@@ -92,50 +118,7 @@ public class DatabaseListUserPresenceActivity extends AppCompatActivity {
                 userOnlineString,
                 lastOnline
         );
-        presenceRef.onDisconnect().setValue(model);
-
-/*
-        String userId = FirebaseUtils.getCurrentUserId();
-        // Since I can connect from multiple devices, we store each connection instance separately
-        // any time that connectionsRef's value is null (i.e. has no children) I am offline
-        final DatabaseReference myConnectionsRef = FirebaseUtils.getDatabaseUserPresenceReference(userId);
-
-        // Stores the timestamp of my last disconnect (the last time I was seen online)
-        final DatabaseReference lastOnlineRef = FirebaseUtils.getDatabaseUserPresenceReference(userId);
-
-        final DatabaseReference connectedRef = FirebaseUtils.getDatabaseInfoConnected();
-        connectedRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                boolean connected = snapshot.getValue(Boolean.class);
-                Log.d(TAG, "presenceCheckDatabase onDataChange connected: " + connected);
-                AndroidUtils.showToast(DatabaseListUserPresenceActivity.this, "presenceCheckDatabase onDataChange connected: " + connected );
-                if (connected) {
-                    DatabaseReference con = myConnectionsRef.push();
-                    // When this device disconnects, remove it
-                    con.onDisconnect().removeValue();
-
-                    // When I disconnect, update the last time I was seen online
-                    lastOnlineRef.onDisconnect().setValue(ServerValue.TIMESTAMP);
-
-                    // Add this device to my connections list
-                    // this value could contain info about the device or a timestamp too
-                    con.setValue(Boolean.TRUE);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(TAG, "Listener was cancelled at .info/connected");
-                AndroidUtils.showToast(DatabaseListUserPresenceActivity.this, "Listener was cancelled at .info/connected");
-            }
-        });
-*/
-
-    }
-
-    private void listDatabaseUser() {
-        adapter.startListening();
+        return model;
     }
 
     @Override
@@ -155,6 +138,26 @@ public class DatabaseListUserPresenceActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         adapter.stopListening();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume for user " + authUserId);
+        if (userConnectedReference != null) userConnectedReference.addValueEventListener(userListValueEventListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause for user " + authUserId);
+        if (userConnectedReference != null) userConnectedReference.removeEventListener(userListValueEventListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (userConnectedReference != null) userConnectedReference.removeEventListener(userListValueEventListener);
     }
 
     private void reload() {
@@ -183,6 +186,8 @@ public class DatabaseListUserPresenceActivity extends AppCompatActivity {
         if (user != null) {
             authUserId = user.getUid();
             authUserEmail = user.getEmail();
+            authDisplayName = user.getDisplayName();
+            if (TextUtils.isEmpty(authDisplayName)) authDisplayName = "unknown";
             String userData = String.format("Email: %s", authUserEmail);
             signedInUser.setText(userData);
             listDatabaseUser();
