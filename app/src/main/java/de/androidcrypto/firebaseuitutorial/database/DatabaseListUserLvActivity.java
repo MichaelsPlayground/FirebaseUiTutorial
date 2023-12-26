@@ -30,6 +30,7 @@ import java.util.Objects;
 import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.models.UserModel;
+import de.androidcrypto.firebaseuitutorial.utils.AndroidUtils;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
 
 public class DatabaseListUserLvActivity extends AppCompatActivity {
@@ -117,12 +118,15 @@ public class DatabaseListUserLvActivity extends AppCompatActivity {
                 Log.i(TAG, "userListView clicked on pos: " + position);
                 //Intent intent = new Intent(DatabaseListUserLvActivity.this, ChatDatabaseActivity.class);
                 Intent intent = new Intent(DatabaseListUserLvActivity.this, DatabaseChatActivity.class);
-                intent.putExtra("UID", listAdapter.getRef(position).getKey());
-                intent.putExtra("EMAIL", emailList.get(position));
-                intent.putExtra("DISPLAYNAME", displayNameList.get(position));
-                intent.putExtra("AUTH_EMAIL", authUserEmail);
-                intent.putExtra("AUTH_DISPLAYNAME", authDisplayName);
-                intent.putExtra("PROFILE_IMAGE", profileImageList.get(position));
+                // public UserModel(String userId, String userName, String userMail, String userPhotoUrl) {
+                UserModel model = new UserModel(
+                        listAdapter.getRef(position).getKey(),
+                        displayNameList.get(position),
+                        emailList.get(position),
+                        profileImageList.get(position)
+                );
+                AndroidUtils.passUserModelAsIntent(intent, model);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();
             }

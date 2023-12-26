@@ -225,7 +225,7 @@ public class DatabaseChatActivity extends AppCompatActivity implements FirebaseA
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
         if(currentUser != null){
-            if (!receiveUserId.equals("")) {
+            if (!TextUtils.isEmpty(receiveUserId)) {
                 Log.i(TAG, "onStart prepare database for chat");
                 reload();
                 enableUiOnSignIn(true);
