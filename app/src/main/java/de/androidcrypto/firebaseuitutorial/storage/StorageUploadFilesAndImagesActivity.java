@@ -150,7 +150,7 @@ public class StorageUploadFilesAndImagesActivity extends AppCompatActivity {
             // Set the clipboard's primary clip.
             clipboard.setPrimaryClip(clip);
             AndroidUtils.showToast(v.getContext(), "downloadUrl is copied to clipboard");
-                }));
+        }));
     }
 
     ActivityResultLauncher<Intent> fileUploadUnencryptedChooserActivityResultLauncher = registerForActivityResult(
