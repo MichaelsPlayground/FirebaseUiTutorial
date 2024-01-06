@@ -225,11 +225,6 @@ public class AuthChangeUserPasswordActivity extends AppCompatActivity {
             } else {
                 sb.append("Display name: ").append(authDisplayName).append("\n");
             }
-            if (TextUtils.isEmpty(authPhotoUrl)) {
-                sb.append("Photo URL: ").append("no photo url available").append("\n");
-            } else {
-                sb.append("Photo URL: ").append(authPhotoUrl).append("\n");
-            }
             if (user.isEmailVerified()) {
                 sb.append("Email verification: ").append("Email address is VERIFIED");
             } else {
