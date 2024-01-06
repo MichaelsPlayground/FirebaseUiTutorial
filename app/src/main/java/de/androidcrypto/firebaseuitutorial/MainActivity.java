@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import de.androidcrypto.firebaseuitutorial.auth.AuthChangeUserPasswordActivity;
 import de.androidcrypto.firebaseuitutorial.auth.AuthEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseChatroomsActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActivity;
@@ -73,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
     private com.google.android.material.textfield.TextInputEditText signedInUser;
     private Button signIn, signOut, editAuthUserProfile, verification, accountDeletion;
+    private Button changePassword, resetPassword;
 
     private List<AuthUI.IdpConfig> authenticationProviders = Arrays.asList(
             new AuthUI.IdpConfig.EmailBuilder().build(),
@@ -174,6 +176,8 @@ public class MainActivity extends AppCompatActivity {
         signIn = findViewById(R.id.btnMainAuthSignIn);
         signOut = findViewById(R.id.btnMainAuthSignOut);
         editAuthUserProfile = findViewById(R.id.btnMainAuthEditUserProfile);
+        changePassword = findViewById(R.id.btnMainAuthChangePassword);
+        resetPassword = findViewById(R.id.btnMainAuthResetPassword);
         verification = findViewById(R.id.btnMainAuthVerification);
         accountDeletion = findViewById(R.id.btnMainAuthDeleteUser);
 
@@ -232,6 +236,25 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "edit user profile on auth database");
                 Intent intent = new Intent(MainActivity.this, AuthEditUserProfileActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        changePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "change password on auth database");
+                Intent intent = new Intent(MainActivity.this, AuthChangeUserPasswordActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        resetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "reset password on auth database");
+                // todo code this
+                //Intent intent = new Intent(MainActivity.this, AuthChangeUserPasswordActivity.class);
+                //startActivity(intent);
             }
         });
 
