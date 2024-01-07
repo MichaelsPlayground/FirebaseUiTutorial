@@ -56,6 +56,9 @@
             android:name=".auth.AuthChangeUserPasswordActivity"
             android:exported="false" />
         <activity
+            android:name=".auth.AuthResetUserPasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".database.DatabaseEditUserProfileActivity"
             android:exported="false" />
         <activity

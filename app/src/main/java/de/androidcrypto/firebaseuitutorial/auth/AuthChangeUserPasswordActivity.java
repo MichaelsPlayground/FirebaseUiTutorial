@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,7 +19,6 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,12 +27,10 @@ import com.google.firebase.auth.UserInfo;
 import java.util.List;
 import java.util.Objects;
 
-import de.androidcrypto.firebaseuitutorial.GlideApp;
 import de.androidcrypto.firebaseuitutorial.MainActivity;
 import de.androidcrypto.firebaseuitutorial.R;
 import de.androidcrypto.firebaseuitutorial.utils.AndroidUtils;
 import de.androidcrypto.firebaseuitutorial.utils.FirebaseUtils;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AuthChangeUserPasswordActivity extends AppCompatActivity {
 
@@ -49,7 +45,7 @@ public class AuthChangeUserPasswordActivity extends AppCompatActivity {
     private com.google.android.material.textfield.TextInputEditText userId, userEmail, userOldPassword, userNewPassword;
 
     // get the data from auth
-    private static String authUserId = "", authUserEmail, authDisplayName, authPhotoUrl;
+    private static String authUserId = "", authUserEmail, authDisplayName;
     private ProgressBar progressBar;
 
     @Override
@@ -67,7 +63,7 @@ public class AuthChangeUserPasswordActivity extends AppCompatActivity {
         userId = findViewById(R.id.etAuthUserUserId);
         userOldPasswordLayout = findViewById(R.id.etAuthUserOldPasswordLayout);
         userEmail = findViewById(R.id.etAuthUserUserEmail);
-        userOldPassword = findViewById(R.id.etAuthUserNewPassword);
+        userOldPassword = findViewById(R.id.etAuthUserOldPassword);
         userNewPasswordLayout = findViewById(R.id.etAuthUserNewPasswordLayout);
         userNewPassword = findViewById(R.id.etAuthUserNewPassword);
 
@@ -83,16 +79,15 @@ public class AuthChangeUserPasswordActivity extends AppCompatActivity {
                 // sanity checks
 
                 FirebaseUser user = FirebaseUtils.getCurrentUser();
+                // check that the user is signed in with an Email/Password provider and not with Google
                 List<? extends UserInfo> providerData = user.getProviderData();
                 boolean isEmailPasswordProvider = false;
                 for (int i = 0; i < providerData.size(); i++) {
                     UserInfo provDat = providerData.get(i);
-                    Log.d(TAG, "provData providerId: " + provDat.getProviderId());
                     if (provDat.getProviderId().equals("password")) isEmailPasswordProvider = true;
                 }
-                Log.d(TAG, "ProviderData ID:" + user.getProviderId());
                 if (!isEmailPasswordProvider) {
-                    AndroidUtils.showSnackbarRedLong(signedInUser, "You signed in with Google, so changing of the password is not allowed here.");
+                    AndroidUtils.showSnackbarRedLong(signedInUser, "You signed in with Google, so changing of the password is not allowed here");
                     return;
                 }
 
@@ -126,6 +121,7 @@ public class AuthChangeUserPasswordActivity extends AppCompatActivity {
                     userNewPasswordLayout.setError("");
                 }
                 if (!authUserId.equals("")) {
+                    showProgressBar();
                     if (!Objects.requireNonNull(userId.getText()).toString().equals("")) {
                         // re-authenticate the user
                         // this is for Email/Password provider only !
@@ -136,25 +132,39 @@ public class AuthChangeUserPasswordActivity extends AppCompatActivity {
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        Log.d(TAG, "User re-authenticated, starting password changing.");
-                                        user.updatePassword(userNewPasswordString)
-                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        if (task.isSuccessful()) {
-                                                            Log.d(TAG, "User password updated.");
-                                                            AndroidUtils.showSnackbarGreenShort(signedInUser, "password changed");
-                                                        } else {
-                                                            AndroidUtils.showSnackbarRedLong(signedInUser, "could not change the password, please sign in again");
+                                        Exception reauthenticateException = task.getException();
+                                        if ((reauthenticateException == null)) {
+                                            Log.d(TAG, "User re-authenticated, starting password changing.");
+                                            user.updatePassword(userNewPasswordString)
+                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            if (task.isSuccessful()) {
+                                                                Log.d(TAG, "User password updated");
+                                                                AndroidUtils.showSnackbarGreenShort(signedInUser, "password changed");
+                                                            } else {
+                                                                Log.e(TAG, "User password NOT updated");
+                                                                Exception e = task.getException();
+                                                                Log.d(TAG, "Exception: " + e);
+                                                                AndroidUtils.showSnackbarRedLong(signedInUser, "could not change the password, please sign in again");
+                                                            }
+                                                            hideProgressBar();
                                                         }
-                                                    }
-                                                });
+                                                    });
+                                        } else {
+                                            Log.e(TAG, "User re-authentication not working");
+                                            Log.d(TAG, "Exception: " + reauthenticateException.getMessage());
+                                            AndroidUtils.showSnackbarRedLong(signedInUser, "Exception on re-authentication: " + reauthenticateException.getMessage());
+                                            hideProgressBar();
+                                        }
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         Log.e(TAG, "error on re-authentication of the user: " + e.getMessage());
+                                        AndroidUtils.showSnackbarRedLong(signedInUser, "Exception on re-authentication: " + e.getMessage());
+                                        hideProgressBar();
                                     }
                                 });
                     } else {
@@ -162,16 +172,12 @@ public class AuthChangeUserPasswordActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(),
                                 "sign in a user before changing",
                                 Toast.LENGTH_SHORT).show();
+                        hideProgressBar();
                     }
-
                 }
-            }
-
-            ;
+            };
         });
-    }
-
-    ;
+    };
 
     @Override
     public void onStart() {
@@ -211,11 +217,6 @@ public class AuthChangeUserPasswordActivity extends AppCompatActivity {
             } else {
                 authDisplayName = "";
             }
-            if (user.getPhotoUrl() != null) {
-                authPhotoUrl = Objects.requireNonNull(user.getPhotoUrl()).toString();
-            } else {
-                authPhotoUrl = "";
-            }
             StringBuilder sb = new StringBuilder();
             sb.append("Data from Auth Database").append("\n");
             sb.append("User id: ").append(authUserId).append("\n");
@@ -224,11 +225,6 @@ public class AuthChangeUserPasswordActivity extends AppCompatActivity {
                 sb.append("Display name: ").append("no display name available").append("\n");
             } else {
                 sb.append("Display name: ").append(authDisplayName).append("\n");
-            }
-            if (user.isEmailVerified()) {
-                sb.append("Email verification: ").append("Email address is VERIFIED");
-            } else {
-                sb.append("Email verification: ").append("Email address is NOT verified");
             }
             signedInUser.setText(sb.toString());
             userId.setText(authUserId);

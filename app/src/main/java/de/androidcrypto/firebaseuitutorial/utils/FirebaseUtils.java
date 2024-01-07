@@ -74,8 +74,12 @@ public class FirebaseUtils {
      * section Authentication
      */
 
+    public static FirebaseAuth getAuth() {
+        return FirebaseAuth.getInstance();
+    }
+
     public static FirebaseUser getCurrentUser() {
-        return FirebaseAuth.getInstance().getCurrentUser();
+        return getAuth().getCurrentUser();
     }
 
     public static String getCurrentUserId() {

@@ -40,6 +40,7 @@ import java.util.List;
 
 import de.androidcrypto.firebaseuitutorial.auth.AuthChangeUserPasswordActivity;
 import de.androidcrypto.firebaseuitutorial.auth.AuthEditUserProfileActivity;
+import de.androidcrypto.firebaseuitutorial.auth.AuthResetUserPasswordActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseChatroomsActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseEditUserProfileActivity;
 import de.androidcrypto.firebaseuitutorial.database.DatabaseExportCompleteChatActivity;
@@ -253,8 +254,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d(TAG, "reset password on auth database");
                 // todo code this
-                //Intent intent = new Intent(MainActivity.this, AuthChangeUserPasswordActivity.class);
-                //startActivity(intent);
+                Intent intent = new Intent(MainActivity.this, AuthResetUserPasswordActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -708,6 +709,7 @@ public class MainActivity extends AppCompatActivity {
         editAuthUserProfile.setEnabled(isSignedIn);
         verification.setEnabled(isSignedIn);
         accountDeletion.setEnabled(isSignedIn);
+        changePassword.setEnabled(isSignedIn);
         // realtime database
         editDatabaseUserProfileCanHub.setEnabled(isSignedIn);
         listDatabaseUser.setEnabled(isSignedIn);
